@@ -12,6 +12,9 @@ namespace Checkers.GameApp.Screens
     public class MainMenuScreen : Screen
     {
         Texture2D background;
+        float bgScale = 2.0f;
+        int bgWidth = 0;
+
         public MainMenuScreen()
             : base()
         {
@@ -21,6 +24,7 @@ namespace Checkers.GameApp.Screens
         public override void LoadContent(ContentManager content)
         {
             background = content.Load<Texture2D>("Checkers");
+            bgWidth = (int)(background.Width * bgScale);
         }
 
         public override void UnloadContent()
@@ -35,9 +39,9 @@ namespace Checkers.GameApp.Screens
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
-            spriteBatch.Draw(background, new Vector2(Checkers.WindowWidth / 2 - background.Width / 2, 50), Color.White);
+            spriteBatch.Draw(background, new Rectangle(Checkers.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
 
             spriteBatch.End();
         }
