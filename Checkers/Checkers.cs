@@ -9,6 +9,9 @@ namespace Checkers
     public class Checkers : Game
     {
         public static string WindowTitle = "Checkers Game";
+        public static int WindowWidth = 1280;
+        public static int WindowHeight = 720;
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
@@ -24,8 +27,8 @@ namespace Checkers
         {
             base.Initialize();
             _content = Content;
-            _graphics.PreferredBackBufferWidth = 1280;
-            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = WindowWidth;
+            _graphics.PreferredBackBufferHeight = WindowHeight;
             _graphics.ApplyChanges();
         }
 
@@ -52,7 +55,7 @@ namespace Checkers
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             ScreenManager.Draw(gameTime);
 
