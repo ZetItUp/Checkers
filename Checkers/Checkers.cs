@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Checkers.GameApp.Screens;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,8 +8,12 @@ namespace Checkers
 {
     public class Checkers : Game
     {
+        public static string WindowTitle = "Checkers Game";
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private ContentManager _content;
+
+
 
         public Checkers()
         {
@@ -19,13 +25,15 @@ namespace Checkers
         protected override void Initialize()
         {
             base.Initialize();
+            _content = Content;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            ScreenManager.Initialize(_spriteBatch, Content);
+            ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
         protected override void Update(GameTime gameTime)
@@ -33,7 +41,10 @@ namespace Checkers
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            if (Window.Title != WindowTitle)
+            {
+                Window.Title = WindowTitle;
+            }
 
             base.Update(gameTime);
         }
@@ -42,7 +53,7 @@ namespace Checkers
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            ScreenManager.Draw(gameTime);
 
             base.Draw(gameTime);
         }
