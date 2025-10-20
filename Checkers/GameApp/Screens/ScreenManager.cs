@@ -15,10 +15,7 @@ namespace Checkers.GameApp.Screens
         private static ContentManager _content;
         private static SpriteBatch _spriteBatch;
 
-        private static Dictionary<ScreenID, Screen> _screens = new Dictionary<ScreenID, Screen>()
-        {
-            { ScreenID.MainMenu, new MainMenuScreen() },
-        };
+        private static Dictionary<ScreenID, Screen> _screens = new Dictionary<ScreenID, Screen>();
 
         public static Screen CurrentScreen
         {

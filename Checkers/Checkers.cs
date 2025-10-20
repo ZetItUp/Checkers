@@ -13,8 +13,6 @@ namespace Checkers
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
 
-
-
         public Checkers()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -26,6 +24,9 @@ namespace Checkers
         {
             base.Initialize();
             _content = Content;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
