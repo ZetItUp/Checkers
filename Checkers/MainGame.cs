@@ -1,4 +1,5 @@
-﻿using Checkers.GameApp.Screens;
+﻿using Checkers.GameApp.Helpers;
+using Checkers.GameApp.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ namespace Checkers
     public class MainGame : Game
     {
         public static string WindowTitle = "Checkers Game";
+        public static GraphicsDeviceManager graphicsDeviceMangager;
         public static int WindowWidth = 1280;
         public static int WindowHeight = 720;
 
@@ -21,6 +23,9 @@ namespace Checkers
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            // Add the MouseHelper as a GameComponent
+            Components.Add(new MouseHelper(this));
         }
 
         protected override void Initialize()
