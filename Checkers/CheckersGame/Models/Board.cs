@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Models
 {
-    internal class Board
+    public class Board
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
         public int Size { get; } // storleken på brädet
