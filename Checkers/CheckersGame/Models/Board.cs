@@ -10,16 +10,16 @@ namespace Checkers.CheckersGame.Models
 {
     internal class Board
     {
-        List<Vector2> cordinates = new List<Vector2>();
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
         public int Size { get; } // storleken på brädet
         public Board(int Size = 8) // konstruktor skapar nytt bräde med angedd storlek
         {
-
+            this.Size = Size; // this.Size nuvarande klassobjeket
+            squares = new Piece?[Size, Size]; // skapa rutnät som börjar som null (inga pjäser där) och är Size brett och Size högt
         }
         public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
         {
-            return null;
+            return squares[position.Row, position.Column];
         }
 
         public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
