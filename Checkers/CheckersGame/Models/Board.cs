@@ -32,25 +32,51 @@ namespace Checkers.CheckersGame.Models
             return null;
         }
 
+        // UML: +PlacePiece(piece: Piece, position: Position): void
+        public void PlacePiece(Piece piece, Position position)
+        {
+            if (piece is null)
+                throw new ArgumentNullException(nameof(piece));
+            if(squares[position.Row, position.Column] != null)
+                throw new InvalidOperationException($"Rutan ({position.Row},{position.Column}) är redan upptagen.");
 
-        
-        
 
+            if (position.Row < 0 || position.Row >= Size || position.Column < 0 || position.Column >= Size)
+                throw new ArgumentOutOfRangeException(nameof(position), $"Positionen {position} ligger utanför brädet {Size}x{Size}.");
+
+            if (squares[position.Row, position.Column] is not null)
+                throw new InvalidOperationException($"Rutan ({position.Row},{position.Column}) är redan upptagen.");
+
+            squares[position.Row, position.Column] = piece;
+
+            squares[position.Row, position.Column] = piece;
+
+        }
+
+        public void RemovePiece(Position position)
+        {
+
+            throw new NotImplementedException();
+
+        }
+        public void MovePiece(Position from, Position to)
+        {
+            throw new NotImplementedException();
+        }
     }
-    
 }
-        // work in progress
+// work in progress
 
-              // get piece som säger vilken piece som är på den positionen 
-                // board ska anropa move piece
-               // new piece
-                // piece ska kunna vara nulla
-                // vad är det för piece på platsen  
-                // PlacePiece inistialiseras när vi gör spelpllan och göra den med for loop
-                // MovePiece - flytta pjäs från en position från en annan
-                // Boarden bryr sig inte om nåt annat
-                
-                
+// get piece som säger vilken piece som är på den positionen 
+// board ska anropa move piece
+// new piece
+// piece ska kunna vara nulla
+// vad är det för piece på platsen  
+// PlacePiece inistialiseras när vi gör spelpllan och göra den med for loop
+// MovePiece - flytta pjäs från en position från en annan
+// Boarden bryr sig inte om nåt annat
+
+
 
 
 // prio varje klass och funktion finns inte vad som finns i dom
