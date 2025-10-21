@@ -22,17 +22,11 @@ namespace Checkers.CheckersGame.Models
             return squares[position.Row, position.Column];
         }
 
-        public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
-        {  
-            return null; 
-        }
-
-        public List<Piece> GetAllPieces(PieceColor color) // Overload: returnerar alla pjäser av angiven färg
-        {
-            return null;
-        }
-
         public void PlacePiece(Piece piece, Position position)
+        {
+            throw new NotImplementedException();
+        }
+        public void MovePiece(Position from, Position to)
         {
             throw new NotImplementedException();
         }
@@ -41,12 +35,31 @@ namespace Checkers.CheckersGame.Models
         {
 
             throw new NotImplementedException();
+        }
+        public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
+        {  
+            var result = new List<Piece>();
 
+            for (int r = 0; r < Size; r++) //loopar varje rad i brädet
+            {
+                for (int c = 0; c < Size; c++) //loopar varje kolumn i raden
+                {
+                    var p = squares[r, c]; // hämtar pjäsen eller null från rutan
+
+                    if (p != null) // är rutan inte tom finnn en pjäs
+                    {
+                        result.Add(p); // lägg till pjäsen
+                    }
+                }
+            }
+            return result;
         }
-        public void MovePiece(Position from, Position to)
+
+        public List<Piece> GetAllPieces(PieceColor color) // Overload: returnerar alla pjäser av angiven färg
         {
-            throw new NotImplementedException();
+            return null;
         }
+
     }
 }
 // work in progress
