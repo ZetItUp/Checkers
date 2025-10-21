@@ -1,4 +1,5 @@
-﻿using Checkers.GameApp.Screens;
+﻿using Checkers.GameApp.Helpers;
+using Checkers.GameApp.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +23,9 @@ namespace Checkers
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            // Add the MouseHelper as a GameComponent
+            Components.Add(new MouseHelper(this));
         }
 
         protected override void Initialize()
