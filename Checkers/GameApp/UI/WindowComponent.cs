@@ -13,12 +13,26 @@ namespace Checkers.UI
 {
     internal class WindowComponent
     {
-        public Rectangle WindowRectangle { get; set; } = new Rectangle(0, 0, 0, 0);
+        private const int MIN_WINDOW_WIDTH = 20;
+        private const int MIN_WINDOW_HEIGHT = 20;
+
+        public Rectangle WindowRectangle { get; set; } = new Rectangle(0, 0, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
         public bool IsVisible { get; set; } = true;
         public bool IsMouseOver { get; protected set; } = false;
 
         public WindowComponent(Rectangle windowRectangle)
         {
+            // Se till att windowRectangle inte är mindre än minimistorleken
+            if (windowRectangle.Width < MIN_WINDOW_WIDTH)
+            {
+                windowRectangle.Width = MIN_WINDOW_WIDTH;
+            }
+
+            if(windowRectangle.Height < MIN_WINDOW_HEIGHT)
+            {
+                windowRectangle.Height = MIN_WINDOW_HEIGHT;
+            }
+
             WindowRectangle = windowRectangle;
         }
 
