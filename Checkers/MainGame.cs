@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Checkers
 {
-    public class Checkers : Game
+    public class MainGame : Game
     {
         public static string WindowTitle = "Checkers Game";
         public static int WindowWidth = 1280;
@@ -16,7 +16,7 @@ namespace Checkers
         private SpriteBatch _spriteBatch;
         private ContentManager _content;
 
-        public Checkers()
+        public MainGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";

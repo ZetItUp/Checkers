@@ -41,7 +41,7 @@ namespace Checkers.GameApp.Screens
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
-            spriteBatch.Draw(background, new Rectangle(Checkers.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
+            spriteBatch.Draw(background, new Rectangle(CheckersGame.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
 
             spriteBatch.End();
         }
