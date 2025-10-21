@@ -22,13 +22,12 @@ namespace Checkers.CheckersGame.GameService
         //RuleSet satt till public så gui kan läsa 
         public RuleSet RuleSet{ get; private set; } // blir en lista sen när vi implementerar factory 
                                                     // för att skapa regler från fil
-        public GameService(string player1, string player2)
+        public GameService()
         {
             RuleSet = RuleSet.CreateStandard(); // blir annorlunda när vi har factoryn
-            InitializeGame();
         }
 
-        private void InitializeGame(string player1Name, string player2Name, RuleSet ruleSet)
+        public void InitializeGame(string player1Name, string player2Name, RuleSet ruleSet)
         {
             _board = new Board(RuleSet.BoardSize);
             _player1 = new Player(player1Name, PieceColor.Red);
