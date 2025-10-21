@@ -9,7 +9,7 @@ using Checkers.CheckersGame.Validation;
 
 namespace Checkers.CheckersGame.GameService
 {
-    internal class GameService
+    public class GameService
     {
         private Board _board;
         private Player _player1;
@@ -38,7 +38,7 @@ namespace Checkers.CheckersGame.GameService
 
             //_board.Initialize();
             
-            //init History med brädet som det var initialt
+            ///init History med brädet som det var initialt
             //där efter behöver vi bara spara drag
             //_gameHistory = new GameHistory(_board.Clone());
         }

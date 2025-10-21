@@ -20,7 +20,9 @@ namespace Checkers.CheckersGame.Models
 
             this.Position = position;
         }
-        
+       
+        public abstract List<Position> GetValidMoves(Board board);
+        public abstract Piece Clone();
         
     }
 }
