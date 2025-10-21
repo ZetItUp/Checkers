@@ -32,17 +32,6 @@ namespace Checkers.CheckersGame.Models
             return null;
         }
 
-        // UML: +PlacePiece(piece: Piece, position: Position): void
-        public void PlacePiece(Piece piece, Position position)
-        {
-            if (piece is null)
-                throw new ArgumentNullException(nameof(piece));
-            if(squares[position.Row, position.Column] != null)
-                throw new InvalidOperationException($"Rutan ({position.Row},{position.Column}) är redan upptagen.");
-
-
-            if (position.Row < 0 || position.Row >= Size || position.Column < 0 || position.Column >= Size)
-                throw new ArgumentOutOfRangeException(nameof(position), $"Positionen {position} ligger utanför brädet {Size}x{Size}.");
 
             if (squares[position.Row, position.Column] is not null)
                 throw new InvalidOperationException($"Rutan ({position.Row},{position.Column}) är redan upptagen.");
