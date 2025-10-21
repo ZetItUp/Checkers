@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -10,11 +11,33 @@ namespace Checkers.CheckersGame.Models
     internal class Board
     {
         List<Vector2> cordinates = new List<Vector2>();
-        public Board()
+        private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
+        public int Size { get; } // storleken på brädet
+        public Board(int Size = 8) // konstruktor skapar nytt bräde med angedd storlek
         {
 
         }
+        public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
+        {
+            return null;
+        }
+
+        public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
+        {  
+            return null; 
+        }
+
+        public List<Piece> GetAllPieces(PieceColor color) // Overload: returnerar alla pjäser av angiven färg
+        {
+            return null;
+        }
+
+
+        
+        
+
     }
+    
 }
         // work in progress
 
