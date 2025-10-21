@@ -32,6 +32,15 @@ namespace Checkers.CheckersGame.Models
             return null;
         }
 
+        public int CountPieces(PieceColor color) // Räknar hur många pjäser det finns av en viss färg och returnerar antalet
+        {
+            return 0;
+        }
+
+        public Board Clone() // skapar och returnerar en kopia av brädet (ny board med samma innehåll) 
+        {
+            return null;
+        }
 
         
         
