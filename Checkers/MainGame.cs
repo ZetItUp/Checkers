@@ -24,7 +24,7 @@ namespace Checkers
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            // Add the MouseHelper as a GameComponent
+            // Lägg till MouseHelper som en GameComponent
             Components.Add(new MouseHelper(this));
         }
 

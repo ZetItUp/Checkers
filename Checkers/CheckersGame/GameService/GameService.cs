@@ -36,11 +36,11 @@ namespace Checkers.CheckersGame.GameService
             _moveValidator = new MoveValidator(ruleSet);
             _gameStatus = GameStatus.WaitingToStart;
 
-            _board.Initialize();
+            //_board.Initialize();
             
             //init History med brädet som det var initialt
             //där efter behöver vi bara spara drag
-            _gameHistory = new GameHistory(_board.Clone());
+            //_gameHistory = new GameHistory(_board.Clone());
         }
 
         public void StartGame()
@@ -67,7 +67,7 @@ namespace Checkers.CheckersGame.GameService
             }
             
             //flytta pjäsen på Board
-            _board.MovePiece(from, to);
+            //_board.MovePiece(from, to);
             
             //kolla om pjäsen ska bli en Dam (king)
             var piece = _board.GetPiece(to);
@@ -101,11 +101,11 @@ namespace Checkers.CheckersGame.GameService
         public Player CheckWinner()
         {
             //om spelaren inte har nå pjäserkvar så förlorar dom
-            if(_board.CountPieces(_player1.Color) == 0)
-                return _player2;
+            //if(_board.CountPieces(_player1.Color) == 0)
+            //    return _player2;
             
-            if(_board.CountPieces(_player2.Color) == 0)
-                return _player1;
+            //if(_board.CountPieces(_player2.Color) == 0)
+            //    return _player1;
             
             //om en spelare inte har nå giltiga drag kvar så förlorar dom
             if (!_moveValidator.HasValidMoves(_currentPlayer, _board))
@@ -143,15 +143,15 @@ namespace Checkers.CheckersGame.GameService
 
         private void PromoteToKing(Position position, Piece piece)
         {
-            var kingPiece ? new KingPiece(piece.Color, position);
-            _board.PlacePiece(kingPiece, position);
+            var kingPiece = new KingPiece(piece.Color, position);
+            //_board.PlacePiece(kingPiece, position);
         }
         private Piece HandleCapture(Position from, Position to)
         {
             var capturedPosition = _moveValidator.GetCapturedPosition(from, to);
             if (capturedPosition.HasValue){
                 var capturedPiece = _board.GetPiece(capturedPosition.Value);
-                _board.RemovePiece(capturedPiece.Value);
+                //_board.RemovePiece(capturedPiece.Value);
                 return capturedPiece;
             }
             return null;
