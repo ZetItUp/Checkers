@@ -32,6 +32,11 @@ namespace Checkers.CheckersGame.Models
             return null;
         }
 
+        public void PlacePiece(Piece piece, Position position)
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemovePiece(Position position)
         {
 
