@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Models
 {
-    public struct CurrentPosition
+    public struct Position
     {
         public readonly int Row { get; }
 
         public readonly int Column { get; }
 
-        public CurrentPosition(int row, int column)
+        public Position(int row, int column)
         {
             this.Row = row;
 

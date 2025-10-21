@@ -10,11 +10,11 @@ namespace Checkers.CheckersGame.Models
     {
         public PieceColor Color { get; set; }
 
-        public CurrentPosition Position { get; set; }
+        public Position Position { get; set; }
 
         public readonly bool IsKing;
 
-        public Piece(PieceColor color, CurrentPosition position)
+        public Piece(PieceColor color, Position position)
         {
             this.Color = color;
 

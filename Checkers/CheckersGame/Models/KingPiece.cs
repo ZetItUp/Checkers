@@ -8,7 +8,7 @@ namespace Checkers.CheckersGame.Models
 {
     public class KingPiece : Piece
     {
-        public KingPiece(PieceColor color, CurrentPosition position) : base(color, position)
+        public KingPiece(PieceColor color, Position position) : base(color, position)
         {
             this.Color = color;
 
