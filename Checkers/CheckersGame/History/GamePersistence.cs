@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using Checkers.CheckersGame.Models;
-using Microsoft.Xna.Framework;
+using Checkers.CheckersGame.Validation;
 
 namespace Checkers.CheckersGame.History;
 
@@ -43,7 +44,7 @@ public static class GamePersistence
 
     public static List<string> GetSavedGames()
     {
-        var files Directory.GetFiles(SaveDirectory, "*.json");
+        var files = Directory.GetFiles(SaveDirectory, "*.json");
         var fileNames = new List<string>();
 
         foreach (var file in  files){
@@ -65,7 +66,7 @@ public static class GamePersistence
     {
         //skapa en simple serializeable game state 
         var gameState = new GameSaveState{
-            Player1Name = game.GetCurrentPlayer().Color = PieceColor.Red
+            Player1Name = game.GetCurrentPlayer().Color == PieceColor.Red
                 ? game.GetCurrentPlayer().Name
                 : GetOpponentName(game),
             Player2Name = game.GetCurrentPlayer().Color == PieceColor.Dark
@@ -89,8 +90,8 @@ public static class GamePersistence
 
         foreach (var piece in allPieces){
             pieces.Add(new PieceSaveState{
-                Row = piece.CurrentPosition.Row,
-                Column = piece.CurrentPosition.Column,
+                Row = piece.Position.Row,
+                Column = piece.Position.Column,
                 Color = piece.Color,
                 IsKing = piece.IsKing
             });
@@ -111,8 +112,8 @@ public static class GamePersistence
                 ToRow = move.To.Row,
                 ToColumn = move.To.Column,
                 WasPromoted = move.WasPromoted,
-                CapturedRow = move.CapturedPiece != null ? move.CapturedPiece.CurrentPosition.Row : -1,
-                CapturedColumn = move.CapturedPiece != null ? move.CapturedPiece.CurrentPosition.Column : -1,
+                CapturedRow = move.CapturedPiece != null ? move.CapturedPiece.Position.Row : -1,
+                CapturedColumn = move.CapturedPiece != null ? move.CapturedPiece.Position.Column : -1,
                 CapturedColor = move.CapturedPiece != null ? move.CapturedPiece.Color : PieceColor.Light,
                 MoveNumber = move.MoveNumber
             });   
@@ -206,7 +207,7 @@ public static class GamePersistence
         public int BoardSize { get; set; }
         public GameStatus Status { get; set; }
         public PieceColor CurrentPlayer1Color { get; set; }
-        public List<PiceSaveState> InitialBoardState { get; set; }
+        public List<PieceSaveState> InitialBoardState { get; set; }
         public List<MoveSaveState> Moves { get; set; }
     }
 

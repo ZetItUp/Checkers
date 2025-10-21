@@ -20,7 +20,7 @@ namespace Checkers.CheckersGame.Validation
         {
             var piece = board.GetPiece(from);
             
-            if(!IsPieceOwnedByPLayer(piece, player))
+            if(!IsPieceOwnedByPlayer(piece, player))
                 return false;
             if(!IsDestinationEmpty(board, to))
                 return false;
@@ -35,7 +35,7 @@ namespace Checkers.CheckersGame.Validation
                     var validMoves = p.GetValidMoves(board);
                     foreach (var validMove in validMoves)
                     {
-                        if (IsCapture(p.CurrentPosition, validMove))
+                        if (IsCapture(p.Position, validMove))
                         {
                             return IsCapture(from, to);
                         }    
@@ -63,7 +63,7 @@ namespace Checkers.CheckersGame.Validation
             int rowDiff = Math.Abs(to.Row - from.Row);
             int colDiff = Math.Abs(to.Column - from.Column);
             
-            return rowDiff = 2 && colDiff == 2;
+            return rowDiff == 2 && colDiff == 2;
         }
 
         public bool HasValidMoves(Player player, Board board)
@@ -80,7 +80,7 @@ namespace Checkers.CheckersGame.Validation
                     bool hasCaptures = false;
                     foreach (var move in validMoves)
                     {
-                        if (IsCapture(piece.CurrentPosition, move))
+                        if (IsCapture(piece.Position, move))
                         {
                             hasCaptures = true;
                             break;
@@ -92,7 +92,7 @@ namespace Checkers.CheckersGame.Validation
                         //om force capture är på, kolla om det finns några pjäser att ta
                         foreach (var move in validMoves)
                         {
-                            if (IsCapture(piece.CurrentPosition, move))
+                            if (IsCapture(piece.Position, move))
                             {
                                 return true;    
                             }
