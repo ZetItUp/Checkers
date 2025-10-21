@@ -109,8 +109,8 @@ namespace Checkers.CheckersGame.History
                 var piece = board.GetPiece(move.To);
                 if (piece != null && !piece.IsKing)
                 {
-                    var kingPiece = new KingPiece(piece.Color, piece.CurrentPosition);
-                    board.PlacePiece(kingPiece, kingPiece.CurrentPosition);
+                    var kingPiece = new KingPiece(piece.Color, piece.Position);
+                    board.PlacePiece(kingPiece, kingPiece.Position);
                 }
             }
         }
