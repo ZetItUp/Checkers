@@ -32,16 +32,6 @@ namespace Checkers.CheckersGame.Models
             return null;
         }
 
-
-            if (squares[position.Row, position.Column] is not null)
-                throw new InvalidOperationException($"Rutan ({position.Row},{position.Column}) är redan upptagen.");
-
-            squares[position.Row, position.Column] = piece;
-
-            squares[position.Row, position.Column] = piece;
-
-        }
-
         public void RemovePiece(Position position)
         {
 
