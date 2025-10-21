@@ -115,12 +115,12 @@ namespace Checkers.CheckersGame.Validation
             return false;
         }
 
-        private bool IsPiceOwnedByPlayer(Piece piece, Player player)
+        private bool IsPieceOwnedByPlayer(Piece piece, Player player)
         {
             return piece != null && piece.Color == player.Color;
         }
 
-        private bool IsDestionationEmpty(Board board, Position to)
+        private bool IsDestinationEmpty(Board board, Position to)
         {
             return board.GetPiece(to) ==  null;
         }
