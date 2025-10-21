@@ -69,7 +69,7 @@ public static class GamePersistence
             Player1Name = game.GetCurrentPlayer().Color == PieceColor.Red
                 ? game.GetCurrentPlayer().Name
                 : GetOpponentName(game),
-            Player2Name = game.GetCurrentPlayer().Color == PieceColor.Dark
+            Player2Name = game.GetCurrentPlayer().Color == PieceColor.Black
                 ? game.GetCurrentPlayer().Name
                 : GetOpponentName(game),
             BoardSize = game.RuleSet.BoardSize,
@@ -114,7 +114,7 @@ public static class GamePersistence
                 WasPromoted = move.WasPromoted,
                 CapturedRow = move.CapturedPiece != null ? move.CapturedPiece.Position.Row : -1,
                 CapturedColumn = move.CapturedPiece != null ? move.CapturedPiece.Position.Column : -1,
-                CapturedColor = move.CapturedPiece != null ? move.CapturedPiece.Color : PieceColor.Light,
+                CapturedColor = move.CapturedPiece != null ? move.CapturedPiece.Color : PieceColor.Red,
                 MoveNumber = move.MoveNumber
             });   
         }
