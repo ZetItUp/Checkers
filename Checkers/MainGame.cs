@@ -9,6 +9,7 @@ namespace Checkers
     public class MainGame : Game
     {
         public static string WindowTitle = "Checkers Game";
+        public static GraphicsDeviceManager graphicsDeviceMangager;
         public static int WindowWidth = 1280;
         public static int WindowHeight = 720;
 
