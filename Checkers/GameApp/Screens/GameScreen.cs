@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Checkers.CheckersGame.GameService;
+using Checkers.UI;
 
 namespace Checkers.GameApp.Screens
 {
@@ -17,6 +18,8 @@ namespace Checkers.GameApp.Screens
         Color _lightColor = new Color(255, 255, 255);
         Color _darkColor = new Color(34, 32, 52);
         GameService _gameService;
+
+        Button btnTest = new Button(new Rectangle(276, 20, 100, 50), "Test");
 
         int boardSize = 0;
         int cellSize = 32;
@@ -33,6 +36,8 @@ namespace Checkers.GameApp.Screens
             boardSize = _gameService.RuleSet.BoardSize;
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, (int)_lightColor.PackedValue);
             _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, (int)_darkColor.PackedValue);
+
+            btnTest.LoadContent(content);
         }
         public override void UnloadContent()
         {
@@ -41,7 +46,7 @@ namespace Checkers.GameApp.Screens
 
         public override void Update(GameTime gameTime)
         {
-            
+            btnTest.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -57,6 +62,8 @@ namespace Checkers.GameApp.Screens
                     spriteBatch.End();
                 }
             }
+
+            btnTest.Draw(spriteBatch);
         }
     }
 }
