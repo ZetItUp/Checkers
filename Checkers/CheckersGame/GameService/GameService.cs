@@ -36,7 +36,7 @@ namespace Checkers.CheckersGame.GameService
             _moveValidator = new MoveValidator(ruleSet);
             _gameStatus = GameStatus.WaitingToStart;
 
-            //_board.Initialize();
+            _board.Initialize();
             
             ///init History med brädet som det var initialt
             //där efter behöver vi bara spara drag
