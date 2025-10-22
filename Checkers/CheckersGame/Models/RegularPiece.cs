@@ -25,5 +25,15 @@ namespace Checkers.CheckersGame.Models
         {
             return new List<Position>();
         }
+
+        private List<Position> GetForwardMoves(Board board)
+        {
+            return new List<Position>();
+        }
+
+        private List<Position> GetCaptureMoves(Board board)
+        {
+            return new List<Position>();
+        }
     }
 }
