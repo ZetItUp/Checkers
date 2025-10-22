@@ -22,5 +22,15 @@ namespace Checkers.CheckersGame.Models
             return new KingPiece(Color, Position);
         }
 
+        private List<Position> GetAllDirectionMoves(Board board)
+        {
+            return new List<Position>();
+        }
+
+        private List<Position> GetAllDirectionCaptures(Board board)
+        {
+            return new List<Position>();
+        }
+
     }
 }
