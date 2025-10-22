@@ -102,11 +102,11 @@ namespace Checkers.CheckersGame.GameService
         public Player CheckWinner()
         {
             //om spelaren inte har nå pjäserkvar så förlorar dom
-            //if(_board.CountPieces(_player1.Color) == 0)
-            //    return _player2;
+            if(_board.CountPieces(_player1.Color) == 0)
+               return _player2;
             
-            //if(_board.CountPieces(_player2.Color) == 0)
-            //    return _player1;
+            if(_board.CountPieces(_player2.Color) == 0)
+               return _player1;
             
             //om en spelare inte har nå giltiga drag kvar så förlorar dom
             if (!_moveValidator.HasValidMoves(_currentPlayer, _board))
@@ -144,15 +144,16 @@ namespace Checkers.CheckersGame.GameService
 
         private void PromoteToKing(Position position, Piece piece)
         {
+            _board.RemovePiece(position);
             var kingPiece = new KingPiece(piece.Color, position);
-            //_board.PlacePiece(kingPiece, position);
+            _board.PlacePiece(kingPiece, position);
         }
         private Piece HandleCapture(Position from, Position to)
         {
             var capturedPosition = _moveValidator.GetCapturedPosition(from, to);
             if (capturedPosition.HasValue){
                 var capturedPiece = _board.GetPiece(capturedPosition.Value);
-                //_board.RemovePiece(capturedPiece.Value);
+                _board.RemovePiece(capturedPosition.Value);
                 return capturedPiece;
             }
             return null;
