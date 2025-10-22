@@ -40,7 +40,7 @@ namespace Checkers.CheckersGame.GameService
             
             ///init History med brädet som det var initialt
             //där efter behöver vi bara spara drag
-            //_gameHistory = new GameHistory(_board.Clone());
+            _gameHistory = new GameHistory(_board.Clone());
         }
 
         public void StartGame()
@@ -67,7 +67,8 @@ namespace Checkers.CheckersGame.GameService
             }
             
             //flytta pjäsen på Board
-            //_board.MovePiece(from, to);
+            _board.MovePiece(from, to);
+            
             
             //kolla om pjäsen ska bli en Dam (king)
             var piece = _board.GetPiece(to);
