@@ -12,9 +12,9 @@ namespace Checkers.CheckersGame.Models
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
         public int Size { get; } // storleken på brädet
-        public Board(int Size ) // konstruktor skapar nytt bräde som anropar storleken på brädet
+        public Board(int size ) // konstruktor skapar nytt bräde som anropar storleken på brädet
         {
-            this.Size = Size; // this.Size nuvarande klassobjeket
+            this.Size = size; // this.Size nuvarande klassobjeket
             squares = new Piece?[Size, Size]; // skapa rutnät som börjar som null (inga pjäser där) och är Size brett och Size högt
         }
         public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
