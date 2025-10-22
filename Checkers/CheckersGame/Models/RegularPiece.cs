@@ -15,5 +15,15 @@ namespace Checkers.CheckersGame.Models
 
             this.Position = position;
         }
+
+        public override Piece Clone()
+        {
+            return new RegularPiece(this.Color, new Position(this.Position.Row, this.Position.Column));
+        }
+
+        public override List<Position> GetValidMoves(Board board)
+        {
+            return new List<Position>();
+        }
     }
 }
