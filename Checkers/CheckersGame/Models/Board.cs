@@ -24,17 +24,77 @@ namespace Checkers.CheckersGame.Models
 
         public void PlacePiece(Piece piece, Position position)
         {
-            throw new NotImplementedException();
+            if (piece == null)
+                throw new ArgumentNullException(nameof(piece), "Piece cannot be null.");
+
+           
+            int r = position.Row;
+            int c = position.Column;
+
+            // check board bounds
+            if (r < 0 || r >= Size || c < 0 || c >= Size)
+                throw new ArgumentOutOfRangeException(
+                    nameof(position),
+                    $"Position ({r}, {c}) is out of board bounds {Size}x{Size}.");
+
+            // check if square is empty
+            if (squares[r, c] != null)
+                throw new InvalidOperationException($"Square at position ({r}, {c}) is already occupied.");
+
+            // place the piece
+            squares[r, c] = piece;
         }
+
+
         public void MovePiece(Position from, Position to)
         {
-            throw new NotImplementedException();
+            int fr = from.Row, fc = from.Column;
+            int tr = to.Row, tc = to.Column;
+
+            if (fr < 0 || fr >= Size || fc < 0 || fc >= Size)
+                throw new ArgumentOutOfRangeException(nameof(from),
+                    $"Source position ({fr}, {fc}) is out of board bounds {Size}x{Size}.");
+
+            if  
+              (tr < 0 || tr >= Size || tc < 0 || tc >= Size)
+                throw new ArgumentOutOfRangeException(nameof(to),
+                    $"Target position ({tr}, {tc}) is out of board bounds {Size}x{Size}.");
+            
+            if (fr == tr && fc == tc)
+                throw new InvalidOperationException("Source and destination positions are the same.");
+
+           
+            var piece = squares[fr, fc];
+            if (piece == null)
+                throw new InvalidOperationException($"No piece at ({fr},{fc}) to move.");
+
+            
+            if (squares[tr, tc] != null)
+                throw new InvalidOperationException($"Destination ({tr},{tc}) is already occupied.");
+
+            
+            squares[fr, fc] = null;
+            squares[tr, tc] = piece;
         }
 
         public void RemovePiece(Position position)
         {
 
-            throw new NotImplementedException();
+            int r = position.Row;
+            int c = position.Column;
+
+            
+            if (r < 0 || r >= Size || c < 0 || c >= Size)
+                throw new ArgumentOutOfRangeException(nameof(position),
+                    $"Position ({r},{c}) is outside the board {Size}x{Size}.");
+
+            
+            if (squares[r, c] == null)
+                throw new InvalidOperationException(
+                    $"No piece found at position ({r},{c}) to remove.");
+
+            
+            squares[r, c] = null;
         }
         public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
         {  
