@@ -19,7 +19,7 @@ namespace Checkers.GameApp.Screens
         Color _darkColor = new Color(34, 32, 52);
         GameService _gameService;
 
-        Button btnTest = new Button(new Rectangle(276, 20, 100, 50), "Test");
+        Button btnMainMenu = new Button(new Rectangle(276, 20, 100, 50), "Main Menu");
 
         int boardSize = 0;
         int cellSize = 32;
@@ -27,7 +27,13 @@ namespace Checkers.GameApp.Screens
         public GameScreen()
             : base()
         {
+            btnMainMenu.Clicked += BtnTest_Clicked;
+        }
 
+        private void BtnTest_Clicked(object sender, EventArgs e)
+        {
+            // Gå tillbaka till huvudmenyn
+            ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
         public override void LoadContent(ContentManager content)
@@ -37,7 +43,7 @@ namespace Checkers.GameApp.Screens
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, (int)_lightColor.PackedValue);
             _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, (int)_darkColor.PackedValue);
 
-            btnTest.LoadContent(content);
+            btnMainMenu.LoadContent(content);
         }
         public override void UnloadContent()
         {
@@ -46,24 +52,27 @@ namespace Checkers.GameApp.Screens
 
         public override void Update(GameTime gameTime)
         {
-            btnTest.Update(gameTime);
+            btnMainMenu.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            for(int y = 0; y < boardSize; y++)
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
+
+            // Rita ett schackbräde
+            for (int y = 0; y < boardSize; y++)
             {
                 for(int x = 0; x < boardSize; x++)
                 {
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
                     Texture2D cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
+                    
                     spriteBatch.Draw(cellTexture, new Rectangle(x * cellSize, y * cellSize, cellSize, cellSize), cellColor);
-                    spriteBatch.End();
                 }
             }
 
-            btnTest.Draw(spriteBatch);
+            btnMainMenu.Draw(spriteBatch);
+            spriteBatch.End();
         }
     }
 }

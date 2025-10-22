@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../../Graphics/Checkers.png
+#begin Checkers.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../Graphics/Checkers.png;Checkers.png
+/build:Checkers.png
 
 #begin Font.spritefont
 /importer:FontDescriptionImporter
