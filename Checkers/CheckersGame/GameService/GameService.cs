@@ -104,15 +104,20 @@ namespace Checkers.CheckersGame.GameService
             //om spelaren inte har nå pjäserkvar så förlorar dom
             if(_board.CountPieces(_player1.Color) == 0)
                return _player2;
-            
+
             if(_board.CountPieces(_player2.Color) == 0)
                return _player1;
-            
+
             //om en spelare inte har nå giltiga drag kvar så förlorar dom
-            if (!_moveValidator.HasValidMoves(_currentPlayer, _board))
-            {
-                return _currentPlayer.Color == _player1.Color ? _player2 : _player1;
-            }
+            // Kolla båda spelarna för giltiga drag
+            bool player1HasMoves = _moveValidator.HasValidMoves(_player1, _board);
+            bool player2HasMoves = _moveValidator.HasValidMoves(_player2, _board);
+
+            if (!player1HasMoves)
+                return _player2;
+
+            if (!player2HasMoves)
+                return _player1;
 
             return null; //ingen vinnare än
         }
