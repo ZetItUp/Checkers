@@ -16,6 +16,9 @@ namespace Checkers.CheckersGame.Models
 
         public Piece(PieceColor color, Position position)
         {
+            Color = color;
+
+            Position = position;
         }
        
         public abstract List<Position> GetValidMoves(Board board);
