@@ -56,7 +56,12 @@ namespace Checkers.UI
         {
             base.Draw(spriteBatch);
 
-            if(IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
+            if(buttonPressedTexture == null || buttonHoverTexture == null || buttonTexture == null)
+            {
+                return;    
+            }
+
+            if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
             {
                 // Rita hover texture
                 spriteBatch.Draw(buttonPressedTexture, WindowRectangle, Color.White);
