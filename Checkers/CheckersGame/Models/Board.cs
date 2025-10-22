@@ -184,8 +184,10 @@ namespace Checkers.CheckersGame.Models
 
             for (int r = 0; r < Size; r++) //  Loopar igenom varje rad
                 for (int c = 0; c < Size; c++) //  Loopar igenom varje kolumn
-                    copy.squares[r, c] = squares[r, c]; // Kopierar pjäsen (eller null) till samma plats på brädet
-
+                {
+                    var  piece = squares[r, c];
+                    copy.squares[r, c] = piece?.Clone();
+                }
             return copy; // Returnerar brädet i form av en kopia
         }
 
