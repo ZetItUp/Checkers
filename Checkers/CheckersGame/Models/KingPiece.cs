@@ -22,6 +22,5 @@ namespace Checkers.CheckersGame.Models
             return new KingPiece(Color, Position);
         }
 
-        private 
     }
 }

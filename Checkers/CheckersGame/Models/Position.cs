@@ -12,18 +12,16 @@ namespace Checkers.CheckersGame.Models
 
         public readonly int Column { get; }
 
-        public readonly int BoardSize { get; }
-
         public Position(int row, int column)
         {
-            this.Row = row;
+            Row = row;
 
-            this.Column = column;
+            Column = column;
         }
 
-        public bool IsValid(Board)
+        public bool IsValid(int size)
         {
-            
+            return Row >= 0 && Row < size && Column >= 0 && Column < size;
         }
     }
 }
