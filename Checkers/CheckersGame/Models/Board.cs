@@ -57,8 +57,34 @@ namespace Checkers.CheckersGame.Models
 
         public List<Piece> GetAllPieces(PieceColor color) // Overload: returnerar alla pjäser av angiven färg
         {
-            return null;
+            var allPieces = GetAllPieces(); // hämtar alla färger på brädet
+            var result = new List<Piece>(); // Tom lista som ska innehålla pjäser av rätt färg
+            foreach (var piece in allPieces) // Loopar igenom alla pjäser
+            {
+                if (piece.Color == color) // Om pjäsen har den färg vi söker
+                    result.Add(piece);    // Lägg till den i listan
+            }
+            return result;
         }
+        public int CountPieces(PieceColor color)       // Räknar hur många pjäser det finns av en viss färg och returnerar antalet
+        {
+            var pieces = GetAllPieces(color); // Hämtar alla pjäser av den angivna färgen
+            return pieces.Count; // Returnerar antalet pjäser i listan
+
+
+        }
+
+        public Board Clone() // Skapar och returnerar en kopia av brädet
+        {
+            var copy = new Board(Size); // 1. Skapar nytt bräde med samma storlek
+
+            for (int r = 0; r < Size; r++) // 2. Loopar igenom varje rad
+                for (int c = 0; c < Size; c++) // 3. Loopar igenom varje kolumn
+                    copy.squares[r, c] = squares[r, c]; // 4. Kopierar pjäsen (eller null) till samma plats
+
+            return copy; // 5. Returnerar kopian av brädet
+        }
+
 
     }
 }
