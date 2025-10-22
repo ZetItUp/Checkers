@@ -18,10 +18,23 @@ namespace Checkers.CheckersGame.Models
 
         public override Piece Clone()
         {
-            return new RegularPiece(this.Color, new Position(this.Position.Row, this.Position.Column));
+            var clone = new RegularPiece(Color, Position);
+
+            return clone;
         }
 
         public override List<Position> GetValidMoves(Board board)
+        {
+            return new List<Position>();
+        }
+
+
+        private List<Position> GetForwardMoves(Board board)
+        {
+            return new List<Position>();
+        }
+
+        private List<Position> GetCaptureMoves(Board board)
         {
             return new List<Position>();
         }
