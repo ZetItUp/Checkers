@@ -7,7 +7,7 @@ using Checkers.CheckersGame.Models;
 
 namespace Checkers.CheckersGame.History
 {
-    internal class GameHistory
+    public class GameHistory
     {
         private readonly Board _initialBoard;
         private readonly List<Move> _moves;
@@ -89,7 +89,7 @@ namespace Checkers.CheckersGame.History
             var initalPieces = _initialBoard.GetAllPieces();
             foreach (var piece in  initalPieces){
                 var clonedPiece = piece.Clone();
-                board.PlacePiece(clonedPiece, clonedPiece.CurrentPosition);
+                board.PlacePiece(clonedPiece, clonedPiece.Position);
             }
         }
 
