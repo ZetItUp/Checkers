@@ -10,9 +10,16 @@ namespace Checkers.CheckersGame.Models
     {
         public KingPiece(PieceColor color, Position position) : base(color, position)
         {
-            this.Color = color;
+        }
 
-            this.Position = position;
+        public override List<Position> GetValidMoves(Board board)
+        {
+            return new List<Position>();
+        }
+
+        public override Piece Clone()
+        {
+            return new KingPiece(Color, Position);
         }
     }
 }
