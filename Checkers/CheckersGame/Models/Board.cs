@@ -11,7 +11,7 @@ namespace Checkers.CheckersGame.Models
     public class Board
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
-        public int Size { get; } // storleken på brädet
+        private int Size { get; } // storleken på brädet
         public Board(int size ) // konstruktor skapar nytt bräde som anropar storleken på brädet
         {
             this.Size = size; // this.Size nuvarande klassobjeket
