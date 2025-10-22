@@ -57,6 +57,8 @@ namespace Checkers
                 Window.Title = WindowTitle;
             }
 
+            ScreenManager.Update(gameTime);
+
             base.Update(gameTime);
         }
 
