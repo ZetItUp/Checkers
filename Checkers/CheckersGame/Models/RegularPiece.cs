@@ -25,18 +25,57 @@ namespace Checkers.CheckersGame.Models
 
         public override List<Position> GetValidMoves(Board board)
         {
-            return new List<Position>();
+            var validMoves = new List<Position>();
+            validMoves.AddRange(GetForwardMoves(board));
+            validMoves.AddRange(GetCaptureMoves(board));
+            return validMoves;
         }
 
 
         private List<Position> GetForwardMoves(Board board)
         {
-            return new List<Position>();
+            var forwardMoves = new List<Position>();
+            
+            int direction = (Color == PieceColor.Black) ? -1 : 1;
+            
+            Position forwardMoveLeft = new Position(Position.Row + direction, Position.Column - 1);
+            Position forwardMoveRight = new Position(Position.Row + direction, Position.Column + 1);
+
+            if (forwardMoveLeft.IsValid(board.Size))
+            {
+                forwardMoves.Add(forwardMoveLeft);
+            }
+
+            if (forwardMoveRight.IsValid(board.Size))
+            {
+                forwardMoves.Add(forwardMoveRight);
+            }
+
+            return forwardMoves;
         }
 
         private List<Position> GetCaptureMoves(Board board)
         {
-            return new List<Position>();
+            var captureMoves = new List<Position>();
+            
+            int direction = (Color == PieceColor.Black) ? -1 : 1;
+            
+            Position captureMoveLeft = new Position(Position.Row + direction, Position.Column - 1);
+            Position captureMoveRight = new Position(Position.Row + direction, Position.Column + 1);
+
+            if (captureMoveLeft.IsValid(board.Size))
+            {
+                captureMoves.Add(captureMoveLeft);
+                board.RemovePiece(captureMoveRight);
+            }
+
+            if (captureMoveRight.IsValid(board.Size))
+            {
+                captureMoves.Add(captureMoveRight);
+                board.RemovePiece(captureMoveRight);
+            }
+
+            return captureMoves;
         }
     }
 }

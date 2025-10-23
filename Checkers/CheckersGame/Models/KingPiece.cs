@@ -12,6 +12,9 @@ namespace Checkers.CheckersGame.Models
         {
         }
 
+        int[] directionRows = { -1, 1 };
+        int[] directionCols = { -1, 1 };
+
         public override List<Position> GetValidMoves(Board board)
         {
             return new List<Position>();
@@ -24,12 +27,43 @@ namespace Checkers.CheckersGame.Models
 
         private List<Position> GetAllDirectionMoves(Board board)
         {
-            return new List<Position>();
+            var forwardMoves = new List<Position>();
+
+            foreach (var rowDirection in directionRows)
+            {
+                foreach (var colDirection in directionCols)
+                {
+                    Position move = new Position(Position.Row + rowDirection, Position.Column + colDirection);
+
+                    if (move.IsValid(board.Size))
+                    {
+                        forwardMoves.Add(move);
+                    }
+                }
+            }
+
+            return forwardMoves;
         }
 
         private List<Position> GetAllDirectionCaptures(Board board)
         {
-            return new List<Position>();
+            var captureMoves = new List<Position>();
+            
+            foreach (var rowDirection in directionRows)
+            {
+                foreach (var colDirection in directionCols)
+                {
+                    Position captureMove = new Position(Position.Row + rowDirection, Position.Column + colDirection);
+                    Position landingSpot = new Position(captureMove.Row + rowDirection, captureMove.Column + colDirection);
+                    if (captureMove.IsValid(board.Size) && landingSpot.IsValid(board.Size))
+                    {
+                        captureMoves.Add(landingSpot);
+                        board.RemovePiece(captureMove);
+                    }
+                }
+            }
+
+            return captureMoves;
         }
 
     }
