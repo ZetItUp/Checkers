@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Checkers.CheckersGame.GameService;
 using Checkers.UI;
+using Checkers.GameApp.Helpers;
+using Checkers.CheckersGame.DataTypes;
+using Checkers.CheckersGame.Models;
 
 namespace Checkers.GameApp.Screens
 {
@@ -24,18 +27,35 @@ namespace Checkers.GameApp.Screens
         Texture2D blackPiece;
         Texture2D blackKingPiece;
 
+        Texture2D selectTexture;
+        Texture2D validMoveTexture;
         Texture2D uiTexture;
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
+        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
+
+        bool isPieceSelected = false;
 
         int boardSize = 0;
         int cellSize = 32;
         float boardScale = 1f;
+        float drawScale = 1f;
+
+        Position selectedPosition;
+        Player currentPlayer;
+        List<Position> validMoves = new List<Position>();
 
         public GameScreen()
             : base()
         {
             btnMainMenu.Clicked += BtnTest_Clicked;
+            btnStartGame.Clicked += BtnStartGame_Clicked;   
+        }
+
+        private void BtnStartGame_Clicked(object? sender, EventArgs e)
+        {
+            _gameService.StartGame();
+            btnStartGame.Enabled = false;
         }
 
         private void BtnTest_Clicked(object sender, EventArgs e)
@@ -53,15 +73,21 @@ namespace Checkers.GameApp.Screens
 
             // Set board scale to fit window height
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
+            drawScale = (cellSize * boardScale);
 
             whitePiece = content.Load<Texture2D>("White");
             whiteKingPiece = content.Load<Texture2D>("WhiteKing");
             blackPiece = content.Load<Texture2D>("Black");
             blackKingPiece = content.Load<Texture2D>("BlackKing");
 
+            validMoveTexture = content.Load<Texture2D>("Move");
             uiTexture = content.Load<Texture2D>("UINormal");
+            selectTexture = content.Load<Texture2D>("Select");
 
             btnMainMenu.LoadContent(content);
+            btnStartGame.LoadContent(content);
+
+            _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet);
         }
         public override void UnloadContent()
         {
@@ -71,13 +97,54 @@ namespace Checkers.GameApp.Screens
         public override void Update(GameTime gameTime)
         {
             btnMainMenu.Update(gameTime);
+            btnStartGame.Update(gameTime);
+
+            if (_gameService.GetGameStatus() != GameStatus.InProgress)
+            {
+                return;
+            }
+
+            currentPlayer = _gameService.GetCurrentPlayer();
+
+            var mousePositionX = (int)(MouseHelper.MousePosition().X / drawScale);
+            var mousePositionY = (int)(MouseHelper.MousePosition().Y / drawScale);
+
+            if (MouseHelper.MousePressed(MouseHelper.MouseButton.Left))
+            {
+                var hoveredPiece = _gameService.GetBoard().GetPiece(new Position(mousePositionY, mousePositionX));
+                if (hoveredPiece != null)
+                {
+                    if(currentPlayer.Color != hoveredPiece.Color)
+                    {
+                        isPieceSelected = false;
+                        return;
+                    }
+                        
+                    isPieceSelected = true;
+                    selectedPosition = new Position(mousePositionY, mousePositionX);
+                    validMoves = hoveredPiece.GetValidMoves(_gameService.GetBoard());
+                }
+                else
+                {
+                    foreach(var move in validMoves)
+                    {
+                        if(move.Row == mousePositionY && move.Column == mousePositionX)
+                        {
+                            // Gör draget
+                            _gameService.MakeMove(selectedPosition, move);
+                            break;
+                        }
+                    }
+                    validMoves.Clear();
+                    isPieceSelected = false;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
-            float drawScale = (cellSize * boardScale);
-
+            
             // Rita ett schackbräde
             for (int y = 0; y < boardSize; y++)
             {
@@ -90,53 +157,43 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
-            spriteBatch.Draw(uiTexture, new Rectangle((int)(8 * drawScale), 0, 3*3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
-
-
-            for (int y = 0; y < boardSize; y++)
+            if (_gameService.GetGameStatus() == GameStatus.InProgress)
             {
-                for(int x = 0; x < boardSize; x++)
-                {
-                    if(y == 0 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 1 && x % 2 == 0)
-                    {
-                        // Draw white piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 2 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 5 && x % 2 == 0)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 6 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 7 && x % 2 == 0)
-                    {
-                        // Draw white piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    
-                    // Draw temporary pieces to test
+                var pieces = _gameService.GetBoard().GetAllPieces();
 
+                for (int i = 0; i < pieces.Count; i++)
+                {
+                    var piece = pieces[i];
+                    Texture2D pieceTexture = null;
+                    if (piece.Color == PieceColor.Red)
+                    {
+                        pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
+                    }
+                    else
+                    {
+                        pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
+                    }
+                    spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                }
+
+                if (isPieceSelected)
+                {
+                    spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale), (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
+
+                    foreach (var move in validMoves)
+                    {
+                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
+                    }
                 }
             }
+
+            spriteBatch.Draw(uiTexture, new Rectangle((int)(8 * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 
             spriteBatch.Begin(SpriteSortMode.Deferred);
             btnMainMenu.Draw(spriteBatch);
+            btnStartGame.Draw(spriteBatch);
             spriteBatch.End();
         }
     }
