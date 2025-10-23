@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.History;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.Validation;

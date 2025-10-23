@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Checkers.CheckersGame.Models
+namespace Checkers.CheckersGame.DataTypes
 {
     public struct Position
     {
