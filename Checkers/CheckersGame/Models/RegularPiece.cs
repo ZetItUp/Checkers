@@ -66,13 +66,11 @@ namespace Checkers.CheckersGame.Models
             if (captureMoveLeft.IsValid(board.Size))
             {
                 captureMoves.Add(captureMoveLeft);
-                board.RemovePiece(captureMoveRight);
             }
 
             if (captureMoveRight.IsValid(board.Size))
             {
                 captureMoves.Add(captureMoveRight);
-                board.RemovePiece(captureMoveRight);
             }
 
             return captureMoves;

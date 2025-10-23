@@ -58,7 +58,6 @@ namespace Checkers.CheckersGame.Models
                     if (captureMove.IsValid(board.Size) && landingSpot.IsValid(board.Size))
                     {
                         captureMoves.Add(landingSpot);
-                        board.RemovePiece(captureMove);
                     }
                 }
             }
