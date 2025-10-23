@@ -35,20 +35,34 @@ namespace Checkers.CheckersGame.Models
         private List<Position> GetForwardMoves(Board board)
         {
             var forwardMoves = new List<Position>();
-            
-            int direction = (Color == PieceColor.Black) ? -1 : 1;
-            
-            Position forwardMoveLeft = new Position(Position.Row + direction, Position.Column - 1);
-            Position forwardMoveRight = new Position(Position.Row + direction, Position.Column + 1);
 
-            if (forwardMoveLeft.IsValid(board.Size))
+            int directionBlack = (Color == PieceColor.Black) ? -1 : 1;
+            
+            int directionRed = (Color == PieceColor.Black) ? 1 : -1;
+            
+            Position forwardMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 1);
+            Position forwardMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 1);
+            Position forwardMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 1);
+            Position forwardMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 1);
+
+            if (forwardMoveLeftBlack.IsValid(board.Size))
             {
-                forwardMoves.Add(forwardMoveLeft);
+                forwardMoves.Add(forwardMoveLeftBlack);
             }
 
-            if (forwardMoveRight.IsValid(board.Size))
+            if (forwardMoveRightBlack.IsValid(board.Size))
             {
-                forwardMoves.Add(forwardMoveRight);
+                forwardMoves.Add(forwardMoveRightBlack);
+            }
+
+            if (forwardMoveLeftRed.IsValid(board.Size))
+            {
+                forwardMoves.Add(forwardMoveLeftRed);
+            }
+
+            if (forwardMoveRightRed.IsValid(board.Size))
+            {
+                forwardMoves.Add(forwardMoveRightRed);
             }
 
             return forwardMoves;
@@ -58,19 +72,32 @@ namespace Checkers.CheckersGame.Models
         {
             var captureMoves = new List<Position>();
             
-            int direction = (Color == PieceColor.Black) ? -1 : 1;
+            int directionBlack = (Color == PieceColor.Black) ? -1 : 1;
+            int directionRed = (Color == PieceColor.Black) ? 1 : -1;
             
-            Position captureMoveLeft = new Position(Position.Row + direction, Position.Column - 1);
-            Position captureMoveRight = new Position(Position.Row + direction, Position.Column + 1);
+            Position captureMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 1);
+            Position captureMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 1);
+            Position captureMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 1);
+            Position captureMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 1);
 
-            if (captureMoveLeft.IsValid(board.Size))
+            if (captureMoveLeftBlack.IsValid(board.Size))
             {
-                captureMoves.Add(captureMoveLeft);
+                captureMoves.Add(captureMoveLeftBlack);
             }
 
-            if (captureMoveRight.IsValid(board.Size))
+            if (captureMoveRightBlack.IsValid(board.Size))
             {
-                captureMoves.Add(captureMoveRight);
+                captureMoves.Add(captureMoveRightBlack);
+            }
+
+            if (captureMoveLeftRed.IsValid(board.Size))
+            {
+                captureMoves.Add(captureMoveLeftRed);
+            }
+
+            if (captureMoveRightRed.IsValid(board.Size))
+            {
+                captureMoves.Add(captureMoveRightRed);
             }
 
             return captureMoves;
