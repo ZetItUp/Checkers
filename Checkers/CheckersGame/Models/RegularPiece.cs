@@ -38,7 +38,7 @@ namespace Checkers.CheckersGame.Models
 
             int directionBlack = (Color == PieceColor.Black) ? -1 : 1;
             
-            int directionRed = (Color == PieceColor.Black) ? 1 : -1;
+            int directionRed = (Color == PieceColor.Red) ? 1 : -1;
             
             Position forwardMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 1);
             Position forwardMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 1);
@@ -72,13 +72,13 @@ namespace Checkers.CheckersGame.Models
         {
             var captureMoves = new List<Position>();
             
-            int directionBlack = (Color == PieceColor.Black) ? -1 : 1;
-            int directionRed = (Color == PieceColor.Black) ? 1 : -1;
+            int directionBlack = (Color == PieceColor.Black) ? -2 : 2;
+            int directionRed = (Color == PieceColor.Black) ? 2 : -2;
             
-            Position captureMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 1);
-            Position captureMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 1);
-            Position captureMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 1);
-            Position captureMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 1);
+            Position captureMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 2);
+            Position captureMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 2);
+            Position captureMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 2);
+            Position captureMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 2);
 
             if (captureMoveLeftBlack.IsValid(board.Size))
             {
