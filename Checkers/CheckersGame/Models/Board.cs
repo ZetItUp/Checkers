@@ -63,7 +63,15 @@ namespace Checkers.CheckersGame.Models
         }
         public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
         {
-            return squares[position.Row, position.Column];
+            // Måste göra en bounds check här
+            if (position.IsValid(Size))
+            {
+                return squares[position.Row, position.Column];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void PlacePiece(Piece piece, Position position)

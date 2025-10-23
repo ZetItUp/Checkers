@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Checkers.CheckersGame.GameService;
 using Checkers.UI;
 using Checkers.GameApp.Helpers;
+using Checkers.CheckersGame.DataTypes;
+using Checkers.CheckersGame.Models;
 
 namespace Checkers.GameApp.Screens
 {
@@ -25,6 +27,7 @@ namespace Checkers.GameApp.Screens
         Texture2D blackPiece;
         Texture2D blackKingPiece;
 
+        Texture2D selectTexture;
         Texture2D uiTexture;
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
@@ -34,6 +37,9 @@ namespace Checkers.GameApp.Screens
         int boardSize = 0;
         int cellSize = 32;
         float boardScale = 1f;
+        float drawScale = 1f;
+
+        Position selectedPosition;
 
         public GameScreen()
             : base()
@@ -56,6 +62,7 @@ namespace Checkers.GameApp.Screens
 
             // Set board scale to fit window height
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
+            drawScale = (cellSize * boardScale);
 
             whitePiece = content.Load<Texture2D>("White");
             whiteKingPiece = content.Load<Texture2D>("WhiteKing");
@@ -63,6 +70,7 @@ namespace Checkers.GameApp.Screens
             blackKingPiece = content.Load<Texture2D>("BlackKing");
 
             uiTexture = content.Load<Texture2D>("UINormal");
+            selectTexture = content.Load<Texture2D>("Select");
 
             btnMainMenu.LoadContent(content);
 
@@ -77,12 +85,29 @@ namespace Checkers.GameApp.Screens
         {
             btnMainMenu.Update(gameTime);
 
+
+            var mousePositionX = (int)(MouseHelper.MousePosition().X / drawScale);
+            var mousePositionY = (int)(MouseHelper.MousePosition().Y / drawScale);
+
+            if (MouseHelper.MousePressed(MouseHelper.MouseButton.Left))
+            {
+                var hoveredPiece = _gameService.GetBoard().GetPiece(new Position(mousePositionY, mousePositionX));
+                if (hoveredPiece != null)
+                {
+                    isPieceSelected = true;
+                    selectedPosition = new Position(mousePositionY, mousePositionX);
+                }
+                else
+                {
+                    isPieceSelected = false;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
-            float drawScale = (cellSize * boardScale);
+            
 
             // Rita ett schackbräde
             for (int y = 0; y < boardSize; y++)
@@ -102,17 +127,22 @@ namespace Checkers.GameApp.Screens
             {
                 var piece = pieces[i];
                 Texture2D pieceTexture = null;
-                if(piece.Color == CheckersGame.Models.PieceColor.Red)
+                if(piece.Color == PieceColor.Red)
                 {
-                    pieceTexture = piece is CheckersGame.Models.KingPiece ? whiteKingPiece : whitePiece;
+                    pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
                 }
                 else
                 {
-                    pieceTexture = piece is CheckersGame.Models.KingPiece ? blackKingPiece : blackPiece;
+                    pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
                 }
                 spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
             }
 
+            if(isPieceSelected)
+            {
+                MainGame.WindowTitle = $"{selectedPosition.Row.ToString()}, {selectedPosition.Column.ToString()}";
+                spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale) , (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
+            }
 
             spriteBatch.Draw(uiTexture, new Rectangle((int)(8 * drawScale), 0, 3*3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
