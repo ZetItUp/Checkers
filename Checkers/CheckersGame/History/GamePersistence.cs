@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.GameService;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.Validation;

@@ -1,5 +1,7 @@
 using System;
 using Checkers.CheckersGame.Models;
+using Checkers.CheckersGame.DataTypes;
+
 namespace Checkers.CheckersGame.History;
 
 public class Move

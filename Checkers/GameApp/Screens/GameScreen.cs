@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Checkers.CheckersGame.GameService;
 using Checkers.UI;
+using Checkers.GameApp.Helpers;
 
 namespace Checkers.GameApp.Screens
 {
@@ -27,6 +28,8 @@ namespace Checkers.GameApp.Screens
         Texture2D uiTexture;
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
+        
+        bool isPieceSelected = false;
 
         int boardSize = 0;
         int cellSize = 32;
@@ -73,6 +76,7 @@ namespace Checkers.GameApp.Screens
         public override void Update(GameTime gameTime)
         {
             btnMainMenu.Update(gameTime);
+
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
