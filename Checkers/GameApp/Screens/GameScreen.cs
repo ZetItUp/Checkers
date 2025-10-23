@@ -62,6 +62,8 @@ namespace Checkers.GameApp.Screens
             uiTexture = content.Load<Texture2D>("UINormal");
 
             btnMainMenu.LoadContent(content);
+
+            _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet);
         }
         public override void UnloadContent()
         {
@@ -90,48 +92,26 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
+            var pieces = _gameService.GetBoard().GetAllPieces();
+
+            for(int i = 0; i < pieces.Count; i++)
+            {
+                var piece = pieces[i];
+                Texture2D pieceTexture = null;
+                if(piece.Color == CheckersGame.Models.PieceColor.Red)
+                {
+                    pieceTexture = piece is CheckersGame.Models.KingPiece ? whiteKingPiece : whitePiece;
+                }
+                else
+                {
+                    pieceTexture = piece is CheckersGame.Models.KingPiece ? blackKingPiece : blackPiece;
+                }
+                spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+            }
+
+
             spriteBatch.Draw(uiTexture, new Rectangle((int)(8 * drawScale), 0, 3*3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
-
-            for (int y = 0; y < boardSize; y++)
-            {
-                for(int x = 0; x < boardSize; x++)
-                {
-                    if(y == 0 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 1 && x % 2 == 0)
-                    {
-                        // Draw white piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 2 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(blackPiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 5 && x % 2 == 0)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 6 && x % 2 == 1)
-                    {
-                        // Draw black piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    else if (y == 7 && x % 2 == 0)
-                    {
-                        // Draw white piece
-                        spriteBatch.Draw(whitePiece, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
-                    }
-                    
-                    // Draw temporary pieces to test
-
-                }
-            }
 
             spriteBatch.End();
 
