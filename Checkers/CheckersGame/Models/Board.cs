@@ -11,11 +11,54 @@ namespace Checkers.CheckersGame.Models
     public class Board
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
-        public int Size { get; } // storleken på brädet
+        public int Size { get; private set; } // storleken på brädet
         public Board(int size ) // konstruktor skapar nytt bräde som anropar storleken på brädet
         {
             this.Size = size; // this.Size nuvarande klassobjeket
             squares = new Piece?[Size, Size]; // skapa rutnät som börjar som null (inga pjäser där) och är Size brett och Size högt
+        }
+        public void Initialize()
+        {
+            //rensa brädet
+            for (int row = 0; row < Size; row++)
+            {
+                for (int col = 0; col < Size; col++)
+                {
+                    if (squares[row, col] != null)
+                        squares[row, col] = null;
+                }
+            }
+ 
+            //räkna hur många pjäser baserat på storleken
+            int piecesRows = (Size - 2) / 2; 
+            if (piecesRows < 1) piecesRows = 1; //minst en rad 
+
+            // placera svarta pjäser
+            for (int row = 0; row < piecesRows; row++)
+            {
+                for (int col = 0; col < Size; col++)
+                {
+                    if ((row + col) % 2 == 1)
+                    {
+                        var piece = new RegularPiece(PieceColor.Black, new Position(row, col));
+                        PlacePiece(piece, new Position(row, col));
+                    }
+                }
+            }
+
+            //placera röda pjäser
+            int redStartRow = Size - piecesRows;
+            for (int row = redStartRow; row < Size; row++)
+            {
+                for (int col = 0; col < Size; col++)
+                {
+                    if ((row + col) % 2 == 1)
+                    {
+                        var piece = new RegularPiece(PieceColor.Red, new Position(row, col));
+                        PlacePiece(piece, new Position(row, col));
+                    }
+                }
+            }
         }
         public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
         {
@@ -75,6 +118,7 @@ namespace Checkers.CheckersGame.Models
             
             squares[fr, fc] = null;
             squares[tr, tc] = piece;
+            piece.Position = to;
         }
 
         public void RemovePiece(Position position)
@@ -140,8 +184,10 @@ namespace Checkers.CheckersGame.Models
 
             for (int r = 0; r < Size; r++) //  Loopar igenom varje rad
                 for (int c = 0; c < Size; c++) //  Loopar igenom varje kolumn
-                    copy.squares[r, c] = squares[r, c]; // Kopierar pjäsen (eller null) till samma plats på brädet
-
+                {
+                    var  piece = squares[r, c];
+                    copy.squares[r, c] = piece?.Clone();
+                }
             return copy; // Returnerar brädet i form av en kopia
         }
 

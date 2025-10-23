@@ -23,6 +23,7 @@ namespace Checkers
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            graphicsDeviceMangager = _graphics;
 
             // Lägg till MouseHelper som en GameComponent
             Components.Add(new MouseHelper(this));
@@ -42,7 +43,8 @@ namespace Checkers
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             ScreenManager.Initialize(_spriteBatch, Content);
-            ScreenManager.ChangeScreen(ScreenID.MainMenu);
+
+            ScreenManager.ChangeScreen(ScreenID.Game);
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,6 +56,8 @@ namespace Checkers
             {
                 Window.Title = WindowTitle;
             }
+
+            ScreenManager.Update(gameTime);
 
             base.Update(gameTime);
         }
