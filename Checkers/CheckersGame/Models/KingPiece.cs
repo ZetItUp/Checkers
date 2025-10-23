@@ -17,7 +17,10 @@ namespace Checkers.CheckersGame.Models
 
         public override List<Position> GetValidMoves(Board board)
         {
-            return new List<Position>();
+            var validMoves = new List<Position>();
+            validMoves.AddRange(GetAllDirectionMoves(board));
+            validMoves.AddRange(GetAllDirectionCaptures(board));
+            return validMoves;
         }
 
         public override Piece Clone()
