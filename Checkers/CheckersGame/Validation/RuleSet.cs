@@ -1,6 +1,7 @@
+using Checkers.CheckersGame.Validation.Config; // för RuleSetDto
 namespace Checkers.CheckersGame.Validation;
 
-public class RuleSet
+public class RuleSet : IRuleSet
 {
     public string Name { get; }
     public int BoardSize { get; }
@@ -17,8 +18,8 @@ public class RuleSet
         AllowMultipleJumps = allowMultipleJumps;
     }
 
-    public static RuleSet CreateStandard()
-    {
+    public static RuleSet CreateStandard() 
+    {                                      
         return new RuleSet(
             name: "Standard American", 
             boardSize: 8, 
@@ -37,3 +38,4 @@ public class RuleSet
                $"Multiple Jumps: {AllowMultipleJumps}";
     }
 }    
+
