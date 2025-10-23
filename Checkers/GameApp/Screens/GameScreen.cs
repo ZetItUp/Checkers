@@ -77,7 +77,6 @@ namespace Checkers.GameApp.Screens
         {
             btnMainMenu.Update(gameTime);
 
-            if(_gameService.GetBoard()
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
