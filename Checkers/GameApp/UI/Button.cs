@@ -25,12 +25,12 @@ namespace Checkers.UI
         public Color DisabledColor { get; set; } = Color.CadetBlue;
 
         public string Text { get; set; } = "Button";
-        public bool Enabled { get; set; } = true;
+        
 
         public Button(Rectangle buttonRectangle)
             : base(buttonRectangle)
         {
-            
+
         }
 
         public Button(Rectangle buttonRectangle, string text)
@@ -51,12 +51,18 @@ namespace Checkers.UI
 
         public override void Update(GameTime gameTime)
         {
-            if(!Enabled)
+            base.Update(gameTime);
+
+            if (!Enabled)
             {
+                if (activeTexture == null)
+                {
+                    activeTexture = buttonTexture;
+                }
+
                 return;
             }
 
-            base.Update(gameTime);
 
             // Kolla om vänstra musknappen är nedtryckt
             if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
@@ -72,7 +78,7 @@ namespace Checkers.UI
                 activeTexture = buttonTexture;
             }
 
-            if(IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
             {
                 Clicked?.Invoke(this, EventArgs.Empty);
             }
@@ -80,22 +86,24 @@ namespace Checkers.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
-
-            if(buttonPressedTexture == null || buttonHoverTexture == null || buttonTexture == null)
-            {
-                return;    
-            }
-
-            if(activeTexture == null)
+            if (!IsVisible)
             {
                 return;
             }
+
+            if (activeTexture == null)
+            {
+                return;
+            }
+
+            base.Draw(spriteBatch);
 
             int currX = WindowRectangle.X;
             int currY = WindowRectangle.Y;
             if (Enabled)
             {
+
+
                 spriteBatch.Draw(activeTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);

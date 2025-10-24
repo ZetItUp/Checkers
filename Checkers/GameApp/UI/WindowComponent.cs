@@ -19,6 +19,7 @@ namespace Checkers.UI
         public Rectangle WindowRectangle { get; set; } = new Rectangle(0, 0, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
         public bool IsVisible { get; set; } = true;
         public bool IsMouseOver { get; protected set; } = false;
+        public bool Enabled { get; set; } = true;
 
         public WindowComponent(Rectangle windowRectangle)
         {
@@ -43,6 +44,7 @@ namespace Checkers.UI
 
         public virtual void Update(GameTime gameTime)
         {
+
             if(MouseHelper.MouseRectangle().Intersects(WindowRectangle))
             {
                 IsMouseOver = true;

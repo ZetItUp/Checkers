@@ -19,22 +19,20 @@ namespace Checkers.CheckersGame.GameService
         private MoveValidator? _moveValidator;
         private GameHistory? _gameHistory;
         private GameStatus _gameStatus;
-        private RuleSet? _ruleSet; 
         //RuleSet satt till public så gui kan läsa 
-        public RuleSet RuleSet{ get; private set; } // blir en lista sen när vi implementerar factory 
-                                                    // för att skapa regler från fil
+        public RuleSet RuleSet{ get; private set; }
         public GameService()
         {
             RuleSet = RuleSet.CreateStandard(); // blir annorlunda när vi har factoryn
         }
 
-        public void InitializeGame(string player1Name, string player2Name, RuleSet ruleSet)
+        public void InitializeGame(string player1Name, string player2Name)
         {
             _board = new Board(RuleSet.BoardSize);
             _player1 = new Player(player1Name, PieceColor.Red);
             _player2 = new Player(player2Name, PieceColor.Black);
             _currentPlayer =  _player1;
-            _moveValidator = new MoveValidator(ruleSet);
+            _moveValidator = new MoveValidator(RuleSet);
             _gameStatus = GameStatus.WaitingToStart;
 
             _board.Initialize();
