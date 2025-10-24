@@ -33,6 +33,7 @@ namespace Checkers.GameApp.Screens
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
+        Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 310, 120, 50), "Restart Game"); 
 
         bool isPieceSelected = false;
@@ -51,13 +52,20 @@ namespace Checkers.GameApp.Screens
         {
             btnMainMenu.Clicked += BtnTest_Clicked;
             btnStartGame.Clicked += BtnStartGame_Clicked;
-            btnRestartGame.Clicked += BtnRestartGame_Clicked;
+            btnUndoMove.Enabled = false;
+            btnUndoMove.Clicked += BtnUndoMove_Clicked;
+        }
+
+        private void BtnUndoMove_Clicked(object? sender, EventArgs e)
+        {
+            _gameService?.Undo();
         }
 
         private void BtnStartGame_Clicked(object? sender, EventArgs e)
         {
             _gameService?.StartGame();
             btnStartGame.Enabled = false;
+            btnUndoMove.Enabled = false;
         }
 
         private void BtnTest_Clicked(object sender, EventArgs e)
@@ -101,9 +109,10 @@ namespace Checkers.GameApp.Screens
 
             btnMainMenu.LoadContent(content);
             btnStartGame.LoadContent(content);
+            btnUndoMove.LoadContent(content);
             btnRestartGame.LoadContent(content);
 
-            _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet);
+            _gameService.InitializeGame("Player 1", "Player 2");
         }
         public override void UnloadContent()
         {
@@ -114,12 +123,16 @@ namespace Checkers.GameApp.Screens
         {
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
+            btnUndoMove.Update(gameTime);
             btnRestartGame.Update(gameTime);
 
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
                 return;
             }
+
+            var history = _gameService.GetGameHistory();
+            btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
             currentPlayer = _gameService.GetCurrentPlayer();
 
@@ -212,6 +225,7 @@ namespace Checkers.GameApp.Screens
             spriteBatch.Begin(SpriteSortMode.Deferred);
             btnMainMenu.Draw(spriteBatch);
             btnStartGame.Draw(spriteBatch);
+            btnUndoMove.Draw(spriteBatch);
             btnRestartGame.Draw(spriteBatch);
             spriteBatch.End();
         }

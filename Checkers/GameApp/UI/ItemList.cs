@@ -4,82 +4,93 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Checkers.GameApp.Helpers;
+using Checkers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Checkers.UI
+namespace Checkers.GameApp.UI
 {
-    internal class Button : WindowComponent
+    internal class ItemList : WindowComponent
     {
-        public event EventHandler? Clicked;
-
         Texture2D buttonTexture;
-        Texture2D buttonHoverTexture;
-        Texture2D buttonPressedTexture;
-        SpriteFont buttonFont;
-
+        SpriteFont itemFont;
         Texture2D activeTexture;
 
-        public Color EnabledColor { get; set; } = Color.White;
-        public Color DisabledColor { get; set; } = Color.CadetBlue;
+        public List<string> Items { get; private set; } = new List<string>();
+        public int SelectedIndex { get; private set; } = -1;
 
-        public string Text { get; set; } = "Button";
-        
+        public Color FontColor { get; set; } = Color.Black;
 
-        public Button(Rectangle buttonRectangle)
-            : base(buttonRectangle)
+        public Color HoverBackgroundColor { get; set; } = new Color(100, 100, 100, 255);
+        public Color HoverFontColor { get; set; } = Color.White;
+
+        int hoveredIndex = -1;
+
+        public ItemList(Rectangle windowRectangle)
+            : base(windowRectangle)
         {
 
-        }
-
-        public Button(Rectangle buttonRectangle, string text)
-            : base(buttonRectangle)
-        {
-            Text = text;
         }
 
         public override void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
-            buttonFont = content.Load<SpriteFont>("Font14");
+            itemFont = content.Load<SpriteFont>("Font12");
             buttonTexture = content.Load<Texture2D>("UINormal");
-            buttonHoverTexture = content.Load<Texture2D>("UIHover");
-            buttonPressedTexture = content.Load<Texture2D>("UIDown");
+            Items.Add("Item 1");
+            Items.Add("Item 2");
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
-            if (!Enabled)
+            if (!IsVisible)
             {
-                if (activeTexture == null)
-                {
-                    activeTexture = buttonTexture;
-                }
-
                 return;
             }
-
-
-            // Kolla om vänstra musknappen är nedtryckt
-            if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
-            {
-                activeTexture = buttonPressedTexture;
-            }
-            else if (IsMouseOver)
-            {
-                activeTexture = buttonHoverTexture;
-            }
-            else
+            
+            if (activeTexture == null)
             {
                 activeTexture = buttonTexture;
             }
 
-            if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            hoveredIndex = -1;
+
+            if (!Enabled)
             {
-                Clicked?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            var mouse = MouseHelper.MousePosition();
+            int localX = (int)mouse.X - WindowRectangle.X;
+            int localY = (int)mouse.Y - WindowRectangle.Y;
+
+            float lineHeight = itemFont.MeasureString("TEST").Y + 2f;
+            int itemHeight = (int)lineHeight;
+            int itemsStartY = 5;
+
+            if (localX >= 0 && localY >= 0 && localX <= WindowRectangle.Width && localY <= WindowRectangle.Height)
+            {
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    int itemTop = itemsStartY + i * itemHeight;
+                    Rectangle itemRectLocal = new Rectangle(10, itemTop, WindowRectangle.Width - 20, itemHeight);
+
+                    if (localX >= itemRectLocal.X && localX <= itemRectLocal.X + itemRectLocal.Width
+                        && localY >= itemRectLocal.Y && localY <= itemRectLocal.Y + itemRectLocal.Height)
+                    {
+                        hoveredIndex = i;
+
+                        if (MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+                        {
+                            SelectedIndex = i;
+                        }
+
+                        break;
+                    }
+                }
             }
         }
 
@@ -89,13 +100,12 @@ namespace Checkers.UI
             {
                 return;
             }
+            base.Draw(spriteBatch);
 
-            if (activeTexture == null)
+            if (activeTexture == null || itemFont == null)
             {
                 return;
             }
-
-            base.Draw(spriteBatch);
 
             int currX = WindowRectangle.X;
             int currY = WindowRectangle.Y;
@@ -124,14 +134,25 @@ namespace Checkers.UI
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
             }
 
-            // Rita texten centrerad på knappen
-            Vector2 textSize = buttonFont.MeasureString(Text);
-            Vector2 textPosition = new Vector2(
-                WindowRectangle.X + (WindowRectangle.Width - textSize.X) / 2,
-                WindowRectangle.Y + (WindowRectangle.Height - textSize.Y) / 2
-            );
+            // Draw items
+            float lHeight = itemFont.MeasureString("TEST").Y + 2f;
+            int itemHeight = (int)lHeight;
+            for (int i = 0; i < Items.Count; i++)
+            {
+                Vector2 textSize = itemFont.MeasureString(Items[i]);
+                Rectangle itemBgRect = new Rectangle(currX + 10, currY + 5 + i * itemHeight, WindowRectangle.Width - 20, itemHeight);
+                Rectangle srcRect = new Rectangle(10, 10, 1, 1);
 
-            spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
+                if (i == hoveredIndex)
+                {
+                    spriteBatch.Draw(activeTexture, itemBgRect, srcRect, HoverBackgroundColor);
+                    spriteBatch.DrawString(itemFont, Items[i], new Vector2(itemBgRect.X + 0, itemBgRect.Y + (itemHeight - textSize.Y) / 2), HoverFontColor);
+                }
+                else
+                {
+                    spriteBatch.DrawString(itemFont, Items[i], new Vector2(currX + 10, currY + 5 + i * itemHeight + (itemHeight - textSize.Y) / 2), FontColor);
+                }
+            }
         }
     }
 }

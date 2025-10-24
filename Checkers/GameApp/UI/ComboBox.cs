@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Checkers.GameApp.Helpers;
+using Checkers.UI;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Checkers.GameApp.Helpers;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Checkers.UI
+namespace Checkers.GameApp.UI
 {
-    internal class Button : WindowComponent
+    internal class ComboBox : WindowComponent
     {
-        public event EventHandler? Clicked;
+        public event EventHandler? SelectedItemChanged;
 
         Texture2D buttonTexture;
         Texture2D buttonHoverTexture;
@@ -21,22 +22,17 @@ namespace Checkers.UI
 
         Texture2D activeTexture;
 
-        public Color EnabledColor { get; set; } = Color.White;
-        public Color DisabledColor { get; set; } = Color.CadetBlue;
+        bool showList = false;
+        ItemList itemList;
+        public string SelectedItemText = string.Empty;
 
-        public string Text { get; set; } = "Button";
-        
+        public Color FontColor { get; set; } = Color.Black;
 
-        public Button(Rectangle buttonRectangle)
-            : base(buttonRectangle)
+        public ComboBox(Rectangle windowRectangle)
+            : base(windowRectangle)
         {
-
-        }
-
-        public Button(Rectangle buttonRectangle, string text)
-            : base(buttonRectangle)
-        {
-            Text = text;
+            itemList = new ItemList(new Rectangle(windowRectangle.X, windowRectangle.Y + windowRectangle.Height, windowRectangle.Width, 100));
+            showList = false;
         }
 
         public override void LoadContent(ContentManager content)
@@ -46,6 +42,7 @@ namespace Checkers.UI
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
+            itemList.LoadContent(content);
         }
 
         public override void Update(GameTime gameTime)
@@ -61,7 +58,6 @@ namespace Checkers.UI
 
                 return;
             }
-
 
             // Kolla om vänstra musknappen är nedtryckt
             if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
@@ -79,22 +75,44 @@ namespace Checkers.UI
 
             if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
             {
-                Clicked?.Invoke(this, EventArgs.Empty);
+                showList = !showList;
             }
+
+            if (showList)
+            {
+                itemList.Update(gameTime);
+                if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+                {
+                    showList = false;
+                    SelectedItemText = itemList.Items[itemList.SelectedIndex];
+                    SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+
+            if (itemList.IsVisible != showList)
+            {
+                itemList.IsVisible = showList;
+            }
+        }
+
+        public void AddItem(string item)
+        {
+            itemList.Items.Add(item);
+        }
+
+        public void RemoveItem(string item)
+        {
+            itemList.Items.Remove(item);
+        }
+
+        public void ClearItems()
+        {
+            itemList.Items.Clear();
+            SelectedItemText = string.Empty;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!IsVisible)
-            {
-                return;
-            }
-
-            if (activeTexture == null)
-            {
-                return;
-            }
-
             base.Draw(spriteBatch);
 
             int currX = WindowRectangle.X;
@@ -124,14 +142,18 @@ namespace Checkers.UI
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
             }
 
-            // Rita texten centrerad på knappen
-            Vector2 textSize = buttonFont.MeasureString(Text);
-            Vector2 textPosition = new Vector2(
-                WindowRectangle.X + (WindowRectangle.Width - textSize.X) / 2,
-                WindowRectangle.Y + (WindowRectangle.Height - textSize.Y) / 2
-            );
+            if (showList)
+            {
+                itemList.Draw(spriteBatch);
+            }
 
-            spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
+            // Draw selected item text
+            if (!string.IsNullOrEmpty(SelectedItemText))
+            {
+                Vector2 textSize = buttonFont.MeasureString(SelectedItemText);
+                Vector2 textPosition = new Vector2(currX + (WindowRectangle.Width - textSize.X) / 2, currY + (WindowRectangle.Height - textSize.Y) / 2);
+                spriteBatch.DrawString(buttonFont, SelectedItemText, textPosition, FontColor);
+            }
         }
     }
 }
