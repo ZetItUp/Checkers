@@ -41,8 +41,11 @@ namespace Checkers.GameApp.Screens
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
+            // Här ritas allt ut
             spriteBatch.Draw(background, new Rectangle(MainGame.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
 
+
+            // Här slutar ritningen
             spriteBatch.End();
         }
     }

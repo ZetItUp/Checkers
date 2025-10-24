@@ -44,7 +44,7 @@ namespace Checkers
 
             ScreenManager.Initialize(_spriteBatch, Content);
 
-            ScreenManager.ChangeScreen(ScreenID.Game);
+            ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
         protected override void Update(GameTime gameTime)

@@ -22,7 +22,7 @@ public class RuleSet : IRuleSet
     {                                      
         return new RuleSet(
             name: "Standard American", 
-            boardSize: 12, 
+            boardSize: 7, 
             forcedCaptures: true, 
             allowBackwardCaptures: false, 
             allowMultipleJumps: true
