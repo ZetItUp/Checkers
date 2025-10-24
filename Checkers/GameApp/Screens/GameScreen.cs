@@ -34,7 +34,7 @@ namespace Checkers.GameApp.Screens
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
         Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
-        Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 310, 120, 50), "Restart Game"); 
+        Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game"); 
 
         bool isPieceSelected = false;
 
@@ -54,6 +54,9 @@ namespace Checkers.GameApp.Screens
             btnStartGame.Clicked += BtnStartGame_Clicked;
             btnUndoMove.Enabled = false;
             btnUndoMove.Clicked += BtnUndoMove_Clicked;
+            btnRestartGame.Clicked += BtnRestartGame_Clicked;
+            
+
         }
 
         private void BtnUndoMove_Clicked(object? sender, EventArgs e)
@@ -66,6 +69,9 @@ namespace Checkers.GameApp.Screens
             _gameService?.StartGame();
             btnStartGame.Enabled = false;
             btnUndoMove.Enabled = false;
+            btnStartGame.IsVisible = false;
+            btnRestartGame.IsVisible = true;
+            btnRestartGame.Enabled = true;
         }
 
         private void BtnTest_Clicked(object sender, EventArgs e)
@@ -78,7 +84,7 @@ namespace Checkers.GameApp.Screens
         {
             if (_gameService != null) // null = spelet är inte igång
             {
-                _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet); // laddar om spelet
+                _gameService.InitializeGame("Player 1", "Player 2"); // laddar om spelet
                 _gameService.StartGame();
 
                 // resetar UI
@@ -111,6 +117,11 @@ namespace Checkers.GameApp.Screens
             btnStartGame.LoadContent(content);
             btnUndoMove.LoadContent(content);
             btnRestartGame.LoadContent(content);
+
+            btnRestartGame.Enabled = false;
+            btnRestartGame.IsVisible = false;
+            btnStartGame.Enabled = true;
+            btnStartGame.IsVisible = true;
 
             _gameService.InitializeGame("Player 1", "Player 2");
         }
