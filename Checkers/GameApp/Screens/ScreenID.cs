@@ -11,6 +11,7 @@ namespace Checkers.GameApp.Screens
         MainMenu,
         Game,
         Replay,
-        Settings
+        Settings,
+        Restart
     }
 }

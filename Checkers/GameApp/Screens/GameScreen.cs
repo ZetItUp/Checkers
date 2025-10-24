@@ -33,6 +33,7 @@ namespace Checkers.GameApp.Screens
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
+        Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 310, 120, 50), "Restart Game"); 
 
         bool isPieceSelected = false;
 
@@ -49,7 +50,8 @@ namespace Checkers.GameApp.Screens
             : base()
         {
             btnMainMenu.Clicked += BtnTest_Clicked;
-            btnStartGame.Clicked += BtnStartGame_Clicked;   
+            btnStartGame.Clicked += BtnStartGame_Clicked;
+            btnRestartGame.Clicked += BtnRestartGame_Clicked;
         }
 
         private void BtnStartGame_Clicked(object? sender, EventArgs e)
@@ -62,6 +64,19 @@ namespace Checkers.GameApp.Screens
         {
             // Gå tillbaka till huvudmenyn
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
+        }
+
+        private void BtnRestartGame_Clicked(object? sender, EventArgs e)
+        {
+            if (_gameService != null) // null = spelet är inte igång
+            {
+                _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet); // laddar om spelet
+                _gameService.StartGame();
+
+                // resetar UI
+                isPieceSelected = false; // ingen pjäs är vald
+                validMoves.Clear(); // tidigare beräknade drag raderas
+            }
         }
 
         public override void LoadContent(ContentManager content)
@@ -86,6 +101,7 @@ namespace Checkers.GameApp.Screens
 
             btnMainMenu.LoadContent(content);
             btnStartGame.LoadContent(content);
+            btnRestartGame.LoadContent(content);
 
             _gameService.InitializeGame("Player 1", "Player 2", _gameService.RuleSet);
         }
@@ -98,6 +114,7 @@ namespace Checkers.GameApp.Screens
         {
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
+            btnRestartGame.Update(gameTime);
 
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
@@ -195,6 +212,7 @@ namespace Checkers.GameApp.Screens
             spriteBatch.Begin(SpriteSortMode.Deferred);
             btnMainMenu.Draw(spriteBatch);
             btnStartGame.Draw(spriteBatch);
+            btnRestartGame.Draw(spriteBatch);
             spriteBatch.End();
         }
     }
