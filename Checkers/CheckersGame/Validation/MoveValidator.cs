@@ -59,6 +59,10 @@ namespace Checkers.CheckersGame.Validation
                         // Är det ett capture-drag?
                         if (IsCapture(p.Position, possibleMove))
                         {
+                            // Kolla om destinationen är tom
+                            if (board.GetPiece(possibleMove) != null)
+                                continue;
+
                             // Kolla om det är ett GILTIGT capture (finns motståndarpjäs)
                             var capturedPos = GetCapturedPosition(p.Position, possibleMove);
                             if (capturedPos.HasValue)
