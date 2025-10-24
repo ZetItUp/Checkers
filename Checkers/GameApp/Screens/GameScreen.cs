@@ -54,7 +54,7 @@ namespace Checkers.GameApp.Screens
 
         private void BtnStartGame_Clicked(object? sender, EventArgs e)
         {
-            _gameService.StartGame();
+            _gameService?.StartGame();
             btnStartGame.Enabled = false;
         }
 
@@ -99,7 +99,7 @@ namespace Checkers.GameApp.Screens
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
 
-            if (_gameService.GetGameStatus() != GameStatus.InProgress)
+            if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
                 return;
             }
@@ -158,7 +158,7 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
-            if (_gameService.GetGameStatus() == GameStatus.InProgress)
+            if (_gameService != null && _gameService.GetGameStatus() == GameStatus.InProgress)
             {
                 var pieces = _gameService.GetBoard().GetAllPieces();
 
