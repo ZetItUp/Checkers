@@ -13,6 +13,7 @@ namespace Checkers
         public static GraphicsDeviceManager graphicsDeviceMangager;
         public static int WindowWidth = 1280;
         public static int WindowHeight = 720;
+        public static bool ExitGame = false;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -55,6 +56,11 @@ namespace Checkers
             if (Window.Title != WindowTitle)
             {
                 Window.Title = WindowTitle;
+            }
+
+            if (ExitGame)
+            {
+                Exit();
             }
 
             ScreenManager.Update(gameTime);

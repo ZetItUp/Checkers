@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Checkers.UI;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Checkers.GameApp.Screens
 {
@@ -15,16 +16,32 @@ namespace Checkers.GameApp.Screens
         float bgScale = 2.0f;
         int bgWidth = 0;
 
+        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth /2 - (200/2), MainGame.WindowHeight /2, 200, 80), "Start Game");
+        Button btnExitGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 70, 120, 50), "Exit Game");
+
         public MainMenuScreen()
             : base()
         {
+            btnStartGame.Clicked += BtnStartGame_Clicked;
+            btnExitGame.Clicked += BtnExitGame_Clicked;
+        }
 
+        private void BtnExitGame_Clicked(object? sender, EventArgs e)
+        {
+            MainGame.ExitGame = true;
+        }
+
+        private void BtnStartGame_Clicked(object? sender, EventArgs e)
+        {
+            ScreenManager.ChangeScreen(ScreenID.Game);
         }
 
         public override void LoadContent(ContentManager content)
         {
             background = content.Load<Texture2D>("Checkers");
             bgWidth = (int)(background.Width * bgScale);
+            btnStartGame.LoadContent(content);
+            btnExitGame.LoadContent(content);
         }
 
         public override void UnloadContent()
@@ -34,7 +51,8 @@ namespace Checkers.GameApp.Screens
 
         public override void Update(GameTime gameTime)
         {
-            
+            btnStartGame.Update(gameTime);
+            btnExitGame.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -44,8 +62,15 @@ namespace Checkers.GameApp.Screens
             // Här ritas allt ut
             spriteBatch.Draw(background, new Rectangle(MainGame.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
 
+            spriteBatch.End();
 
+            spriteBatch.Begin(SpriteSortMode.Deferred);
+
+
+            btnStartGame.Draw(spriteBatch);
+            btnExitGame.Draw(spriteBatch);
             // Här slutar ritningen
+
             spriteBatch.End();
         }
     }
