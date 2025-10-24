@@ -56,21 +56,21 @@ namespace Checkers.CheckersGame.GameService
                 return false;
             if(!_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
                 return false;
-            
+
             //skapa ett move object för att spara movet
             var move = new Move(from, to);
-            
+
             //kolla om en pjäs vart tagen
             var capturedPiece = HandleCapture(from, to);
             if (capturedPiece != null)
             {
                 move.CapturedPiece = capturedPiece;
             }
-            
+
             //flytta pjäsen på Board
             _board.MovePiece(from, to);
-            
-            
+
+
             //kolla om pjäsen ska bli en Dam (king)
             var piece = _board.GetPiece(to);
             if (piece != null && !piece.IsKing && IsPromotionPosition(to, piece.Color))
@@ -80,8 +80,8 @@ namespace Checkers.CheckersGame.GameService
             }
             //spara draget i history
             _gameHistory.RecordMove(move);
-            
-            //kolla om det är en vinnare 
+
+            //kolla om det är en vinnare
             var winner = CheckWinner();
             if (winner != null){
                 _gameStatus = GameStatus.Completed;
@@ -97,7 +97,16 @@ namespace Checkers.CheckersGame.GameService
         {
             if(_gameStatus != GameStatus.InProgress)
                 return false;
-            return _gameHistory.Undo(_board);
+
+            bool success = _gameHistory.Undo(_board);
+
+            // Byt tillbaka tur om undo lyckades
+            if (success)
+            {
+                SwitchTurn();
+            }
+
+            return success;
         }
 
         public Player CheckWinner()
@@ -146,6 +155,16 @@ namespace Checkers.CheckersGame.GameService
         public GameHistory GetGameHistory()
         {
             return _gameHistory;
+        }
+
+        public string GetPlayer1Name()
+        {
+            return _player1?.Name ?? "Player 1";
+        }
+
+        public string GetPlayer2Name()
+        {
+            return _player2?.Name ?? "Player 2";
         }
 
         public List<Position> GetValidMovesForPiece(Position position)

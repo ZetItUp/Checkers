@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.GameService;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.Validation;
-using Microsoft.Xna.Framework;
 
 namespace Checkers.CheckersGame.History;
 
@@ -22,224 +22,256 @@ public static class GamePersistence
         Directory.CreateDirectory(SaveDirectory);
     }
 
-    public static void SaveGame(GameService.GameService game, string fileName)
+    /// Sparar ett spel automatiskt med timestamp som filnamn
+    public static string SaveGame(GameService.GameService game)
     {
-        string json = SerializeGame(game);
+        string fileName = $"game_{DateTime.Now:yyyy-MM-dd_HHmmss_fff}";
+        var gameState = SerializeGame(game);
+        string json = JsonSerializer.Serialize(gameState, new JsonSerializerOptions { WriteIndented = true });
         string filePath = Path.Combine(SaveDirectory, $"{fileName}.json");
         File.WriteAllText(filePath, json);
+        return fileName;
     }
 
-    // public static GameService.GameService LoadGame(string fileName)
-    // {
-    //     try{
-    //         string filePath = Path.Combine(SaveDirectory, $"{fileName}.json");
-    //         if (!File.Exists(filePath))
-    //             return null;
-    //
-    //         string json = File.ReadAllText(filePath);
-    //         //return DeserializeGame(json); ta bort komentaren när DeserializeGame är fixadi
-    //         
-    //     }
-    //     catch
-    //     {
-    //         return null;    
-    //     }
-    // }
+    /// Laddar ett sparat spel för replay
+    public static SavedGame? LoadGameForReplay(string fileName)
+    {
+        try
+        {
+            string filePath = Path.Combine(SaveDirectory, $"{fileName}.json");
+            if (!File.Exists(filePath))
+                return null;
 
+            string json = File.ReadAllText(filePath);
+            var gameState = JsonSerializer.Deserialize<GameSaveState>(json);
+
+            if (gameState == null)
+                return null;
+
+            return DeserializeGame(gameState, fileName);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// Hämtar alla sparade spel med metadata för UI-listan
+    public static List<GameMetadata> GetSavedGamesWithMetadata()
+    {
+        var files = Directory.GetFiles(SaveDirectory, "*.json");
+        var gameMetadataList = new List<GameMetadata>();
+
+        foreach (var filePath in files)
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                var gameState = JsonSerializer.Deserialize<GameSaveState>(json);
+
+                if (gameState != null)
+                {
+                    gameMetadataList.Add(new GameMetadata
+                    {
+                        FileName = Path.GetFileNameWithoutExtension(filePath),
+                        Player1Name = gameState.Player1Name,
+                        Player2Name = gameState.Player2Name,
+                        DatePlayed = gameState.DatePlayed,
+                        Winner = gameState.Winner,
+                        TotalMoves = gameState.Moves.Count,
+                        BoardSize = gameState.RuleSet.BoardSize
+                    });
+                }
+            }
+            catch
+            {
+                // Skippa filer som inte kan läsas
+                continue;
+            }
+        }
+
+        // Sortera efter datum, senaste först
+        return gameMetadataList.OrderByDescending(g => g.DatePlayed).ToList();
+    }
+
+    /// Hämtar filnamn för alla sparade spel (för bakåtkompatibilitet)
     public static List<string> GetSavedGames()
     {
         var files = Directory.GetFiles(SaveDirectory, "*.json");
         var fileNames = new List<string>();
 
-        foreach (var file in  files){
+        foreach (var file in files)
+        {
             fileNames.Add(Path.GetFileNameWithoutExtension(file));
         }
-        
+
         return fileNames;
     }
 
     public static void DeleteGame(string fileName)
     {
         string filePath = Path.Combine(SaveDirectory, $"{fileName}.json");
-        if(File.Exists(filePath))
+        if (File.Exists(filePath))
             File.Delete(filePath);
     }
-    
 
-    private static string SerializeGame(GameService.GameService game)
+    #region Serialization
+
+    private static GameSaveState SerializeGame(GameService.GameService game)
     {
-        //skapa en simple serializeable game state 
-        var gameState = new GameSaveState{
-            Player1Name = game.GetCurrentPlayer().Color == PieceColor.Red
-                ? game.GetCurrentPlayer().Name
-                : GetOpponentName(game),
-            Player2Name = game.GetCurrentPlayer().Color == PieceColor.Black
-                ? game.GetCurrentPlayer().Name
-                : GetOpponentName(game),
-            BoardSize = game.RuleSet.BoardSize,
-            Status = game.GetGameStatus(),
-            CurrentPlayerColor = game.GetCurrentPlayer().Color,
-            // sparar bara initialt bräde + alla moves
-            InitialBoardState = SerializeInitialBoard(game.GetGameHistory()),
-            Moves = SerializeMoves(game.GetGameHistory().GetAllMoves())
-        };
-        
-        return JsonSerializer.Serialize(gameState);
-    }
+        var history = game.GetGameHistory();
+        var moves = history.GetAllMoves();
 
-    private static string GetOpponentName(GameService.GameService game)
-    {
-        return game.GetCurrentPlayer().Color == PieceColor.Red ? "Player2" : "Player1";    
-    }
-
-    private static List<PieceSaveState> SerializeInitialBoard(GameHistory gameHistory){
-        var tempBoard = new Board(8);
-        
-        var pieces = new List<PieceSaveState>();
-        var allPieces = tempBoard.GetAllPieces();
-
-        foreach (var piece in allPieces){
-            pieces.Add(new PieceSaveState{
-                Row = piece.Position.Row,
-                Column = piece.Position.Column,
-                Color = piece.Color,
-                IsKing = piece.IsKing
-            });
+        // Bestäm vinnare baserat på spelstatus
+        string? winner = null;
+        if (game.GetGameStatus() == GameStatus.Completed)
+        {
+            // Den som är current player vann (eftersom SwitchTurn() aldrig anropades efter vinsten)
+            var currentPlayer = game.GetCurrentPlayer();
+            winner = currentPlayer.Name;
         }
-        return pieces;
+
+        return new GameSaveState
+        {
+            Player1Name = game.GetPlayer1Name(),
+            Player2Name = game.GetPlayer2Name(),
+            RuleSet = new RuleSetSaveState
+            {
+                Name = game.RuleSet.Name,
+                BoardSize = game.RuleSet.BoardSize,
+                ForcedCaptures = game.RuleSet.ForcedCaptures,
+                AllowBackwardCaptures = game.RuleSet.AllowBackwardCaptures,
+                AllowMultipleJumps = game.RuleSet.AllowMultipleJumps
+            },
+            Moves = SerializeMoves(moves),
+            DatePlayed = DateTime.Now,
+            Winner = winner
+        };
     }
 
     private static List<MoveSaveState> SerializeMoves(List<Move> moves)
     {
         var result = new List<MoveSaveState>();
 
-        foreach (var move in moves )
+        foreach (var move in moves)
         {
             result.Add(new MoveSaveState
             {
                 FromRow = move.From.Row,
                 FromColumn = move.From.Column,
                 ToRow = move.To.Row,
-                ToColumn = move.To.Column,
-                WasPromoted = move.WasPromoted,
-                CapturedRow = move.CapturedPiece != null ? move.CapturedPiece.Position.Row : -1,
-                CapturedColumn = move.CapturedPiece != null ? move.CapturedPiece.Position.Column : -1,
-                CapturedColor = move.CapturedPiece != null ? move.CapturedPiece.Color : PieceColor.Red,
-                MoveNumber = move.MoveNumber
-            });   
+                ToColumn = move.To.Column
+            });
         }
+
         return result;
     }
 
-    // private static GameService.GameService DeserializeGame(string json)
-    // {
-    //     var gameState = JsonSerializer.Deserialize<GameSaveState>(json);
-    //     
-    //     RuleSet ruleSet = new RuleSet(
-    //         name: gameState.RuleSetName,
-    //         boardSize: gameState.BoardSize,
-    //         forcedCaptures: gameState.ForcedCaptures,
-    //         allowBackwardCaptures: gameState.AllowBackwardCaptures,
-    //         allowMultipleJumps: gameState.AllowMultipleJumps
-    //     );
-    //
-    //     var game = new GameService.GameService();
-    //     
-    //     RuleSetType ruleSetType;
-    //     switch (gameState.RuleSetName)
-    //     {
-    //         case "International":
-    //             ruleSetType = RuleSetType.International;
-    //             break;
-    //         case "Relaxed":
-    //             ruleSetType = RuleSetType.Relaxed;
-    //             break;
-    //         default:
-    //             ruleSetType = RuleSetType.Standard;
-    //             break;
-    //     }
-    //     game.SetRuleSet(ruleSetType);
-    //     
-    //     //rensa bordet och bygg upp det från saved state
-    //     var board = game.GetBoard();
-    //     for (int row = 0; row < board.Size; row++)
-    //     {
-    //         for (int col = 0; col < board.Size; col++)
-    //         {
-    //             board.RemovePiece(new Position(row, col));
-    //         }
-    //     }
-    //     foreach (var pieceState in gameState.BoardState)
-    //     {
-    //         var position = new Position(pieceState.Row, pieceState.Column);
-    //         Piece piece;
-    //             
-    //         if (pieceState.IsKing)
-    //         {
-    //             piece = new KingPiece(pieceState.Color, position);
-    //         }
-    //         else
-    //         {
-    //             piece = new RegularPiece(pieceState.Color, position);
-    //         }
-    //             
-    //         board.PlacePiece(piece, position);
-    //     }
-    //     if (gameState.Status != GameStatus.WaitingToStart)
-    //     {
-    //         game.Start();
-    //     
-    //         // Replay all the moves to reconstruct game history and current state
-    //         foreach (var moveState in gameState.Moves)
-    //         {
-    //             var fromPos = new Position(moveState.FromRow, moveState.FromColumn);
-    //             var toPos = new Position(moveState.ToRow, moveState.ToColumn);
-    //         
-    //             // Make the move on the board
-    //             game.MakeMove(fromPos, toPos);
-    //         
-    //             // If we've reached the current game state (all moves have been replayed),
-    //             // make sure the right player is set as current
-    //             if (moveState.MoveNumber == gameState.Moves.Count && 
-    //                 game.GetCurrentPlayer().Color != gameState.CurrentPlayerColor)
-    //             {
-    //                 // If needed, switch turn to match saved state
-    //                 game.SwitchTurn();
-    //             }
-    //         }
-    //     }
-    //     return game;
-    // }
+    #endregion
+
+    #region Deserialization
+
+    private static SavedGame DeserializeGame(GameSaveState gameState, string fileName)
+    {
+        // Rekonstruera RuleSet från sparad data
+        var ruleSet = new RuleSet(
+            name: gameState.RuleSet.Name,
+            boardSize: gameState.RuleSet.BoardSize,
+            forcedCaptures: gameState.RuleSet.ForcedCaptures,
+            allowBackwardCaptures: gameState.RuleSet.AllowBackwardCaptures,
+            allowMultipleJumps: gameState.RuleSet.AllowMultipleJumps
+        );
+
+        // Konvertera moves från DTO till Move-objekt
+        var moves = new List<Move>();
+        foreach (var moveState in gameState.Moves)
+        {
+            var from = new Position(moveState.FromRow, moveState.FromColumn);
+            var to = new Position(moveState.ToRow, moveState.ToColumn);
+
+            // Vi behöver inte captured piece eller promotion här - de räknas ut när vi replayer
+            moves.Add(new Move(from, to));
+        }
+
+        return new SavedGame
+        {
+            FileName = fileName,
+            Player1Name = gameState.Player1Name,
+            Player2Name = gameState.Player2Name,
+            RuleSet = ruleSet,
+            Moves = moves,
+            DatePlayed = gameState.DatePlayed,
+            Winner = gameState.Winner
+        };
+    }
+
+    #endregion
+
+    #region DTOs
+
+    /// DTO för att spara speldata till JSON
     private class GameSaveState
     {
-        public string Player1Name { get; set; }
-        public string Player2Name { get; set; }
-        public int BoardSize { get; set; }
-        public GameStatus Status { get; set; }
-        public PieceColor CurrentPlayerColor { get; set; }
-        public List<PieceSaveState> InitialBoardState { get; set; }
-        public List<MoveSaveState> Moves { get; set; }
+        public string Player1Name { get; set; } = "";
+        public string Player2Name { get; set; } = "";
+        public RuleSetSaveState RuleSet { get; set; } = new();
+        public List<MoveSaveState> Moves { get; set; } = new();
+        public DateTime DatePlayed { get; set; }
+        public string? Winner { get; set; }
     }
 
-    private class PieceSaveState
+    /// DTO för att spara RuleSet
+    private class RuleSetSaveState
     {
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public PieceColor Color { get; set; }
-        public bool IsKing { get; set; }
+        public string Name { get; set; } = "";
+        public int BoardSize { get; set; }
+        public bool ForcedCaptures { get; set; }
+        public bool AllowBackwardCaptures { get; set; }
+        public bool AllowMultipleJumps { get; set; }
     }
 
+    /// DTO för att spara moves - endast from/to behövs, resten räknas ut vid replay
     private class MoveSaveState
     {
         public int FromRow { get; set; }
         public int FromColumn { get; set; }
         public int ToRow { get; set; }
         public int ToColumn { get; set; }
-        public bool WasPromoted { get; set; }
-        public int CapturedRow { get; set; }
-        public int CapturedColumn { get; set; }
-        public PieceColor CapturedColor { get; set; }
-        public int MoveNumber { get; set; }
     }
 
+    #endregion
+}
+
+/// Representerar ett laddat spel redo för replay
+public class SavedGame
+{
+    public string FileName { get; set; } = "";
+    public string Player1Name { get; set; } = "";
+    public string Player2Name { get; set; } = "";
+    public RuleSet RuleSet { get; set; } = null!;
+    public List<Move> Moves { get; set; } = new();
+    public DateTime DatePlayed { get; set; }
+    public string? Winner { get; set; }
+}
+
+/// Metadata för ett sparat spel (för att visa i game list UI)
+public class GameMetadata
+{
+    public string FileName { get; set; } = "";
+    public string Player1Name { get; set; } = "";
+    public string Player2Name { get; set; } = "";
+    public DateTime DatePlayed { get; set; }
+    public string? Winner { get; set; }
+    public int TotalMoves { get; set; }
+    public int BoardSize { get; set; }
+
+    public string GetDisplayName()
+    {
+        return $"{Player1Name} vs {Player2Name} - {DatePlayed:yyyy-MM-dd HH:mm}";
+    }
+
+    public string GetWinnerDisplay()
+    {
+        return Winner ?? "Ingen vinnare";
+    }
 }
