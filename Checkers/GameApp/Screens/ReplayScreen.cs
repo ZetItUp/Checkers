@@ -3,6 +3,7 @@ using Checkers.CheckersGame.GameService;
 using Checkers.CheckersGame.History;
 using Checkers.CheckersGame.Models;
 using Checkers.GameApp.Helpers;
+using Checkers.GameApp.UI;
 using Checkers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -37,6 +38,7 @@ namespace Checkers.GameApp.Screens
         Button btnReset = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Reset");
         Button btnNextMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Next >>");
         Button btnPreviousMove = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "<< Previous");
+        ComboBox cboGames = new ComboBox(new Rectangle(MainGame.WindowWidth - 410, 10, 400, 40));
 
         bool isPieceSelected = false;
 
@@ -48,7 +50,7 @@ namespace Checkers.GameApp.Screens
         public ReplayScreen()
             : base()
         {
-            
+            btnMainMenu.Clicked += BtnMainMenu_Clicked;
         }
 
         private void BtnMainMenu_Clicked(object sender, EventArgs e)
@@ -78,18 +80,26 @@ namespace Checkers.GameApp.Screens
             btnMainMenu.LoadContent(content);
             btnReset.LoadContent(content);
             btnNextMove.LoadContent(content);
-
+            btnPreviousMove.LoadContent(content);
+            cboGames.LoadContent(content);
+            cboGames.SelectedItemText = "<Select a Previous Game>";
         }
         public override void UnloadContent()
         {
             _replayService = null;
+            btnMainMenu = null;
+            btnReset = null;
+            btnNextMove = null;
+            btnPreviousMove = null;
         }
 
         public override void Update(GameTime gameTime)
         {
-            btnMainMenu.Update(gameTime);
-            btnReset.Update(gameTime);
-            btnNextMove.Update(gameTime);
+            btnMainMenu?.Update(gameTime);
+            btnReset?.Update(gameTime);
+            btnNextMove?.Update(gameTime);
+            btnPreviousMove?.Update(gameTime);
+            cboGames?.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -138,7 +148,7 @@ namespace Checkers.GameApp.Screens
             //    }
             //}
 
-            spriteBatch.Draw(uiTexture, new Rectangle((int)(_replayService.GetBoard().Size * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(uiTexture, new Rectangle((int)(_replayService.GetBoard().Size * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 
@@ -146,6 +156,9 @@ namespace Checkers.GameApp.Screens
             btnMainMenu.Draw(spriteBatch);
             btnReset.Draw(spriteBatch);
             btnNextMove.Draw(spriteBatch);
+            btnPreviousMove.Draw(spriteBatch);
+
+            cboGames.Draw(spriteBatch);
             spriteBatch.End();
         }
     }

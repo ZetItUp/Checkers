@@ -32,6 +32,7 @@ namespace Checkers.GameApp.Screens
 
             _screens.Add(ScreenID.MainMenu, new MainMenuScreen());
             _screens.Add(ScreenID.Game, new GameScreen());
+            _screens.Add(ScreenID.Replay, new ReplayScreen());
         }
 
         public static void ChangeScreen(ScreenID screenID)

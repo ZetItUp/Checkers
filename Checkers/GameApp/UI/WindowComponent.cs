@@ -20,6 +20,8 @@ namespace Checkers.UI
         public bool IsVisible { get; set; } = true;
         public bool IsMouseOver { get; protected set; } = false;
         public bool Enabled { get; set; } = true;
+        public Color EnabledColor { get; set; } = Color.White;
+        public Color DisabledColor { get; set; } = Color.CadetBlue;
 
         public WindowComponent(Rectangle windowRectangle)
         {
@@ -44,7 +46,6 @@ namespace Checkers.UI
 
         public virtual void Update(GameTime gameTime)
         {
-
             if(MouseHelper.MouseRectangle().Intersects(WindowRectangle))
             {
                 IsMouseOver = true;

@@ -12,10 +12,7 @@ namespace Checkers.CheckersGame.History;
 
 public static class GamePersistence
 {
-    private static readonly string SaveDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "Checkers",
-        "Saves");
+    private static readonly string SaveDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
 
     static GamePersistence()
     {

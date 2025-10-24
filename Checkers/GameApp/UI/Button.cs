@@ -35,7 +35,6 @@ namespace Checkers.UI
 
         public Button(Rectangle buttonRectangle, string text)
             : base(buttonRectangle)
-
         {
             Text = text;
         }
@@ -102,8 +101,6 @@ namespace Checkers.UI
             int currY = WindowRectangle.Y;
             if (Enabled)
             {
-
-
                 spriteBatch.Draw(activeTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
