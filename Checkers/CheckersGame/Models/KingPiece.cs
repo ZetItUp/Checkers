@@ -11,6 +11,7 @@ namespace Checkers.CheckersGame.Models
     {
         public KingPiece(PieceColor color, Position position) : base(color, position)
         {
+            this.IsKing = true;
         }
 
         int[] directionRows = { -1, 1 };

@@ -20,27 +20,66 @@ namespace Checkers.CheckersGame.Validation
         public bool ValidateMove(Position from, Position to, Board board, Player player)
         {
             var piece = board.GetPiece(from);
-            
+
             if(!IsPieceOwnedByPlayer(piece, player))
                 return false;
             if(!IsDestinationEmpty(board, to))
                 return false;
             if(!IsMoveInValidList(piece, to, board))
                 return false;
-            
-            //kolla om vi måste ta
+
+            // Om det är ett capture-drag, validera att det finns en motståndarens pjäs att ta
+            if (IsCapture(from, to))
+            {
+                var capturedPosition = GetCapturedPosition(from, to);
+                if (capturedPosition.HasValue)
+                {
+                    var capturedPiece = board.GetPiece(capturedPosition.Value);
+
+                    // Det måste finnas en pjäs på captured-positionen
+                    if (capturedPiece == null)
+                        return false;
+
+                    // Den tagna pjäsen måste vara motståndarens (motsatt färg)
+                    if (capturedPiece.Color == player.Color)
+                        return false;
+                }
+            }
+
+            //kolla om vi måste ta (forced captures)
             if (_ruleSet.ForcedCaptures){
+                // Kolla om det finns några GILTIGA captures för spelaren
+                bool hasValidCapture = false;
                 var playerPieces = board.GetAllPieces(player.Color);
 
                 foreach (var p in playerPieces){
-                    var validMoves = p.GetValidMoves(board);
-                    foreach (var validMove in validMoves)
+                    var possibleMoves = p.GetValidMoves(board);
+                    foreach (var possibleMove in possibleMoves)
                     {
-                        if (IsCapture(p.Position, validMove))
+                        // Är det ett capture-drag?
+                        if (IsCapture(p.Position, possibleMove))
                         {
-                            return IsCapture(from, to);
-                        }    
+                            // Kolla om det är ett GILTIGT capture (finns motståndarpjäs)
+                            var capturedPos = GetCapturedPosition(p.Position, possibleMove);
+                            if (capturedPos.HasValue)
+                            {
+                                var capturedPiece = board.GetPiece(capturedPos.Value);
+                                // Finns det en motståndarpjäs att ta?
+                                if (capturedPiece != null && capturedPiece.Color != player.Color)
+                                {
+                                    hasValidCapture = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
+                    if (hasValidCapture) break;
+                }
+
+                // Om det finns giltiga captures, måste detta drag OCKSÅ vara ett capture
+                if (hasValidCapture)
+                {
+                    return IsCapture(from, to);
                 }
             }
             return true;

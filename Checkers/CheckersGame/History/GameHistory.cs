@@ -79,12 +79,17 @@ namespace Checkers.CheckersGame.History
 
         private void ResetBoard(Board board)
         {
+            // Ta bara bort pjäser från rutor som faktiskt har pjäser
             for (int row = 0; row < board.Size; row++)
             {
                 for (int col = 0; col < board.Size; col++)
                 {
-                    board.RemovePiece(new Position(row, col));    
-                }    
+                    var position = new Position(row, col);
+                    if (board.GetPiece(position) != null)
+                    {
+                        board.RemovePiece(position);
+                    }
+                }
             }
 
             var initalPieces = _initialBoard.GetAllPieces();
@@ -110,8 +115,10 @@ namespace Checkers.CheckersGame.History
                 var piece = board.GetPiece(move.To);
                 if (piece != null && !piece.IsKing)
                 {
-                    var kingPiece = new KingPiece(piece.Color, piece.Position);
-                    board.PlacePiece(kingPiece, kingPiece.Position);
+                    // Ta bort RegularPiece först innan vi placerar KingPiece
+                    board.RemovePiece(move.To);
+                    var kingPiece = new KingPiece(piece.Color, move.To);
+                    board.PlacePiece(kingPiece, move.To);
                 }
             }
         }

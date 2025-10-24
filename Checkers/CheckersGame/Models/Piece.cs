@@ -13,7 +13,7 @@ namespace Checkers.CheckersGame.Models
 
         public Position Position { get; set; }
 
-        public readonly bool IsKing;
+        public bool IsKing { get; protected set; }
 
         public Piece(PieceColor color, Position position)
         {

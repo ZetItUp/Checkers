@@ -12,14 +12,14 @@ namespace Checkers.CheckersGame.GameService
 {
     public class GameService
     {
-        private Board _board;
-        private Player _player1;
-        private Player _player2;
-        private Player _currentPlayer;
-        private MoveValidator _moveValidator;
-        private GameHistory _gameHistory;
+        private Board? _board;
+        private Player? _player1;
+        private Player? _player2;
+        private Player? _currentPlayer;
+        private MoveValidator? _moveValidator;
+        private GameHistory? _gameHistory;
         private GameStatus _gameStatus;
-        private RuleSet _ruleSet; 
+        private RuleSet? _ruleSet; 
         //RuleSet satt till public så gui kan läsa 
         public RuleSet RuleSet{ get; private set; } // blir en lista sen när vi implementerar factory 
                                                     // för att skapa regler från fil
@@ -148,6 +148,38 @@ namespace Checkers.CheckersGame.GameService
             return _gameHistory;
         }
 
+        public List<Position> GetValidMovesForPiece(Position position)
+        {
+            var validMoves = new List<Position>();
+
+            // Kolla om spelet är i gång
+            if (_gameStatus != GameStatus.InProgress)
+                return validMoves;
+
+            // Hämta pjäsen på positionen
+            var piece = _board?.GetPiece(position);
+            if (piece == null)
+                return validMoves;
+
+            // Kolla att pjäsen tillhör nuvarande spelaren
+            if (piece.Color != _currentPlayer?.Color)
+                return validMoves;
+
+            // Hämta alla möjliga drag från pjäsen
+            var potentialMoves = piece.GetValidMoves(_board);
+
+            // Filtrera bara de drag som är faktiskt giltiga enligt MoveValidator
+            foreach (var move in potentialMoves)
+            {
+                if (_moveValidator != null && _moveValidator.ValidateMove(position, move, _board, _currentPlayer))
+                {
+                    validMoves.Add(move);
+                }
+            }
+
+            return validMoves;
+        }
+
         private void PromoteToKing(Position position, Piece piece)
         {
             _board.RemovePiece(position);
@@ -159,7 +191,11 @@ namespace Checkers.CheckersGame.GameService
             var capturedPosition = _moveValidator.GetCapturedPosition(from, to);
             if (capturedPosition.HasValue){
                 var capturedPiece = _board.GetPiece(capturedPosition.Value);
-                _board.RemovePiece(capturedPosition.Value);
+                // Ta bara bort pjäsen om det faktiskt finns en där
+                if (capturedPiece != null)
+                {
+                    _board.RemovePiece(capturedPosition.Value);
+                }
                 return capturedPiece;
             }
             return null;

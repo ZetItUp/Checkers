@@ -15,6 +15,8 @@ namespace Checkers.CheckersGame.Models
             this.Color = color;
 
             this.Position = position;
+
+            this.IsKing = false;
         }
 
         public override Piece Clone()
@@ -37,33 +39,21 @@ namespace Checkers.CheckersGame.Models
         {
             var forwardMoves = new List<Position>();
 
-            int directionBlack = (Color == PieceColor.Black) ? -1 : 1;
-            
-            int directionRed = (Color == PieceColor.Red) ? 1 : -1;
-            
-            Position forwardMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 1);
-            Position forwardMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 1);
-            Position forwardMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 1);
-            Position forwardMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 1);
+            // Svarta pjäser rör sig NER (rad ökar), Röda pjäser rör sig UPP (rad minskar)
+            int direction = (Color == PieceColor.Black) ? 1 : -1;
 
-            if (forwardMoveLeftBlack.IsValid(board.Size))
+            // Beräkna de två diagonala fram-dragen
+            Position forwardLeft = new Position(Position.Row + direction, Position.Column - 1);
+            Position forwardRight = new Position(Position.Row + direction, Position.Column + 1);
+
+            if (forwardLeft.IsValid(board.Size))
             {
-                forwardMoves.Add(forwardMoveLeftBlack);
+                forwardMoves.Add(forwardLeft);
             }
 
-            if (forwardMoveRightBlack.IsValid(board.Size))
+            if (forwardRight.IsValid(board.Size))
             {
-                forwardMoves.Add(forwardMoveRightBlack);
-            }
-
-            if (forwardMoveLeftRed.IsValid(board.Size))
-            {
-                forwardMoves.Add(forwardMoveLeftRed);
-            }
-
-            if (forwardMoveRightRed.IsValid(board.Size))
-            {
-                forwardMoves.Add(forwardMoveRightRed);
+                forwardMoves.Add(forwardRight);
             }
 
             return forwardMoves;
@@ -72,33 +62,22 @@ namespace Checkers.CheckersGame.Models
         private List<Position> GetCaptureMoves(Board board)
         {
             var captureMoves = new List<Position>();
-            
-            int directionBlack = (Color == PieceColor.Black) ? -2 : 2;
-            int directionRed = (Color == PieceColor.Black) ? 2 : -2;
-            
-            Position captureMoveLeftBlack = new Position(Position.Row + directionBlack, Position.Column - 2);
-            Position captureMoveRightBlack = new Position(Position.Row + directionBlack, Position.Column + 2);
-            Position captureMoveLeftRed = new Position(Position.Row + directionRed, Position.Column + 2);
-            Position captureMoveRightRed = new Position(Position.Row + directionRed, Position.Column - 2);
 
-            if (captureMoveLeftBlack.IsValid(board.Size))
+            // Svarta pjäser tar NER (rad ökar med 2), Röda pjäser tar UPP (rad minskar med 2)
+            int direction = (Color == PieceColor.Black) ? 2 : -2;
+
+            // Beräkna de två diagonala landningspositionerna för capture (hoppa över motståndarens pjäs)
+            Position captureLeft = new Position(Position.Row + direction, Position.Column - 2);
+            Position captureRight = new Position(Position.Row + direction, Position.Column + 2);
+
+            if (captureLeft.IsValid(board.Size))
             {
-                captureMoves.Add(captureMoveLeftBlack);
+                captureMoves.Add(captureLeft);
             }
 
-            if (captureMoveRightBlack.IsValid(board.Size))
+            if (captureRight.IsValid(board.Size))
             {
-                captureMoves.Add(captureMoveRightBlack);
-            }
-
-            if (captureMoveLeftRed.IsValid(board.Size))
-            {
-                captureMoves.Add(captureMoveLeftRed);
-            }
-
-            if (captureMoveRightRed.IsValid(board.Size))
-            {
-                captureMoves.Add(captureMoveRightRed);
+                captureMoves.Add(captureRight);
             }
 
             return captureMoves;

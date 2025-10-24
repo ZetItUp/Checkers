@@ -119,10 +119,11 @@ namespace Checkers.GameApp.Screens
                         isPieceSelected = false;
                         return;
                     }
-                        
+
                     isPieceSelected = true;
                     selectedPosition = new Position(mousePositionY, mousePositionX);
-                    validMoves = hoveredPiece.GetValidMoves(_gameService.GetBoard());
+                    // Använd GameService för att få bara GILTIGA drag
+                    validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
                 }
                 else
                 {
