@@ -22,6 +22,12 @@ public static class GamePersistence
     /// Sparar ett spel automatiskt med timestamp som filnamn
     public static string SaveGame(GameService.GameService game)
     {
+        // Säkerställ att Save-katalogen finns
+        if (!Directory.Exists(SaveDirectory))
+        {
+            Directory.CreateDirectory(SaveDirectory);
+        }
+
         string fileName = $"game_{DateTime.Now:yyyy-MM-dd_HHmmss_fff}";
         var gameState = SerializeGame(game);
         string json = JsonSerializer.Serialize(gameState, new JsonSerializerOptions { WriteIndented = true });
