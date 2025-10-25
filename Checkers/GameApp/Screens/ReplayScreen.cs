@@ -35,6 +35,7 @@ namespace Checkers.GameApp.Screens
         Texture2D uiTexture;
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
+        Button btnAutoPlay = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Auto Play: ON");
         Button btnReset = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Reset");
         Button btnNextMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Next >>");
         Button btnPreviousMove = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "<< Previous");
@@ -47,7 +48,8 @@ namespace Checkers.GameApp.Screens
         float boardScale = 1f;
         float drawScale = 1f;
 
-        float autoPlayTimer = 300f;
+        float autoPlayTimer = 500f;
+        float lastAutoPlayTime = 0f;
         bool isAutoPlaying = false;
 
         public ReplayScreen()
@@ -56,8 +58,23 @@ namespace Checkers.GameApp.Screens
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnNextMove.Clicked += BtnNextMove_Clicked;
             btnPreviousMove.Clicked += BtnPreviousMove_Clicked;
-            btnReset.Clicked += BtnReset_Clicked;  
+            btnReset.Clicked += BtnReset_Clicked;
+            btnAutoPlay.Clicked += btnAutoPlay_Clicked;
             cboGames.SelectedItemChanged += CboGames_SelectedItemChanged;
+        }
+
+        private void btnAutoPlay_Clicked(object? sender, EventArgs e)
+        {
+            isAutoPlaying = !isAutoPlaying;
+
+            if(isAutoPlaying)
+            {
+                btnAutoPlay.Text = "Auto Play: ON";
+            }
+            else
+            {
+                btnAutoPlay.Text = "Auto Play: OFF";
+            }
         }
 
         private void BtnReset_Clicked(object? sender, EventArgs e)
@@ -116,6 +133,7 @@ namespace Checkers.GameApp.Screens
             btnReset.LoadContent(content);
             btnNextMove.LoadContent(content);
             btnPreviousMove.LoadContent(content);
+            btnAutoPlay.LoadContent(content);
             cboGames.LoadContent(content);
             cboGames.SelectedItemText = "<Select a Previous Game>";
 
@@ -133,6 +151,7 @@ namespace Checkers.GameApp.Screens
             btnReset = null;
             btnNextMove = null;
             btnPreviousMove = null;
+            btnAutoPlay = null;
         }
 
         public override void Update(GameTime gameTime)
@@ -141,6 +160,7 @@ namespace Checkers.GameApp.Screens
             btnReset?.Update(gameTime);
             btnNextMove?.Update(gameTime);
             btnPreviousMove?.Update(gameTime);
+            btnAutoPlay?.Update(gameTime);
             cboGames?.Update(gameTime);
 
             if(_replayService == null)
@@ -148,8 +168,27 @@ namespace Checkers.GameApp.Screens
                 return;
             }
 
-            btnNextMove.Enabled = _replayService != null && !_replayService.IsAtEnd;
-            btnPreviousMove.Enabled = _replayService != null && !_replayService.IsAtStart;
+            btnNextMove.Enabled = _replayService != null && !_replayService.IsAtEnd && !isAutoPlaying;
+            btnPreviousMove.Enabled = _replayService != null && !_replayService.IsAtStart && !isAutoPlaying;
+            btnAutoPlay.Enabled = _replayService != null;
+
+            if (isAutoPlaying)
+            {
+                lastAutoPlayTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (lastAutoPlayTime >= autoPlayTimer)
+                {
+                    lastAutoPlayTime = 0f;
+                    if(!_replayService.IsAtEnd)
+                    {
+                        _replayService.StepForward();
+                    }
+                    else
+                    {
+                        isAutoPlaying = false;
+                        btnAutoPlay.Text = "Auto Play: OFF";
+                    }
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -198,6 +237,7 @@ namespace Checkers.GameApp.Screens
             btnReset.Draw(spriteBatch);
             btnNextMove.Draw(spriteBatch);
             btnPreviousMove.Draw(spriteBatch);
+            btnAutoPlay.Draw(spriteBatch);
 
             cboGames.Draw(spriteBatch);
             spriteBatch.End();
