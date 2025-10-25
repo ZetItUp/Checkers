@@ -291,7 +291,7 @@ namespace Checkers.CheckersGame.GameService
 
         public void EndTurn()
         {
-            if (_gameStatus != GameStatus.InProgress)
+            if (_gameStatus != GameStatus.InProgress || RuleSet.ForcedCaptures)
                 return;
 
             _isInMultiJump = false;
