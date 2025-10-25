@@ -121,6 +121,11 @@ namespace Checkers.GameApp.UI
         {
             base.Draw(spriteBatch);
 
+            if(activeTexture == null)
+            {
+                activeTexture = buttonTexture;
+            }
+
             int currX = WindowRectangle.X;
             int currY = WindowRectangle.Y;
             if (Enabled)

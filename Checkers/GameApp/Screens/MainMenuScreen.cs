@@ -16,7 +16,8 @@ namespace Checkers.GameApp.Screens
         float bgScale = 2.0f;
         int bgWidth = 0;
 
-        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth /2 - (200/2), MainGame.WindowHeight /2, 200, 80), "Start Game");
+        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth /2 - (250 / 2), MainGame.WindowHeight / 2, 250, 80), "Start Game");
+        Button btnReplayGames= new Button(new Rectangle(MainGame.WindowWidth / 2 - (250 / 2), MainGame.WindowHeight / 2 + 120, 250, 80), "Replay Games");
         Button btnExitGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 70, 120, 50), "Exit Game");
 
         public MainMenuScreen()
@@ -24,6 +25,12 @@ namespace Checkers.GameApp.Screens
         {
             btnStartGame.Clicked += BtnStartGame_Clicked;
             btnExitGame.Clicked += BtnExitGame_Clicked;
+            btnReplayGames.Clicked += BtnReplayGames_Clicked;
+        }
+
+        private void BtnReplayGames_Clicked(object? sender, EventArgs e)
+        {
+            ScreenManager.ChangeScreen(ScreenID.Replay);
         }
 
         private void BtnExitGame_Clicked(object? sender, EventArgs e)
@@ -42,6 +49,7 @@ namespace Checkers.GameApp.Screens
             bgWidth = (int)(background.Width * bgScale);
             btnStartGame.LoadContent(content);
             btnExitGame.LoadContent(content);
+            btnReplayGames.LoadContent(content);
         }
 
         public override void UnloadContent()
@@ -52,6 +60,7 @@ namespace Checkers.GameApp.Screens
         public override void Update(GameTime gameTime)
         {
             btnStartGame.Update(gameTime);
+            btnReplayGames.Update(gameTime);
             btnExitGame.Update(gameTime);
         }
 
@@ -65,10 +74,10 @@ namespace Checkers.GameApp.Screens
             spriteBatch.End();
 
             spriteBatch.Begin(SpriteSortMode.Deferred);
-
-
             btnStartGame.Draw(spriteBatch);
+            btnReplayGames.Draw(spriteBatch);
             btnExitGame.Draw(spriteBatch);
+
             // Här slutar ritningen
 
             spriteBatch.End();
