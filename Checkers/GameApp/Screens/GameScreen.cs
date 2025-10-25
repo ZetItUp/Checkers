@@ -11,6 +11,7 @@ using Checkers.UI;
 using Checkers.GameApp.Helpers;
 using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.Models;
+using Checkers.CheckersGame.History;
 
 namespace Checkers.GameApp.Screens
 {
@@ -35,7 +36,8 @@ namespace Checkers.GameApp.Screens
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
         Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
-        Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn"); 
+        Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
+        Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game"); 
 
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false; // tracker för att kolla om vi är i ett multi-jump
@@ -58,6 +60,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Clicked += BtnUndoMove_Clicked;
             btnRestartGame.Clicked += BtnRestartGame_Clicked;
             btnEndTurn.Clicked += BtnEndTurn_Clicked;
+            btnSaveGame.Clicked += BtnSaveGame_Clicked;
         }
 
         private void BtnEndTurn_Clicked(object? sender, EventArgs e)
@@ -102,6 +105,24 @@ namespace Checkers.GameApp.Screens
             }
         }
 
+        private void BtnSaveGame_Clicked(object? sender, EventArgs e)
+        {
+            if (_gameService != null)
+            {
+                try
+                {
+                    string fileName = GamePersistence.SaveGame(_gameService);
+                    Console.WriteLine($"Game saved successfully as: {fileName}.json");
+                    Console.WriteLine($"Save location: {System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves")}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error saving game: {ex.Message}");
+                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                }
+            }
+        }
+
         public override void LoadContent(ContentManager content)
         {
             _gameService = new GameService();
@@ -127,6 +148,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.LoadContent(content);
             btnRestartGame.LoadContent(content);
             btnEndTurn.LoadContent(content);
+            btnSaveGame.LoadContent(content);
 
             btnRestartGame.Enabled = false;
             btnRestartGame.IsVisible = false;
@@ -134,6 +156,7 @@ namespace Checkers.GameApp.Screens
             btnStartGame.IsVisible = true;
             btnEndTurn.Enabled = false;
             btnEndTurn.IsVisible = false;
+            btnSaveGame.Enabled = true;
 
             _gameService.InitializeGame("Player 1", "Player 2");
         }
@@ -149,6 +172,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Update(gameTime);
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
+            btnSaveGame.Update(gameTime);
 
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
@@ -280,6 +304,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Draw(spriteBatch);
             btnRestartGame.Draw(spriteBatch);
             btnEndTurn.Draw(spriteBatch);
+            btnSaveGame.Draw(spriteBatch);
             spriteBatch.End();
         }
     }
