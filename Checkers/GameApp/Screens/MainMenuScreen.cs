@@ -16,9 +16,9 @@ namespace Checkers.GameApp.Screens
         float bgScale = 2.0f;
         int bgWidth = 0;
 
-        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth /2 - (250 / 2), MainGame.WindowHeight / 2, 250, 80), "Start Game");
-        Button btnReplayGames= new Button(new Rectangle(MainGame.WindowWidth / 2 - (250 / 2), MainGame.WindowHeight / 2 + 120, 250, 80), "Replay Games");
-        Button btnExitGame = new Button(new Rectangle(MainGame.WindowWidth - 200, MainGame.WindowHeight - 70, 120, 50), "Exit Game");
+        Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth / 2 - (250 / 2), MainGame.WindowHeight / 2 - 50, 250, 80), "Start Game");
+        Button btnReplayGames= new Button(new Rectangle(MainGame.WindowWidth / 2 - (250 / 2), MainGame.WindowHeight / 2 - 50 + 100, 250, 80), "Replay Games");
+        Button btnExitGame = new Button(new Rectangle(MainGame.WindowWidth - 160, MainGame.WindowHeight - 70, 140, 50), "Exit Game");
 
         public MainMenuScreen()
             : base()
