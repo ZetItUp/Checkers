@@ -54,7 +54,7 @@ namespace Checkers.CheckersGame.GameService
         {
             if(_gameStatus != GameStatus.InProgress)
                 return false;
-            if(!_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
+            if(_moveValidator != null && _board != null && _currentPlayer != null && !_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
                 return false;
 
             //skapa ett move object för att spara movet
@@ -69,18 +69,18 @@ namespace Checkers.CheckersGame.GameService
             }
 
             //flytta pjäsen på Board
-            _board.MovePiece(from, to);
+            _board?.MovePiece(from, to);
 
 
             //kolla om pjäsen ska bli en Dam (king)
-            var piece = _board.GetPiece(to);
+            var piece = _board?.GetPiece(to);
             if (piece != null && !piece.IsKing && IsPromotionPosition(to, piece.Color))
             {
                 PromoteToKing(to, piece);
                 move.WasPromoted = true;
             }
             //spara draget i history
-            _gameHistory.RecordMove(move);
+            _gameHistory?.RecordMove(move);
 
             //kolla om det är en vinnare
             var winner = CheckWinner();
@@ -110,7 +110,7 @@ namespace Checkers.CheckersGame.GameService
 
         public bool Undo()
         {
-            if(_gameStatus != GameStatus.InProgress)
+            if(_gameHistory == null || _board == null || _gameStatus != GameStatus.InProgress)
                 return false;
 
             bool success = _gameHistory.Undo(_board);
@@ -124,10 +124,13 @@ namespace Checkers.CheckersGame.GameService
             return success;
         }
 
-        public Player CheckWinner()
+        public Player? CheckWinner()
         {
+            if(_board == null || _player1 == null || _player2 == null || _moveValidator == null)
+                return null;
+
             //om spelaren inte har nå pjäserkvar så förlorar dom
-            if(_board.CountPieces(_player1.Color) == 0)
+            if (_board.CountPieces(_player1.Color) == 0)
                return _player2;
 
             if(_board.CountPieces(_player2.Color) == 0)
@@ -149,15 +152,20 @@ namespace Checkers.CheckersGame.GameService
 
         public void SwitchTurn()
         {
+            if(_currentPlayer == null || _player1 == null || _player2 == null)
+            {
+                throw new InvalidOperationException("Current player or players are not initialized.");
+            }
+
             _currentPlayer = _currentPlayer.Color == _player1.Color ? _player2 : _player1;
         }
 
-        public Board GetBoard()
+        public Board? GetBoard()
         {
             return _board;
         }
 
-        public Player GetCurrentPlayer()
+        public Player? GetCurrentPlayer()
         {
             return _currentPlayer;    
         }
@@ -167,7 +175,7 @@ namespace Checkers.CheckersGame.GameService
             return _gameStatus;
         }
 
-        public GameHistory GetGameHistory()
+        public GameHistory? GetGameHistory()
         {
             return _gameHistory;
         }
@@ -199,6 +207,10 @@ namespace Checkers.CheckersGame.GameService
             if (piece.Color != _currentPlayer?.Color)
                 return validMoves;
 
+            // Kolla att brädet och nuvarande spelare är initierade
+            if (_board == null || _currentPlayer == null)
+                return validMoves;
+
             // Hämta alla möjliga drag från pjäsen
             var potentialMoves = piece.GetValidMoves(_board);
 
@@ -227,22 +239,28 @@ namespace Checkers.CheckersGame.GameService
 
         private void PromoteToKing(Position position, Piece piece)
         {
-            _board.RemovePiece(position);
+            _board?.RemovePiece(position);
             var kingPiece = new KingPiece(piece.Color, position);
-            _board.PlacePiece(kingPiece, position);
+            _board?.PlacePiece(kingPiece, position);
         }
-        private Piece HandleCapture(Position from, Position to)
+        private Piece? HandleCapture(Position from, Position to)
         {
+            if (_moveValidator == null || _board == null)
+                return null;
+
             var capturedPosition = _moveValidator.GetCapturedPosition(from, to);
             if (capturedPosition.HasValue){
                 var capturedPiece = _board.GetPiece(capturedPosition.Value);
+            
                 // Ta bara bort pjäsen om det faktiskt finns en där
                 if (capturedPiece != null)
                 {
                     _board.RemovePiece(capturedPosition.Value);
                 }
+
                 return capturedPiece;
             }
+
             return null;
         }
 
@@ -258,8 +276,8 @@ namespace Checkers.CheckersGame.GameService
 
         private bool CanPieceCaptureAgain(Position piecePosition)
         {
-            var piece = _board.GetPiece(piecePosition);
-            if (piece == null || piece.Color != _currentPlayer.Color)
+            var piece = _board?.GetPiece(piecePosition);
+            if (_board == null || _moveValidator == null || piece == null || _currentPlayer == null || piece.Color != _currentPlayer.Color)
                 return false;
 
             var validMoves = piece.GetValidMoves(_board);

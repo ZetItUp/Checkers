@@ -15,15 +15,15 @@ namespace Checkers.GameApp.UI
     {
         public event EventHandler? SelectedItemChanged;
 
-        Texture2D buttonTexture;
-        Texture2D buttonHoverTexture;
-        Texture2D buttonPressedTexture;
-        SpriteFont buttonFont;
+        Texture2D? buttonTexture;
+        Texture2D? buttonHoverTexture;
+        Texture2D? buttonPressedTexture;
+        SpriteFont? buttonFont;
 
-        Texture2D activeTexture;
+        Texture2D? activeTexture;
 
         bool showList = false;
-        ItemList itemList;
+        ItemList? itemList;
         public string SelectedItemText = string.Empty;
 
         public Color FontColor { get; set; } = Color.Black;
@@ -42,7 +42,8 @@ namespace Checkers.GameApp.UI
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
-            itemList.LoadContent(content);
+            itemList?.LoadContent(content);
+            activeTexture = buttonTexture;
         }
 
         public override void Update(GameTime gameTime)
@@ -77,22 +78,25 @@ namespace Checkers.GameApp.UI
             {
                 showList = !showList;
             }
-            
 
-            if (showList)
+
+            if (itemList != null)
             {
-                itemList.Update(gameTime);
-                if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left) && itemList.SelectedIndex >= 0)
+                if (showList)
                 {
-                    showList = false;
-                    SelectedItemText = itemList.Items[itemList.SelectedIndex];
-                    SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+                    itemList.Update(gameTime);
+                    if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left) && itemList.SelectedIndex >= 0)
+                    {
+                        showList = false;
+                        SelectedItemText = itemList.Items[itemList.SelectedIndex];
+                        SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+                    }
                 }
-            }
 
-            if (itemList.IsVisible != showList)
-            {
-                itemList.IsVisible = showList;
+                if (itemList.IsVisible != showList)
+                {
+                    itemList.IsVisible = showList;
+                }
             }
 
             if (!IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
@@ -103,18 +107,24 @@ namespace Checkers.GameApp.UI
 
         public void AddItem(string item)
         {
-            itemList.Items.Add(item);
+            itemList?.Items.Add(item);
         }
 
         public void RemoveItem(string item)
         {
-            itemList.Items.Remove(item);
+            itemList?.Items.Remove(item);
         }
 
         public void ClearItems()
         {
-            itemList.Items.Clear();
+            itemList?.Items.Clear();
             SelectedItemText = string.Empty;
+        }
+
+        public override void UnloadContent()
+        {
+            base.UnloadContent();
+            itemList?.UnloadContent();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -123,7 +133,7 @@ namespace Checkers.GameApp.UI
 
             if(activeTexture == null)
             {
-                activeTexture = buttonTexture;
+                return;
             }
 
             int currX = WindowRectangle.X;
@@ -153,17 +163,20 @@ namespace Checkers.GameApp.UI
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
             }
 
-            if (showList)
+            if (itemList != null && buttonFont != null)
             {
-                itemList.Draw(spriteBatch);
-            }
+                if (showList)
+                {
+                    itemList.Draw(spriteBatch);
+                }
 
-            // Draw selected item text
-            if (!string.IsNullOrEmpty(SelectedItemText))
-            {
-                Vector2 textSize = buttonFont.MeasureString(SelectedItemText);
-                Vector2 textPosition = new Vector2(currX + (WindowRectangle.Width - textSize.X) / 2, currY + (WindowRectangle.Height - textSize.Y) / 2);
-                spriteBatch.DrawString(buttonFont, SelectedItemText, textPosition, FontColor);
+                // Draw selected item text
+                if (!string.IsNullOrEmpty(SelectedItemText))
+                {
+                    Vector2 textSize = buttonFont.MeasureString(SelectedItemText);
+                    Vector2 textPosition = new Vector2(currX + (WindowRectangle.Width - textSize.X) / 2, currY + (WindowRectangle.Height - textSize.Y) / 2);
+                    spriteBatch.DrawString(buttonFont, SelectedItemText, textPosition, FontColor);
+                }
             }
         }
     }

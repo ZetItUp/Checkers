@@ -21,6 +21,11 @@ namespace Checkers.CheckersGame.Validation
         {
             var piece = board.GetPiece(from);
 
+            if (piece == null)
+            {
+                return false;
+            }
+
             if(!IsPieceOwnedByPlayer(piece, player))
                 return false;
             if(!IsDestinationEmpty(board, to))

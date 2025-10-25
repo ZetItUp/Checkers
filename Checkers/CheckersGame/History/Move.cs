@@ -8,7 +8,7 @@ public class Move
 {
     public Position From{ get; }    
     public Position To{ get; }
-    public Piece CapturedPiece { get; set; }
+    public Piece? CapturedPiece { get; set; }
     public bool WasPromoted { get; set; }
     public DateTime TimeStamp { get; set; }
     public int MoveNumber { get; set; }

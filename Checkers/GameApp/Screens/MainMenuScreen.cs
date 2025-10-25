@@ -12,7 +12,7 @@ namespace Checkers.GameApp.Screens
 {
     public class MainMenuScreen : Screen
     {
-        Texture2D background;
+        Texture2D? background;
         float bgScale = 2.0f;
         int bgWidth = 0;
 
@@ -69,7 +69,10 @@ namespace Checkers.GameApp.Screens
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
             // Här ritas allt ut
-            spriteBatch.Draw(background, new Rectangle(MainGame.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
+            if (background != null)
+            {
+                spriteBatch.Draw(background, new Rectangle(MainGame.WindowWidth / 2 - bgWidth / 2, 0, bgWidth, (int)(background.Height * bgScale)), Color.White);
+            }
 
             spriteBatch.End();
 

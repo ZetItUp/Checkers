@@ -84,7 +84,7 @@ public class ReplayService
 
 
     /// Hämta brädet i sitt nuvarande tillstånd
-    public Board GetBoard() => _board;
+    public Board? GetBoard() => _board;
 
 
     private void ExecuteMove(Position from, Position to)

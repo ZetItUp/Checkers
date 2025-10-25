@@ -13,9 +13,9 @@ namespace Checkers.GameApp.UI
 {
     internal class ItemList : WindowComponent
     {
-        private Texture2D buttonTexture;
-        private SpriteFont itemFont;
-        private Texture2D activeTexture;
+        private Texture2D? buttonTexture;
+        private SpriteFont? itemFont;
+        private Texture2D? activeTexture;
 
         public List<string> Items { get; private set; } = new List<string>();
         public int SelectedIndex { get; private set; } = -1;
@@ -45,6 +45,15 @@ namespace Checkers.GameApp.UI
             buttonTexture = content.Load<Texture2D>("UINormal");
         }
 
+        public override void UnloadContent()
+        {
+            base.UnloadContent();
+            Items.Clear();
+            SelectedIndex = -1;
+            hoveredIndex = -1;
+            _scrollOffset = 0;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -62,6 +71,11 @@ namespace Checkers.GameApp.UI
             hoveredIndex = -1;
 
             if (!Enabled)
+            {
+                return;
+            }
+
+            if(itemFont == null)
             {
                 return;
             }

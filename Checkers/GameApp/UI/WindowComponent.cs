@@ -44,6 +44,12 @@ namespace Checkers.UI
 
         }
 
+        public virtual void UnloadContent()
+        {
+            IsVisible = true;
+            Enabled = true;
+        }
+
         public virtual void Update(GameTime gameTime)
         {
             if(MouseHelper.MouseRectangle().Intersects(WindowRectangle))

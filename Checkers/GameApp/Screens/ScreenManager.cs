@@ -11,9 +11,9 @@ namespace Checkers.GameApp.Screens
 {
     public static class ScreenManager
     {
-        private static Screen _currentScreen;
-        private static ContentManager _content;
-        private static SpriteBatch _spriteBatch;
+        private static Screen? _currentScreen;
+        private static ContentManager? _content;
+        private static SpriteBatch? _spriteBatch;
 
         private static Dictionary<ScreenID, Screen> _screens = new Dictionary<ScreenID, Screen>();
 
@@ -21,7 +21,7 @@ namespace Checkers.GameApp.Screens
         {
             get 
             { 
-                return _currentScreen; 
+                return _currentScreen!; 
             }
         }
 
@@ -39,7 +39,7 @@ namespace Checkers.GameApp.Screens
         {
             _currentScreen?.UnloadContent();
             _currentScreen = _screens[screenID];
-            _currentScreen.LoadContent(_content);
+            _currentScreen.LoadContent(_content!);
         }
 
         public static void Update(GameTime gameTime)
@@ -49,7 +49,7 @@ namespace Checkers.GameApp.Screens
 
         public static void Draw(GameTime gameTime)
         {
-            _currentScreen?.Draw(_spriteBatch, gameTime);
+            _currentScreen?.Draw(_spriteBatch!, gameTime);
         }
     }
 }

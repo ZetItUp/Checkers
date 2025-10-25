@@ -10,14 +10,13 @@ namespace Checkers
     public class MainGame : Game
     {
         public static string WindowTitle = "Checkers Game";
-        public static GraphicsDeviceManager graphicsDeviceMangager;
+        public static GraphicsDeviceManager? graphicsDeviceMangager;
         public static int WindowWidth = 1280;
         public static int WindowHeight = 720;
         public static bool ExitGame = false;
 
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-        private ContentManager _content;
+        private SpriteBatch? _spriteBatch;
 
         public MainGame()
         {
@@ -33,7 +32,6 @@ namespace Checkers
         protected override void Initialize()
         {
             base.Initialize();
-            _content = Content;
             _graphics.PreferredBackBufferWidth = WindowWidth;
             _graphics.PreferredBackBufferHeight = WindowHeight;
             _graphics.ApplyChanges();

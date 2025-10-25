@@ -14,18 +14,15 @@ namespace Checkers.UI
     {
         public event EventHandler? Clicked;
 
-        Texture2D buttonTexture;
-        Texture2D buttonHoverTexture;
-        Texture2D buttonPressedTexture;
-        SpriteFont buttonFont;
+        Texture2D? buttonTexture;
+        Texture2D? buttonHoverTexture;
+        Texture2D? buttonPressedTexture;
+        SpriteFont? buttonFont;
 
-        Texture2D activeTexture;
-
-        public Color EnabledColor { get; set; } = Color.White;
-        public Color DisabledColor { get; set; } = Color.CadetBlue;
+        Texture2D? activeTexture;
 
         public string Text { get; set; } = "Button";
-        
+
 
         public Button(Rectangle buttonRectangle)
             : base(buttonRectangle)
@@ -46,19 +43,30 @@ namespace Checkers.UI
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
+            activeTexture = buttonTexture;
+        }
+
+        public override void UnloadContent()
+        {
+            base.UnloadContent();
+            buttonFont = null;
+            buttonTexture = null;
+            buttonHoverTexture = null;
+            buttonPressedTexture = null;
+            activeTexture = null;
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
+            if (activeTexture == null)
+            {
+                activeTexture = buttonTexture;
+            }
+
             if (!Enabled)
             {
-                if (activeTexture == null)
-                {
-                    activeTexture = buttonTexture;
-                }
-
                 return;
             }
 
@@ -125,13 +133,16 @@ namespace Checkers.UI
             }
 
             // Rita texten centrerad på knappen
-            Vector2 textSize = buttonFont.MeasureString(Text);
-            Vector2 textPosition = new Vector2(
-                WindowRectangle.X + (WindowRectangle.Width - textSize.X) / 2,
-                WindowRectangle.Y + (WindowRectangle.Height - textSize.Y) / 2
-            );
+            if (buttonFont != null)
+            {
+                Vector2 textSize = buttonFont.MeasureString(Text);
+                Vector2 textPosition = new Vector2(
+                    WindowRectangle.X + (WindowRectangle.Width - textSize.X) / 2,
+                    WindowRectangle.Y + (WindowRectangle.Height - textSize.Y) / 2
+                );
 
-            spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
+                spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
+            }
         }
     }
 }

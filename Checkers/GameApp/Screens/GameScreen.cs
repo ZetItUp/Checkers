@@ -47,7 +47,7 @@ namespace Checkers.GameApp.Screens
         float boardScale = 1f;
         float drawScale = 1f;
 
-        Position? selectedPosition;
+        Position selectedPosition;
         Player? currentPlayer;
         List<Position> validMoves = new List<Position>();
 
@@ -125,6 +125,11 @@ namespace Checkers.GameApp.Screens
 
         public override void LoadContent(ContentManager content)
         {
+            if(MainGame.graphicsDeviceMangager == null)
+            {
+                throw new Exception("GraphicsDeviceManager is not initialized.");
+            }
+
             _gameService = new GameService();
             boardSize = _gameService.RuleSet.BoardSize;
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
@@ -193,10 +198,11 @@ namespace Checkers.GameApp.Screens
 
             if (MouseHelper.MousePressed(MouseHelper.MouseButton.Left))
             {
-                var hoveredPiece = _gameService.GetBoard().GetPiece(new Position(mousePositionY, mousePositionX));
+                var board = _gameService.GetBoard();
+                var hoveredPiece = board?.GetPiece(new Position(mousePositionY, mousePositionX));
                 if (hoveredPiece != null)
                 {
-                    if(currentPlayer.Color != hoveredPiece.Color)
+                    if(currentPlayer != null && currentPlayer.Color != hoveredPiece.Color)
                     {
                         isPieceSelected = false;
                         return;
@@ -226,7 +232,7 @@ namespace Checkers.GameApp.Screens
 
                             // Kolla om samma spelare fortfarande är i tur (betyder multi-jump möjligt)
                             var newPlayer = _gameService.GetCurrentPlayer();
-                            if (previousPlayer.Color == newPlayer.Color)
+                            if (previousPlayer?.Color == newPlayer?.Color)
                             {
                                 // Spelaren kan ta igen! Auto-select pjäsen och aktivera multi-jump läge
                                 selectedPosition = moveToPosition;
@@ -258,7 +264,7 @@ namespace Checkers.GameApp.Screens
                 for(int x = 0; x < boardSize; x++)
                 {
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
-                    Texture2D cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
+                    Texture2D? cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
                     
                     spriteBatch.Draw(cellTexture, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, cellColor, 0f, Vector2.Zero, SpriteEffects.None, 1.0f);
                 }
@@ -266,21 +272,25 @@ namespace Checkers.GameApp.Screens
 
             if (_gameService != null && _gameService.GetGameStatus() == GameStatus.InProgress)
             {
-                var pieces = _gameService.GetBoard().GetAllPieces();
+                var board = _gameService.GetBoard();
+                var pieces = board?.GetAllPieces();
 
-                for (int i = 0; i < pieces.Count; i++)
+                if (pieces != null)
                 {
-                    var piece = pieces[i];
-                    Texture2D pieceTexture = null;
-                    if (piece.Color == PieceColor.Red)
+                    for (int i = 0; i < pieces.Count; i++)
                     {
-                        pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
+                        var piece = pieces[i];
+                        Texture2D? pieceTexture = null;
+                        if (piece.Color == PieceColor.Red)
+                        {
+                            pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
+                        }
+                        else
+                        {
+                            pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
+                        }
+                        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                     }
-                    else
-                    {
-                        pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
-                    }
-                    spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 }
 
                 if (isPieceSelected)
@@ -294,7 +304,10 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
-            spriteBatch.Draw(uiTexture, new Rectangle((int)(_gameService.RuleSet.BoardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            if (_gameService != null)
+            {
+                spriteBatch.Draw(uiTexture, new Rectangle((int)(_gameService.RuleSet.BoardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            }
 
             spriteBatch.End();
 

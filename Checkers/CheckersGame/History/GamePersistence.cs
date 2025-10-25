@@ -123,7 +123,7 @@ public static class GamePersistence
     private static GameSaveState SerializeGame(GameService.GameService game)
     {
         var history = game.GetGameHistory();
-        var moves = history.GetAllMoves();
+        var moves = history?.GetAllMoves();
 
         // Bestäm vinnare baserat på spelstatus
         string? winner = null;
@@ -131,8 +131,18 @@ public static class GamePersistence
         {
             // Den som är current player vann (eftersom SwitchTurn() aldrig anropades efter vinsten)
             var currentPlayer = game.GetCurrentPlayer();
-            winner = currentPlayer.Name;
+            if (currentPlayer != null)
+            {
+                winner = currentPlayer.Name;
+            }
+            else
+            {
+                winner = "Unnamed Player";
+            }
         }
+
+        if (moves == null)
+            moves = new List<Move>();
 
         return new GameSaveState
         {
