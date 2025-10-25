@@ -51,6 +51,20 @@ namespace Checkers.GameApp.Screens
             : base()
         {
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
+
+            cboGames.SelectedItemChanged += CboGames_SelectedItemChanged;
+        }
+
+        private void CboGames_SelectedItemChanged(object? sender, EventArgs e)
+        {
+            var savedGame = GamePersistence.LoadGameForReplay(cboGames.SelectedItemText);
+
+            if (savedGame == null)
+            {
+                return;
+            }
+
+            _replayService = new ReplayService(savedGame);
         }
 
         private void BtnMainMenu_Clicked(object sender, EventArgs e)

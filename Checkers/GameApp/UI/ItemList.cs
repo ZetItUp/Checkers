@@ -43,10 +43,6 @@ namespace Checkers.GameApp.UI
             base.LoadContent(content);
             itemFont = content.Load<SpriteFont>("Font14");
             buttonTexture = content.Load<Texture2D>("UINormal");
-            Items.Add("Item 1");
-            Items.Add("Item 2");
-            Items.Add("Item 3");
-            Items.Add("Item 4");
         }
 
         public override void Update(GameTime gameTime)
