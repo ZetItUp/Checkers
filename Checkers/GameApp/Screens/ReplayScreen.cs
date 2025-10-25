@@ -42,17 +42,37 @@ namespace Checkers.GameApp.Screens
 
         bool isPieceSelected = false;
 
-        int boardSize = 0;
+        int boardSize = 8;
         int cellSize = 32;
         float boardScale = 1f;
         float drawScale = 1f;
+
+        float autoPlayTimer = 300f;
+        bool isAutoPlaying = false;
 
         public ReplayScreen()
             : base()
         {
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
-
+            btnNextMove.Clicked += BtnNextMove_Clicked;
+            btnPreviousMove.Clicked += BtnPreviousMove_Clicked;
+            btnReset.Clicked += BtnReset_Clicked;  
             cboGames.SelectedItemChanged += CboGames_SelectedItemChanged;
+        }
+
+        private void BtnReset_Clicked(object? sender, EventArgs e)
+        {
+            _replayService?.ResetToStart();
+        }
+
+        private void BtnPreviousMove_Clicked(object? sender, EventArgs e)
+        {
+            _replayService?.StepBackward();
+        }
+
+        private void BtnNextMove_Clicked(object? sender, EventArgs e)
+        {
+            _replayService?.StepForward();
         }
 
         private void CboGames_SelectedItemChanged(object? sender, EventArgs e)
@@ -65,6 +85,7 @@ namespace Checkers.GameApp.Screens
             }
 
             _replayService = new ReplayService(savedGame);
+            _replayService.ResetToStart();
         }
 
         private void BtnMainMenu_Clicked(object sender, EventArgs e)
@@ -97,6 +118,13 @@ namespace Checkers.GameApp.Screens
             btnPreviousMove.LoadContent(content);
             cboGames.LoadContent(content);
             cboGames.SelectedItemText = "<Select a Previous Game>";
+
+            // Ladda in sparade spel för replay
+            var savedGames = GamePersistence.GetSavedGamesWithMetadata();
+            foreach (var game in savedGames)
+            {
+                cboGames.AddItem(game.FileName);
+            }
         }
         public override void UnloadContent()
         {
@@ -114,6 +142,14 @@ namespace Checkers.GameApp.Screens
             btnNextMove?.Update(gameTime);
             btnPreviousMove?.Update(gameTime);
             cboGames?.Update(gameTime);
+
+            if(_replayService == null)
+            {
+                return;
+            }
+
+            btnNextMove.Enabled = _replayService != null && !_replayService.IsAtEnd;
+            btnPreviousMove.Enabled = _replayService != null && !_replayService.IsAtStart;
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -132,37 +168,28 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
-            //if (_gameService != null && _gameService.GetGameStatus() == GameStatus.InProgress)
-            //{
-            //    var pieces = _gameService.GetBoard().GetAllPieces();
+            if (_replayService != null)
+            {
+                var pieces = _replayService.GetBoard().GetAllPieces();
 
-            //    for (int i = 0; i < pieces.Count; i++)
-            //    {
-            //        var piece = pieces[i];
-            //        Texture2D pieceTexture = null;
-            //        if (piece.Color == PieceColor.Red)
-            //        {
-            //            pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
-            //        }
-            //        else
-            //        {
-            //            pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
-            //        }
-            //        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
-            //    }
+                for(int i = 0; i < pieces.Count; i++)
+                {
+                    var piece = pieces[i];
+                    Texture2D pieceTexture = null;
+                    if (piece.Color == PieceColor.Red)
+                    {
+                        pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
+                    }
+                    else
+                    {
+                        pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
+                    }
+                    spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                }
+            }
 
-            //    if (isPieceSelected)
-            //    {
-            //        spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale), (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
 
-            //        foreach (var move in validMoves)
-            //        {
-            //            spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
-            //        }
-            //    }
-            //}
-
-            //spriteBatch.Draw(uiTexture, new Rectangle((int)(_replayService.GetBoard().Size * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            spriteBatch.Draw(uiTexture, new Rectangle((int)(boardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 

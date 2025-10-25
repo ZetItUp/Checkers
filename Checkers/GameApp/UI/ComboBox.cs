@@ -77,11 +77,12 @@ namespace Checkers.GameApp.UI
             {
                 showList = !showList;
             }
+            
 
             if (showList)
             {
                 itemList.Update(gameTime);
-                if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+                if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left) && itemList.SelectedIndex >= 0)
                 {
                     showList = false;
                     SelectedItemText = itemList.Items[itemList.SelectedIndex];
@@ -92,6 +93,11 @@ namespace Checkers.GameApp.UI
             if (itemList.IsVisible != showList)
             {
                 itemList.IsVisible = showList;
+            }
+
+            if (!IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            {
+                showList = false;
             }
         }
 
