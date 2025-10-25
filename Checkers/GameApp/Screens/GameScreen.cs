@@ -15,13 +15,17 @@ using Checkers.CheckersGame.History;
 
 namespace Checkers.GameApp.Screens
 {
+    /// <summary>
+    /// Screen för spelet
+    /// </summary>
     public class GameScreen : Screen
     {
+        // GameService 
+        GameService? _gameService;
+
+        // Texturer
         Texture2D? _lightTexture;
         Texture2D? _darkTexture;
-        Color _lightColor = new Color(255, 255, 255);
-        Color _darkColor = new Color(34, 32, 52);
-        GameService? _gameService;
 
         Texture2D? whitePiece;
         Texture2D? whiteKingPiece;
@@ -32,6 +36,7 @@ namespace Checkers.GameApp.Screens
         Texture2D? validMoveTexture;
         Texture2D? uiTexture;
 
+        // Knappar 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
         Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
@@ -39,84 +44,144 @@ namespace Checkers.GameApp.Screens
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game"); 
 
+        // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
-        bool isInMultiJumpMode = false; // tracker för att kolla om vi är i ett multi-jump
+        bool isInMultiJumpMode = false;
 
+        // Spelbrädes variabler för scaling och size
         int boardSize = 0;
         int cellSize = 32;
         float boardScale = 1f;
         float drawScale = 1f;
 
+        // Färger som används vid ritning av texturer
+        Color _lightColor = new Color(255, 255, 255);
+        Color _darkColor = new Color(34, 32, 52);
+        
+        // Vald position 
         Position selectedPosition;
+        // Nuvarande Spelare
         Player? currentPlayer;
+
+        // Lista på tillgängliga moves som en pjäs kan utföra
         List<Position> validMoves = new List<Position>();
 
         public GameScreen()
             : base()
         {
+            // Subscribe:a till alla knappars Clicked event
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnStartGame.Clicked += BtnStartGame_Clicked;
-            btnUndoMove.Enabled = false;
             btnUndoMove.Clicked += BtnUndoMove_Clicked;
             btnRestartGame.Clicked += BtnRestartGame_Clicked;
             btnEndTurn.Clicked += BtnEndTurn_Clicked;
             btnSaveGame.Clicked += BtnSaveGame_Clicked;
+
+            // Disable:a Undo knappen
+            btnUndoMove.Enabled = false;
         }
 
+        /// <summary>
+        /// Hantera knapptryck för EndTurn click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnEndTurn_Clicked(object? sender, EventArgs e)
         {
+            // Säg till GameService att spelaren valt att avsluta sin turn
             _gameService?.EndTurn();
+            // Avmarkera vald pjäs
             isPieceSelected = false;
+            // Rensa validMoves listan
             validMoves.Clear();
+            // Vi är inte längre i MultiJumpMode
             isInMultiJumpMode = false;
         }
 
+        /// <summary>
+        /// Hantera knapptryckning för UndoMove click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnUndoMove_Clicked(object? sender, EventArgs e)
         {
+            // Säg till GameService att ångra senaste draget
             _gameService?.Undo();
         }
 
+        /// <summary>
+        /// Hantera knapptryckning för StartGame click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnStartGame_Clicked(object? sender, EventArgs e)
         {
+            // Säg åt GameService att starta ett spel
             _gameService?.StartGame();
+            // Disable:a och göm knappar som inte längre behövs
             btnStartGame.Enabled = false;
             btnUndoMove.Enabled = false;
             btnStartGame.IsVisible = false;
+            // Visa och enable:a knappar som behövs
             btnRestartGame.IsVisible = true;
             btnRestartGame.Enabled = true;
         }
 
+        /// <summary>
+        /// Hantera knapptryckning för MainMenu click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnMainMenu_Clicked(object? sender, EventArgs e)
         {
             // Gå tillbaka till huvudmenyn
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
+        /// <summary>
+        /// Hantera knapptryckning för RestartGame click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnRestartGame_Clicked(object? sender, EventArgs e)
         {
-            if (_gameService != null) // null = spelet är inte igång
+            // Kontrollera att _gameService inte är null
+            if (_gameService != null)
             {
-                _gameService.InitializeGame("Player 1", "Player 2"); // laddar om spelet
+                // Initiera ett nytt spel
+                _gameService.InitializeGame("Player 1", "Player 2");
+                // Starta ett nytt spel
                 _gameService.StartGame();
 
-                // resetar UI
-                isPieceSelected = false; // ingen pjäs är vald
-                validMoves.Clear(); // tidigare beräknade drag raderas
+                // Resetar UI
+                isPieceSelected = false; 
+                // Rensa validMoves listan
+                validMoves.Clear();
             }
         }
 
+        /// <summary>
+        /// Hantera knapptryckning för SaveGame click
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnSaveGame_Clicked(object? sender, EventArgs e)
         {
+            // Kontrollera att _gameService inte är null
             if (_gameService != null)
             {
                 try
                 {
+                    // Försök spara spelet till en json-fil
                     string fileName = GamePersistence.SaveGame(_gameService);
+
+                    // Logga console om det lyckades och vart filen sparades
                     Console.WriteLine($"Game saved successfully as: {fileName}.json");
                     Console.WriteLine($"Save location: {System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves")}");
                 }
                 catch (Exception ex)
                 {
+                    // Logga fel i console
                     Console.WriteLine($"Error saving game: {ex.Message}");
                     Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 }
@@ -125,29 +190,36 @@ namespace Checkers.GameApp.Screens
 
         public override void LoadContent(ContentManager content)
         {
+            // Kontrollera att MainGame.graphicsDeviceManager inte är null
             if(MainGame.graphicsDeviceMangager == null)
             {
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
                 throw new Exception("GraphicsDeviceManager is not initialized.");
             }
 
+            // Skapa en GameService 
             _gameService = new GameService();
+            // Hämta board size
             boardSize = _gameService.RuleSet.BoardSize;
+
+            // Skapa texturer för brädet, en svart och en vit, med cellSize storlek
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
             _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _darkColor);
 
-            // Set board scale to fit window height
+            // Beräkna scaling så vi kan rita ut brädet anpassat efter fönstrets storlek och board size
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
             drawScale = (cellSize * boardScale);
 
+            // Ladda texturer
             whitePiece = content.Load<Texture2D>("White");
             whiteKingPiece = content.Load<Texture2D>("WhiteKing");
             blackPiece = content.Load<Texture2D>("Black");
             blackKingPiece = content.Load<Texture2D>("BlackKing");
-
             validMoveTexture = content.Load<Texture2D>("Move");
             uiTexture = content.Load<Texture2D>("UINormal");
             selectTexture = content.Load<Texture2D>("Select");
 
+            // Ladda alla knappar
             btnMainMenu.LoadContent(content);
             btnStartGame.LoadContent(content);
             btnUndoMove.LoadContent(content);
@@ -155,6 +227,7 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
 
+            // Ställ in alla knappars default synlighet och om dom är aktiva
             btnRestartGame.Enabled = false;
             btnRestartGame.IsVisible = false;
             btnStartGame.Enabled = true;
@@ -163,15 +236,24 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.IsVisible = false;
             btnSaveGame.Enabled = true;
 
+            // Initiera ett nytt spel
             _gameService.InitializeGame("Player 1", "Player 2");
         }
         public override void UnloadContent()
         {
+            // Töm resurser
             _gameService = null;
+            btnEndTurn?.UnloadContent();
+            btnStartGame?.UnloadContent();
+            btnUndoMove?.UnloadContent();
+            btnRestartGame?.UnloadContent();
+            btnSaveGame?.UnloadContent();
+            btnMainMenu?.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
+            // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
             btnUndoMove.Update(gameTime);
@@ -179,31 +261,44 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
 
+            // Uppdatera inget annat om _gameService är null eller om ett spel inte är GameStatus.InProgress
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
                 return;
             }
 
+            // Hämta spelhistoriken från nuvarande spel
             var history = _gameService.GetGameHistory();
+            // Uppdatera UndoMove knappen beroende på history state eller om det finns några moves gjorda
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
-            // Visa End Turn knappen bara om ForcedCaptures är av
+            // Visa EndTurn knappen bara om ForcedCaptures är av
             btnEndTurn.IsVisible = !_gameService.RuleSet.ForcedCaptures;
             btnEndTurn.Enabled = !_gameService.RuleSet.ForcedCaptures && isPieceSelected;
 
+            // Hämta currentPlayer från _gameService
             currentPlayer = _gameService.GetCurrentPlayer();
 
+            // Räkna ut musens position på brädet
+            // Vi delar med drawScale för att få exakta rutan som musen är över
             var mousePositionX = (int)(MouseHelper.MousePosition().X / drawScale);
             var mousePositionY = (int)(MouseHelper.MousePosition().Y / drawScale);
 
+            // Kolla om musen är nedtryckt
             if (MouseHelper.MousePressed(MouseHelper.MouseButton.Left))
             {
+                // Hämta board
                 var board = _gameService.GetBoard();
+                // Försök hämta en pjäs från board där musen är
                 var hoveredPiece = board?.GetPiece(new Position(mousePositionY, mousePositionX));
+                
+                // Om pjäsen inte är null
                 if (hoveredPiece != null)
                 {
+                    // Kontrollera att vi har en currentPlayer och att currentPlayers färg är samma som sig själv
                     if(currentPlayer != null && currentPlayer.Color != hoveredPiece.Color)
                     {
+                        // Avmarkera pjäsen och returnera
                         isPieceSelected = false;
                         return;
                     }
@@ -214,15 +309,20 @@ namespace Checkers.GameApp.Screens
                         return; // Måste fortsätta med samma pjäs i multi-jump
                     }
 
+                    // Markera en pjäs
                     isPieceSelected = true;
+                    // Spara positionen på markerad pjäs
                     selectedPosition = new Position(mousePositionY, mousePositionX);
-                    // Använd GameService för att få bara GILTIGA drag
+                    // Använd GameService för att få giltiga drag
                     validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
                 }
+                // Om pjäsen är null
                 else
                 {
+                    // Loopa igenom alla validMoves
                     foreach(var move in validMoves)
                     {
+                        // Kontrollera så att draget som görs är på samma plats som musens position
                         if(move.Row == mousePositionY && move.Column == mousePositionX)
                         {
                             // Gör draget och spara position
@@ -236,15 +336,21 @@ namespace Checkers.GameApp.Screens
                             {
                                 // Spelaren kan ta igen! Auto-select pjäsen och aktivera multi-jump läge
                                 selectedPosition = moveToPosition;
+                                // Hämta giltiga drag
                                 validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
+                                // Markera pjäsen
                                 isPieceSelected = true;
-                                isInMultiJumpMode = true; // Nu är vi i multi-jump läge
+                                // Nu är vi i multi-jump läge
+                                isInMultiJumpMode = true; 
                             }
                             else
                             {
-                                // Normal turn switch - rensa selection
+                                // Vanligt drag
+                                // Rensa validMoves
                                 validMoves.Clear();
+                                // Avmarkera pjäs
                                 isPieceSelected = false;
+                                // Se till att vi inte är i multi-jump läge
                                 isInMultiJumpMode = false;
                             }
                             break;
@@ -263,24 +369,34 @@ namespace Checkers.GameApp.Screens
             {
                 for(int x = 0; x < boardSize; x++)
                 {
+                    // Hämta färg baserat på position, varannan svart, varannan vit
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
                     Texture2D? cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
                     
+                    // Rita ut cellen
                     spriteBatch.Draw(cellTexture, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, cellColor, 0f, Vector2.Zero, SpriteEffects.None, 1.0f);
                 }
             }
 
+            // Rita bara pjäser om _gameService inte är null och ett game är i GameStatus.InProgress
             if (_gameService != null && _gameService.GetGameStatus() == GameStatus.InProgress)
             {
+                // Hämta brädet från GameService
                 var board = _gameService.GetBoard();
+                // hämta alla pjäser från brädet
                 var pieces = board?.GetAllPieces();
 
+                // Kontrollera att det finns pjäser
                 if (pieces != null)
                 {
+                    // Loopa igenom alla pjäser
                     for (int i = 0; i < pieces.Count; i++)
                     {
+                        // Hämta nuvarande pjäs
                         var piece = pieces[i];
                         Texture2D? pieceTexture = null;
+
+                        // Sätt dess texture baserat på vilken färg pjäsen är
                         if (piece.Color == PieceColor.Red)
                         {
                             pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
@@ -289,16 +405,22 @@ namespace Checkers.GameApp.Screens
                         {
                             pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
                         }
+
+                        // Rita ut pjäsen på dess position med dess texture
                         spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                     }
                 }
 
+                // Om en pjäs är markerad
                 if (isPieceSelected)
                 {
+                    // Rita ut markering
                     spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale), (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
 
+                    // Loopa igenom alla validMoves
                     foreach (var move in validMoves)
                     {
+                        // Rita en markör som visar alla giltiga moves pjäsen kan göra baserat på dess position och omgivning
                         spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
                     }
                 }
@@ -306,11 +428,13 @@ namespace Checkers.GameApp.Screens
 
             if (_gameService != null)
             {
+                // Rita ut en border för spelbrädet där det tar slut
                 spriteBatch.Draw(uiTexture, new Rectangle((int)(_gameService.RuleSet.BoardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
             }
 
             spriteBatch.End();
 
+            // Rita alla knappar
             spriteBatch.Begin(SpriteSortMode.Deferred);
             btnMainMenu.Draw(spriteBatch);
             btnStartGame.Draw(spriteBatch);
