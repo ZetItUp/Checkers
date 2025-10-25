@@ -19,7 +19,8 @@ namespace Checkers.CheckersGame.GameService
         private MoveValidator? _moveValidator;
         private GameHistory? _gameHistory;
         private GameStatus _gameStatus;
-        //RuleSet satt till public så gui kan läsa 
+        private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
+        //RuleSet satt till public så gui kan läsa
         public RuleSet RuleSet{ get; private set; }
         public GameService()
         {
@@ -34,9 +35,10 @@ namespace Checkers.CheckersGame.GameService
             _currentPlayer =  _player1;
             _moveValidator = new MoveValidator(RuleSet);
             _gameStatus = GameStatus.WaitingToStart;
+            _isInMultiJump = false;
 
             _board.Initialize();
-            
+
             ///init History med brädet som det var initialt
             //där efter behöver vi bara spara drag
             _gameHistory = new GameHistory(_board.Clone());
@@ -60,6 +62,7 @@ namespace Checkers.CheckersGame.GameService
 
             //kolla om en pjäs vart tagen
             var capturedPiece = HandleCapture(from, to);
+            bool wasCapture = capturedPiece != null;
             if (capturedPiece != null)
             {
                 move.CapturedPiece = capturedPiece;
@@ -86,6 +89,20 @@ namespace Checkers.CheckersGame.GameService
                 return true;
             }
 
+            // Kolla om pjäsen kan ta igen 
+            // Bara om: det var ett capture och AllowMultipleJumps är på
+            if (wasCapture && RuleSet.AllowMultipleJumps)
+            {
+                if (CanPieceCaptureAgain(to))
+                {
+                    // Pjäsen kan ta igen 
+                    _isInMultiJump = true;
+                    return true;
+                }
+            }
+
+            
+            _isInMultiJump = false;
             SwitchTurn();
 
             return true;
@@ -190,7 +207,18 @@ namespace Checkers.CheckersGame.GameService
             {
                 if (_moveValidator != null && _moveValidator.ValidateMove(position, move, _board, _currentPlayer))
                 {
-                    validMoves.Add(move);
+                    // Om vi är i multi-jump läge, tillåt BARA capture-moves
+                    if (_isInMultiJump)
+                    {
+                        if (_moveValidator.IsCapture(position, move))
+                        {
+                            validMoves.Add(move);
+                        }
+                    }
+                    else
+                    {
+                        validMoves.Add(move);
+                    }
                 }
             }
 
@@ -222,10 +250,52 @@ namespace Checkers.CheckersGame.GameService
         {
             if (color == PieceColor.Red && position.Row == 0)
                 return true;
-            
+
             if(color == PieceColor.Black && position.Row == RuleSet.BoardSize -1)
                 return true;
             return false;
+        }
+
+        private bool CanPieceCaptureAgain(Position piecePosition)
+        {
+            var piece = _board.GetPiece(piecePosition);
+            if (piece == null || piece.Color != _currentPlayer.Color)
+                return false;
+
+            var validMoves = piece.GetValidMoves(_board);
+
+            foreach (var move in validMoves)
+            {
+                // Kolla om draget är ett capture
+                if (!_moveValidator.IsCapture(piecePosition, move))
+                    continue;
+
+                // Kolla om destinationen är tom
+                if (_board.GetPiece(move) != null)
+                    continue;
+
+                // Kolla om det finns en motståndarpjäs att ta
+                var capturedPos = _moveValidator.GetCapturedPosition(piecePosition, move);
+                if (capturedPos.HasValue)
+                {
+                    var capturedPiece = _board.GetPiece(capturedPos.Value);
+                    if (capturedPiece != null && capturedPiece.Color != _currentPlayer.Color)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void EndTurn()
+        {
+            if (_gameStatus != GameStatus.InProgress)
+                return;
+
+            _isInMultiJump = false;
+            SwitchTurn();
         }
     }
 }

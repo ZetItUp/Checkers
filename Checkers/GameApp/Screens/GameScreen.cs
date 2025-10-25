@@ -34,9 +34,11 @@ namespace Checkers.GameApp.Screens
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
         Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
-        Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game"); 
+        Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
+        Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn"); 
 
         bool isPieceSelected = false;
+        bool isInMultiJumpMode = false; // tracker för att kolla om vi är i ett multi-jump
 
         int boardSize = 0;
         int cellSize = 32;
@@ -55,8 +57,15 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Enabled = false;
             btnUndoMove.Clicked += BtnUndoMove_Clicked;
             btnRestartGame.Clicked += BtnRestartGame_Clicked;
-            
+            btnEndTurn.Clicked += BtnEndTurn_Clicked;
+        }
 
+        private void BtnEndTurn_Clicked(object? sender, EventArgs e)
+        {
+            _gameService?.EndTurn();
+            isPieceSelected = false;
+            validMoves.Clear();
+            isInMultiJumpMode = false;
         }
 
         private void BtnUndoMove_Clicked(object? sender, EventArgs e)
@@ -117,11 +126,14 @@ namespace Checkers.GameApp.Screens
             btnStartGame.LoadContent(content);
             btnUndoMove.LoadContent(content);
             btnRestartGame.LoadContent(content);
+            btnEndTurn.LoadContent(content);
 
             btnRestartGame.Enabled = false;
             btnRestartGame.IsVisible = false;
             btnStartGame.Enabled = true;
             btnStartGame.IsVisible = true;
+            btnEndTurn.Enabled = false;
+            btnEndTurn.IsVisible = false;
 
             _gameService.InitializeGame("Player 1", "Player 2");
         }
@@ -136,6 +148,7 @@ namespace Checkers.GameApp.Screens
             btnStartGame.Update(gameTime);
             btnUndoMove.Update(gameTime);
             btnRestartGame.Update(gameTime);
+            btnEndTurn.Update(gameTime);
 
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
@@ -144,6 +157,10 @@ namespace Checkers.GameApp.Screens
 
             var history = _gameService.GetGameHistory();
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
+
+            // Visa End Turn knappen bara om ForcedCaptures är av
+            btnEndTurn.IsVisible = !_gameService.RuleSet.ForcedCaptures;
+            btnEndTurn.Enabled = !_gameService.RuleSet.ForcedCaptures && isPieceSelected;
 
             currentPlayer = _gameService.GetCurrentPlayer();
 
@@ -161,6 +178,12 @@ namespace Checkers.GameApp.Screens
                         return;
                     }
 
+                    // Om vi är i multi-jump läge, tillåt inte byte av pjäs
+                    if (isInMultiJumpMode && (mousePositionY != selectedPosition.Row || mousePositionX != selectedPosition.Column))
+                    {
+                        return; // Måste fortsätta med samma pjäs i multi-jump
+                    }
+
                     isPieceSelected = true;
                     selectedPosition = new Position(mousePositionY, mousePositionX);
                     // Använd GameService för att få bara GILTIGA drag
@@ -172,13 +195,31 @@ namespace Checkers.GameApp.Screens
                     {
                         if(move.Row == mousePositionY && move.Column == mousePositionX)
                         {
-                            // Gör draget
+                            // Gör draget och spara position
+                            var moveToPosition = move;
+                            var previousPlayer = _gameService.GetCurrentPlayer();
                             _gameService.MakeMove(selectedPosition, move);
+
+                            // Kolla om samma spelare fortfarande är i tur (betyder multi-jump möjligt)
+                            var newPlayer = _gameService.GetCurrentPlayer();
+                            if (previousPlayer.Color == newPlayer.Color)
+                            {
+                                // Spelaren kan ta igen! Auto-select pjäsen och aktivera multi-jump läge
+                                selectedPosition = moveToPosition;
+                                validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
+                                isPieceSelected = true;
+                                isInMultiJumpMode = true; // Nu är vi i multi-jump läge
+                            }
+                            else
+                            {
+                                // Normal turn switch - rensa selection
+                                validMoves.Clear();
+                                isPieceSelected = false;
+                                isInMultiJumpMode = false;
+                            }
                             break;
                         }
                     }
-                    validMoves.Clear();
-                    isPieceSelected = false;
                 }
             }
         }
@@ -238,6 +279,7 @@ namespace Checkers.GameApp.Screens
             btnStartGame.Draw(spriteBatch);
             btnUndoMove.Draw(spriteBatch);
             btnRestartGame.Draw(spriteBatch);
+            btnEndTurn.Draw(spriteBatch);
             spriteBatch.End();
         }
     }

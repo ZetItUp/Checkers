@@ -1,4 +1,4 @@
-using Checkers.CheckersGame.Validation.Config; // för RuleSetDto
+using Checkers.CheckersGame.Validation.Config; // fï¿½r RuleSetDto
 namespace Checkers.CheckersGame.Validation;
 
 public class RuleSet : IRuleSet
