@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens
 {
+    // Tom basklass för olika screens i spelet
+    // Denna klass skulle kunna vara abstract, men vi var osäkra på om vi skulle behöva en instans av Screen direkt någon gång under testning
     public class Screen
     {
         public Screen()

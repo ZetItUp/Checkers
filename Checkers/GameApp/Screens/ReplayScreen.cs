@@ -17,24 +17,28 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens
 {
+    /// <summary>
+    /// Screen för att replaya sparade spel
+    /// </summary>
     public class ReplayScreen : Screen
     {
+        // Tjänst för replay av sparade spel
+        ReplayService? _replayService;
+
+        // Texturer och färger för brädet
         Texture2D? _lightTexture;
         Texture2D? _darkTexture;
         Color _lightColor = new Color(255, 255, 255);
         Color _darkColor = new Color(34, 32, 52);
 
-        ReplayService? _replayService;
-
+        // Texturer för pjäser och UI
         Texture2D? whitePiece;
         Texture2D? whiteKingPiece;
         Texture2D? blackPiece;
         Texture2D? blackKingPiece;
-
-        Texture2D? selectTexture;
-        Texture2D? validMoveTexture;
         Texture2D? uiTexture;
 
+        // Knappar och ComboBox
         Button? btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button? btnAutoPlay = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Auto Play: ON");
         Button? btnReset = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Reset");
@@ -42,11 +46,13 @@ namespace Checkers.GameApp.Screens
         Button? btnPreviousMove = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "<< Previous");
         ComboBox? cboGames = new ComboBox(new Rectangle(MainGame.WindowWidth - 410, 10, 400, 40));
 
+        // Board inställningar
         int boardSize = 8;
         int cellSize = 32;
         float boardScale = 1f;
         float drawScale = 1f;
 
+        // Timing inställningar för auto play
         float autoPlayTimer = 500f;
         float lastAutoPlayTime = 0f;
         bool isAutoPlaying = false;
@@ -54,20 +60,30 @@ namespace Checkers.GameApp.Screens
         public ReplayScreen()
             : base()
         {
+            // Subscriba till knapp event handlers
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnNextMove.Clicked += BtnNextMove_Clicked;
             btnPreviousMove.Clicked += BtnPreviousMove_Clicked;
             btnReset.Clicked += BtnReset_Clicked;
             btnAutoPlay.Clicked += btnAutoPlay_Clicked;
+            // Subscriba till ComboBox SelectedItemChanged event
             cboGames.SelectedItemChanged += CboGames_SelectedItemChanged;
         }
 
+        /// <summary>
+        /// Toggla auto play läge
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void btnAutoPlay_Clicked(object? sender, EventArgs e)
         {
+            // Toggla auto play state
             isAutoPlaying = !isAutoPlaying;
 
+            // Kola om knappen inte är null
             if (btnAutoPlay != null)
             {
+                // Uppdatera knappens text beroende på state
                 if (isAutoPlaying)
                 {
                     btnAutoPlay.Text = "Auto Play: ON";
@@ -79,41 +95,74 @@ namespace Checkers.GameApp.Screens
             }
         }
 
+        /// <summary>
+        /// Hantera Reset knapp klickande
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnReset_Clicked(object? sender, EventArgs e)
         {
+            // Återställ replay till start
             _replayService?.ResetToStart();
         }
 
+        /// <summary>
+        /// Hantera Previous Move knapp klickande
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnPreviousMove_Clicked(object? sender, EventArgs e)
         {
+            // Gå tillbaka i spelhistoriken om möjligt
             _replayService?.StepBackward();
         }
 
+        /// <summary>
+        /// Hantera Next Move knapp klickande
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnNextMove_Clicked(object? sender, EventArgs e)
         {
+            // Gå framåt i spelhistoriken om möjligt
             _replayService?.StepForward();
         }
 
+        /// <summary>
+        /// Hantera när ett nytt sparat spel väljs i ComboBox
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void CboGames_SelectedItemChanged(object? sender, EventArgs e)
         {
+            // Hämta valt filnamn från ComboBox
             string? fileName = cboGames?.SelectedItemText;
 
-            if(string.IsNullOrEmpty(fileName))
+            // Kolla så att filnamnet inte är null eller tomt
+            if (string.IsNullOrEmpty(fileName))
             {
                 return;
             }
 
+            // Hämta sparat spel från GamePersistence
             var savedGame = GamePersistence.LoadGameForReplay(fileName);
 
+            // Om inget sparat spel hittades, returnera
             if (savedGame == null)
             {
                 return;
             }
 
+            // Skapa en ny ReplayService med det sparade spelet och återställ till start
             _replayService = new ReplayService(savedGame);
             _replayService.ResetToStart();
         }
 
+        /// <summary>
+        /// Hantera Main Menu knapp klickande
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void BtnMainMenu_Clicked(object? sender, EventArgs e)
         {
             // Gå tillbaka till huvudmenyn
@@ -122,35 +171,39 @@ namespace Checkers.GameApp.Screens
 
         public override void LoadContent(ContentManager content)
         {
-            if(MainGame.graphicsDeviceMangager == null)
+            // Kolla så att GraphicsDeviceManager är initialiserad
+            if (MainGame.graphicsDeviceMangager == null)
             {
+                // Här kör vi exception, om detta sker så har spelet inte initialiserats korrekt
                 throw new Exception("GraphicsDeviceManager is not initialized.");
             }
 
+            // Skapa texturer för brädet (Svart och Vitt)
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
             _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _darkColor);
 
-            // Set board scale to fit window height
+            // Räkna ut skalning för brädet baserat på fönsterstorlek
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
             drawScale = (cellSize * boardScale);
 
+            // Ladda in texturer för pjäser och UI
             whitePiece = content.Load<Texture2D>("White");
             whiteKingPiece = content.Load<Texture2D>("WhiteKing");
             blackPiece = content.Load<Texture2D>("Black");
             blackKingPiece = content.Load<Texture2D>("BlackKing");
-
-            validMoveTexture = content.Load<Texture2D>("Move");
             uiTexture = content.Load<Texture2D>("UINormal");
-            selectTexture = content.Load<Texture2D>("Select");
 
+            // Ladda in knappar och ComboBox
             btnMainMenu?.LoadContent(content);
             btnReset?.LoadContent(content);
             btnNextMove?.LoadContent(content);
             btnPreviousMove?.LoadContent(content);
             btnAutoPlay?.LoadContent(content);
 
+            // Säkerställ att cboGames inte är null innan vi laddar in innehåll
             if (cboGames != null)
             {
+                // Ladda in och sätt standardvärde för ComboBox
                 cboGames.LoadContent(content);
                 cboGames.SelectedItemText = "<Select a Previous Game>";
             }
@@ -159,11 +212,13 @@ namespace Checkers.GameApp.Screens
             var savedGames = GamePersistence.GetSavedGamesWithMetadata();
             foreach (var game in savedGames)
             {
+                // Lägg till varje sparat spel i ComboBox
                 cboGames?.AddItem(game.FileName);
             }
         }
         public override void UnloadContent()
         {
+            // Töm resurser och återställ variabler
             _replayService = null;
             btnMainMenu?.UnloadContent();
             btnReset?.UnloadContent();
@@ -175,6 +230,7 @@ namespace Checkers.GameApp.Screens
 
         public override void Update(GameTime gameTime)
         {
+            // Uppdatera knappar och ComboBox
             btnMainMenu?.Update(gameTime);
             btnReset?.Update(gameTime);
             btnNextMove?.Update(gameTime);
@@ -182,10 +238,13 @@ namespace Checkers.GameApp.Screens
             btnAutoPlay?.Update(gameTime);
             cboGames?.Update(gameTime);
 
-            if(_replayService == null)
+            // Uppdatera inget om replay service är null
+            if (_replayService == null)
             {
                 return;
             }
+
+            // Uppdatera knappars enabled state baserat på replay service state
             if (btnNextMove != null)
             {
                 btnNextMove.Enabled = _replayService != null && !_replayService.IsAtEnd && !isAutoPlaying;
@@ -199,20 +258,29 @@ namespace Checkers.GameApp.Screens
                 btnAutoPlay.Enabled = _replayService != null;
             }
 
+            // Hantera auto play logik
             if (isAutoPlaying)
             {
+                // Hämta tid sedan senaste uppdatering
                 lastAutoPlayTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                // Kolla om tiden sedan senaste uppdatering är större än auto play timer
                 if (lastAutoPlayTime >= autoPlayTimer)
                 {
+                    // Nollställ timer och gå till nästa steg i replay
                     lastAutoPlayTime = 0f;
-                    if(_replayService != null && !_replayService.IsAtEnd)
+
+                    // Gå framåt i replay om möjligt och vi inte är i slutet av spelet
+                    if (_replayService != null && !_replayService.IsAtEnd)
                     {
                         _replayService.StepForward();
                     }
                     else
                     {
+                        // Annars, stäng av auto play
                         isAutoPlaying = false;
 
+                        // Uppdatera knappens text 
                         if (btnAutoPlay != null)
                         {
                             btnAutoPlay.Text = "Auto Play: OFF";
@@ -231,24 +299,33 @@ namespace Checkers.GameApp.Screens
             {
                 for (int x = 0; x < boardSize; x++)
                 {
+                    // Välj färg och textur baserat på positionens parity
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
                     Texture2D? cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
 
+                    // Rita cellen
                     spriteBatch.Draw(cellTexture, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, cellColor, 0f, Vector2.Zero, SpriteEffects.None, 1.0f);
                 }
             }
 
+            // Om replay service inte är null
             if (_replayService != null)
             {
+                // Hämta brädet och alla pjäser
                 var board = _replayService.GetBoard();
                 var pieces = board?.GetAllPieces();
 
+                // Om pjäser finns
                 if (pieces != null)
                 {
+                    // Gå igenom varje pjäs
                     for (int i = 0; i < pieces.Count; i++)
                     {
+                        // Initiera en pjäs och dess textur
                         var piece = pieces[i];
                         Texture2D? pieceTexture = null;
+
+                        // Hämta rätt textur baserat på pjäsens färg och typ
                         if (piece.Color == PieceColor.Red)
                         {
                             pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
@@ -257,16 +334,19 @@ namespace Checkers.GameApp.Screens
                         {
                             pieceTexture = piece is KingPiece ? blackKingPiece : blackPiece;
                         }
+
+                        // Rita pjäsen på dess position
                         spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                     }
                 }
             }
 
-
+            // Rita en border för spelområdet
             spriteBatch.Draw(uiTexture, new Rectangle((int)(boardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 
+            // Rita UI komponenter
             spriteBatch.Begin(SpriteSortMode.Deferred);
             btnMainMenu?.Draw(spriteBatch);
             btnReset?.Draw(spriteBatch);

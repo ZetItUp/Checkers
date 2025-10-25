@@ -13,13 +13,19 @@ namespace Checkers.UI
 {
     internal class WindowComponent
     {
+        // Värden för minimistorlek på fönstret
         private const int MIN_WINDOW_WIDTH = 20;
         private const int MIN_WINDOW_HEIGHT = 20;
 
+        // Rectangle som definierar fönstrets position och storlek
         public Rectangle WindowRectangle { get; set; } = new Rectangle(0, 0, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
+        // Är componenten synlig?
         public bool IsVisible { get; set; } = true;
+        // Är musen över componenten?
         public bool IsMouseOver { get; protected set; } = false;
+        // Är componenten aktiv?
         public bool Enabled { get; set; } = true;
+        // Färger för enabled och disabled state
         public Color EnabledColor { get; set; } = Color.White;
         public Color DisabledColor { get; set; } = Color.CadetBlue;
 
@@ -46,13 +52,15 @@ namespace Checkers.UI
 
         public virtual void UnloadContent()
         {
+            // Återställ variabler till default värden
             IsVisible = true;
             Enabled = true;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            if(MouseHelper.MouseRectangle().Intersects(WindowRectangle))
+            // Kolla om musen är över componenten
+            if (MouseHelper.MouseRectangle().Intersects(WindowRectangle))
             {
                 IsMouseOver = true;
             }

@@ -12,17 +12,18 @@ namespace Checkers.UI
 {
     internal class Button : WindowComponent
     {
+        // Event som triggas när knappen klickas
         public event EventHandler? Clicked;
 
+        // Textur och font 
         Texture2D? buttonTexture;
         Texture2D? buttonHoverTexture;
         Texture2D? buttonPressedTexture;
+        Texture2D? activeTexture;
         SpriteFont? buttonFont;
 
-        Texture2D? activeTexture;
-
+        // Text som visas på knappen
         public string Text { get; set; } = "Button";
-
 
         public Button(Rectangle buttonRectangle)
             : base(buttonRectangle)
@@ -38,8 +39,9 @@ namespace Checkers.UI
 
         public override void LoadContent(ContentManager content)
         {
+            // Ladda in texturer och font
             base.LoadContent(content);
-            buttonFont = content.Load<SpriteFont>("Font14");
+            buttonFont = content.Load<SpriteFont>("Font2-14");
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
@@ -48,6 +50,7 @@ namespace Checkers.UI
 
         public override void UnloadContent()
         {
+            // Töm resurser
             base.UnloadContent();
             buttonFont = null;
             buttonTexture = null;
@@ -60,17 +63,19 @@ namespace Checkers.UI
         {
             base.Update(gameTime);
 
+            // Sätt default textur om ingen är satt
             if (activeTexture == null)
             {
                 activeTexture = buttonTexture;
             }
 
+            // Hantera inte input om knappen är inaktiverad
             if (!Enabled)
             {
                 return;
             }
 
-
+            // Hantera Vilken textur som ska användas beroende på musens state
             // Kolla om vänstra musknappen är nedtryckt
             if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
             {
@@ -85,26 +90,34 @@ namespace Checkers.UI
                 activeTexture = buttonTexture;
             }
 
+            // Kolla om knappen har klickats
             if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
             {
+                // Invoke:a Clicked eventet
                 Clicked?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            // Kolla om knappen är synlig
             if (!IsVisible)
             {
                 return;
             }
 
+            // Kolla om texturen är laddad
             if (activeTexture == null)
             {
+                // Sätt default textur och hoppa över detta drawcall
+                activeTexture = buttonTexture;
                 return;
             }
 
             base.Draw(spriteBatch);
 
+            // Rita knappen med 9-slice scaling
+            // Dvs dela upp texturen i 9 delar och skala den korrekt
             int currX = WindowRectangle.X;
             int currY = WindowRectangle.Y;
             if (Enabled)
@@ -135,12 +148,14 @@ namespace Checkers.UI
             // Rita texten centrerad på knappen
             if (buttonFont != null)
             {
+                // Mät hur stor texten är så vi kan centrera den
                 Vector2 textSize = buttonFont.MeasureString(Text);
                 Vector2 textPosition = new Vector2(
                     WindowRectangle.X + (WindowRectangle.Width - textSize.X) / 2,
                     WindowRectangle.Y + (WindowRectangle.Height - textSize.Y) / 2
                 );
 
+                // Rita texten
                 spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
             }
         }
