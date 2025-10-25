@@ -17,20 +17,20 @@ namespace Checkers.GameApp.Screens
 {
     public class GameScreen : Screen
     {
-        Texture2D _lightTexture;
-        Texture2D _darkTexture;
+        Texture2D? _lightTexture;
+        Texture2D? _darkTexture;
         Color _lightColor = new Color(255, 255, 255);
         Color _darkColor = new Color(34, 32, 52);
         GameService? _gameService;
 
-        Texture2D whitePiece;
-        Texture2D whiteKingPiece;
-        Texture2D blackPiece;
-        Texture2D blackKingPiece;
+        Texture2D? whitePiece;
+        Texture2D? whiteKingPiece;
+        Texture2D? blackPiece;
+        Texture2D? blackKingPiece;
 
-        Texture2D selectTexture;
-        Texture2D validMoveTexture;
-        Texture2D uiTexture;
+        Texture2D? selectTexture;
+        Texture2D? validMoveTexture;
+        Texture2D? uiTexture;
 
         Button btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button btnStartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Start Game");
@@ -47,14 +47,14 @@ namespace Checkers.GameApp.Screens
         float boardScale = 1f;
         float drawScale = 1f;
 
-        Position selectedPosition;
-        Player currentPlayer;
+        Position? selectedPosition;
+        Player? currentPlayer;
         List<Position> validMoves = new List<Position>();
 
         public GameScreen()
             : base()
         {
-            btnMainMenu.Clicked += BtnTest_Clicked;
+            btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnStartGame.Clicked += BtnStartGame_Clicked;
             btnUndoMove.Enabled = false;
             btnUndoMove.Clicked += BtnUndoMove_Clicked;
@@ -86,7 +86,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Enabled = true;
         }
 
-        private void BtnTest_Clicked(object sender, EventArgs e)
+        private void BtnMainMenu_Clicked(object? sender, EventArgs e)
         {
             // Gå tillbaka till huvudmenyn
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
