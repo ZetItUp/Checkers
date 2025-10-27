@@ -150,7 +150,7 @@ public static class GamePersistence
             Player2Name = game.GetPlayer2Name(),
             RuleSet = new RuleSetSaveState
             {
-                BoardSize = game.RuleSet.BoardSize,
+                BoardSize = game.RuleSet!.BoardSize,
                 ForcedCaptures = game.RuleSet.ForcedCaptures,
                 AllowMultipleJumps = game.RuleSet.AllowMultipleJumps
             },
