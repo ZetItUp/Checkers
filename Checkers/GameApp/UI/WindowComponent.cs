@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Checkers.UI
 {
+    /// <summary>
+    /// Basklass för UI Komponenter
+    /// </summary>
     internal class WindowComponent
     {
         // Värden för minimistorlek på fönstret

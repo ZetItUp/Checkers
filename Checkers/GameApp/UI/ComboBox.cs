@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.UI
 {
+    /// <summary>
+    /// ComboBox UI Komponent
+    /// </summary>
     internal class ComboBox : WindowComponent
     {
         // Event som triggas när valt item ändras

@@ -20,7 +20,7 @@ namespace Checkers.GameApp.Screens
     /// <summary>
     /// Screen för att replaya sparade spel
     /// </summary>
-    public class ReplayScreen : Screen
+    public class ReplayScreen : IScreen
     {
         // Tjänst för replay av sparade spel
         ReplayService? _replayService;
@@ -169,7 +169,7 @@ namespace Checkers.GameApp.Screens
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
-        public override void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content)
         {
             // Kolla så att GraphicsDeviceManager är initialiserad
             if (MainGame.graphicsDeviceMangager == null)
@@ -216,7 +216,7 @@ namespace Checkers.GameApp.Screens
                 cboGames?.AddItem(game.FileName);
             }
         }
-        public override void UnloadContent()
+        public void UnloadContent()
         {
             // Töm resurser och återställ variabler
             _replayService = null;
@@ -228,7 +228,7 @@ namespace Checkers.GameApp.Screens
             cboGames?.UnloadContent();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             // Uppdatera knappar och ComboBox
             btnMainMenu?.Update(gameTime);
@@ -290,7 +290,7 @@ namespace Checkers.GameApp.Screens
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 

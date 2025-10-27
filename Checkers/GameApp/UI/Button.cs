@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Checkers.UI
 {
+    /// <summary>
+    /// Knapp Komponent
+    /// </summary>
     internal class Button : WindowComponent
     {
         // Event som triggas när knappen klickas

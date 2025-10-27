@@ -43,6 +43,11 @@ namespace Checkers
 
             ScreenManager.Initialize(_spriteBatch, Content);
 
+            // Lägg till screens i ScreenManager
+            ScreenManager.AddScreen(ScreenID.MainMenu, new MainMenuScreen());
+            ScreenManager.AddScreen(ScreenID.Game, new GameScreen());
+            ScreenManager.AddScreen(ScreenID.Replay, new ReplayScreen());
+
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
         }
 

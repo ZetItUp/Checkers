@@ -11,6 +11,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Checkers.GameApp.UI
 {
+    /// <summary>
+    /// ItemList Komponent
+    /// </summary>
     internal class ItemList : WindowComponent
     {
         // Texturer och font
