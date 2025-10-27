@@ -49,6 +49,8 @@ namespace Checkers
             ScreenManager.AddScreen(ScreenID.Replay, new ReplayScreen());
 
             ScreenManager.ChangeScreen(ScreenID.MainMenu);
+
+
         }
 
         protected override void Update(GameTime gameTime)

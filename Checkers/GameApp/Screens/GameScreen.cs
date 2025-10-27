@@ -227,6 +227,9 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
 
+            // ladda ljud
+            Sound.LoadContent(content);
+
             // Ställ in alla knappars default synlighet och om dom är aktiva
             btnRestartGame.Enabled = false;
             btnRestartGame.IsVisible = false;
