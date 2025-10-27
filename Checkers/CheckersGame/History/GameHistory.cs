@@ -8,7 +8,7 @@ using Checkers.CheckersGame.Models;
 
 namespace Checkers.CheckersGame.History
 {
-    public class GameHistory
+    public class GameHistory : IGameHistory
     {
         private readonly IBoard _initialBoard;
         private readonly List<Move> _moves;

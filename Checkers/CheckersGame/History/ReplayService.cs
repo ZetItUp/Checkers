@@ -12,7 +12,7 @@ public class ReplayService
 {
     private readonly SavedGame _savedGame;
     private readonly IBoard _board;
-    private readonly GameHistory _gameHistory;
+    private readonly IGameHistory _gameHistory;
     private readonly RuleSet _ruleSet;
     private readonly PieceOperationsService _pieceOperationsService;
 

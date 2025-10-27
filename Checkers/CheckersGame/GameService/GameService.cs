@@ -17,7 +17,7 @@ namespace Checkers.CheckersGame.GameService
         private Player? _player2;
         private Player? _currentPlayer;
         private IMoveValidator? _moveValidator;
-        private GameHistory? _gameHistory;
+        private IGameHistory? _gameHistory;
         private PieceOperationsService? _pieceOperationsService;
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
@@ -177,7 +177,7 @@ namespace Checkers.CheckersGame.GameService
             return _gameStatus;
         }
 
-        public GameHistory? GetGameHistory()
+        public IGameHistory? GetGameHistory()
         {
             return _gameHistory;
         }
