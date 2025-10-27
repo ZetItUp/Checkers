@@ -14,6 +14,7 @@ namespace Checkers.CheckersGame.Models
 
         public KingPiece(PieceColor color, Position position) : base(color, position)
         {
+            IsKing = true;
         }
 
         public override List<Position> GetValidMoves(IBoard board)
