@@ -47,6 +47,7 @@ namespace Checkers.GameApp.Screens
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
+        bool isWinner = false;
 
         // Spelbrädes variabler för scaling och size
         int boardSize = 0;
@@ -264,6 +265,7 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
 
+
             // Uppdatera inget annat om _gameService är null eller om ett spel inte är GameStatus.InProgress
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
@@ -361,6 +363,13 @@ namespace Checkers.GameApp.Screens
                     }
                 }
             }
+
+            if (_gameService.CheckWinner() != null)
+            {
+                isWinner = true;
+                Sound.PlayWinSound();
+            }
+
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
