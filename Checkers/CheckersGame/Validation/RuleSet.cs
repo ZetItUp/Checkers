@@ -1,3 +1,4 @@
+using System;
 using Checkers.CheckersGame.Validation.Config; // f�r RuleSetDto
 namespace Checkers.CheckersGame.Validation;
 
@@ -6,6 +7,8 @@ public class RuleSet : IRuleSet
     public int BoardSize { get; }
     public bool ForcedCaptures { get; }
     public bool AllowMultipleJumps { get; }
+
+    private static RuleSetFactory _ruleSetFactory { get; } = new RuleSetFactory();
 
     public RuleSet(int boardSize, bool forcedCaptures, bool allowMultipleJumps)
     {
@@ -29,6 +32,14 @@ public class RuleSet : IRuleSet
         return $"{BoardSize}x{BoardSize}, " +
                $"Forced Captures: {ForcedCaptures}, " +
                $"Multiple Jumps: {AllowMultipleJumps}";
+    }
+
+    public static RuleSet LoadRuleSet()
+    {
+        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "");
+
+
+        return null;
     }
 }    
 
