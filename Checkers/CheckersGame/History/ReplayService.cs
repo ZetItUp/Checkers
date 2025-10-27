@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
 using Checkers.CheckersGame.DataTypes;
+using Checkers.CheckersGame.GameService;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.Validation;
 
 namespace Checkers.CheckersGame.History;
 
-/// Hanterar replay av sparade spel 
+/// Hanterar replay av sparade spel
 public class ReplayService
 {
     private readonly SavedGame _savedGame;
-    private readonly Board _board;
-    private readonly GameHistory _gameHistory;
+    private readonly IBoard _board;
+    private readonly IGameHistory _gameHistory;
     private readonly RuleSet _ruleSet;
+    private readonly PieceOperationsService _pieceOperationsService;
 
-    private int _currentMoveIndex;  // Nuvarande position i replay 
+    private int _currentMoveIndex;  // Nuvarande position i replay
     private Player _player1;
     private Player _player2;
 
@@ -45,6 +47,10 @@ public class ReplayService
 
         // Röd börjar alltid
         CurrentPlayer = _player1;
+
+        // Initiera piece operations service
+        var moveValidator = new MoveValidator(_ruleSet);
+        _pieceOperationsService = new PieceOperationsService(_ruleSet, moveValidator);
     }
 
     /// Gå framåt ett drag i replay
@@ -84,7 +90,7 @@ public class ReplayService
 
 
     /// Hämta brädet i sitt nuvarande tillstånd
-    public Board? GetBoard() => _board;
+    public IBoard? GetBoard() => _board;
 
 
     private void ExecuteMove(Position from, Position to)
@@ -92,7 +98,7 @@ public class ReplayService
         var move = new Move(from, to);
 
         // Hantera capture
-        var capturedPiece = HandleCapture(from, to);
+        var capturedPiece = _pieceOperationsService.HandleCapture(from, to, _board);
         if (capturedPiece != null)
             move.CapturedPiece = capturedPiece;
 
@@ -101,9 +107,9 @@ public class ReplayService
 
         // Hantera promotion
         var piece = _board.GetPiece(to);
-        if (piece != null && !piece.IsKing && IsPromotionPosition(to, piece.Color))
+        if (piece != null && !piece.IsKing && _pieceOperationsService.IsPromotionPosition(to, piece.Color))
         {
-            PromoteToKing(to, piece);
+            _pieceOperationsService.PromoteToKing(to, piece, _board);
             move.WasPromoted = true;
         }
 
@@ -112,48 +118,6 @@ public class ReplayService
 
         // Byt spelare
         SwitchPlayer();
-    }
-
-    private Piece? HandleCapture(Position from, Position to)
-    {
-        // Kolla om detta är ett capture-drag (avstånd 2)
-        int rowDiff = Math.Abs(to.Row - from.Row);
-        int colDiff = Math.Abs(to.Column - from.Column);
-
-        if (rowDiff == 2 && colDiff == 2)
-        {
-            // Beräkna den fångade positionen (mellanrutan)
-            int capturedRow = (from.Row + to.Row) / 2;
-            int capturedCol = (from.Column + to.Column) / 2;
-            var capturedPos = new Position(capturedRow, capturedCol);
-
-            var capturedPiece = _board.GetPiece(capturedPos);
-            if (capturedPiece != null)
-            {
-                _board.RemovePiece(capturedPos);
-                return capturedPiece;
-            }
-        }
-
-        return null;
-    }
-
-    private void PromoteToKing(Position position, Piece piece)
-    {
-        _board.RemovePiece(position);
-        var kingPiece = new KingPiece(piece.Color, position);
-        _board.PlacePiece(kingPiece, position);
-    }
-
-    private bool IsPromotionPosition(Position position, PieceColor color)
-    {
-        if (color == PieceColor.Red && position.Row == 0)
-            return true;
-
-        if (color == PieceColor.Black && position.Row == _ruleSet.BoardSize - 1)
-            return true;
-
-        return false;
     }
 
     private void SwitchPlayer()

@@ -12,16 +12,17 @@ namespace Checkers.CheckersGame.GameService
 {
     public class GameService
     {
-        private Board? _board;
+        private IBoard? _board;
         private Player? _player1;
         private Player? _player2;
         private Player? _currentPlayer;
-        private MoveValidator? _moveValidator;
-        private GameHistory? _gameHistory;
+        private IMoveValidator? _moveValidator;
+        private IGameHistory? _gameHistory;
+        private PieceOperationsService? _pieceOperationsService;
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
         //RuleSet satt till public så gui kan läsa
-        public RuleSet RuleSet{ get; private set; }
+        public RuleSet RuleSet { get; }
         public GameService()
         {
             RuleSet = RuleSet.CreateStandard(); // blir annorlunda när vi har factoryn
@@ -34,6 +35,7 @@ namespace Checkers.CheckersGame.GameService
             _player2 = new Player(player2Name, PieceColor.Black);
             _currentPlayer =  _player1;
             _moveValidator = new MoveValidator(RuleSet);
+            _pieceOperationsService = new PieceOperationsService(RuleSet, _moveValidator);
             _gameStatus = GameStatus.WaitingToStart;
             _isInMultiJump = false;
 
@@ -61,7 +63,7 @@ namespace Checkers.CheckersGame.GameService
             var move = new Move(from, to);
 
             //kolla om en pjäs vart tagen
-            var capturedPiece = HandleCapture(from, to);
+            var capturedPiece = _pieceOperationsService?.HandleCapture(from, to, _board);
             bool wasCapture = capturedPiece != null;
             if (capturedPiece != null)
             {
@@ -74,9 +76,9 @@ namespace Checkers.CheckersGame.GameService
 
             //kolla om pjäsen ska bli en Dam (king)
             var piece = _board?.GetPiece(to);
-            if (piece != null && !piece.IsKing && IsPromotionPosition(to, piece.Color))
+            if (piece != null && !piece.IsKing && _pieceOperationsService != null && _pieceOperationsService.IsPromotionPosition(to, piece.Color))
             {
-                PromoteToKing(to, piece);
+                _pieceOperationsService.PromoteToKing(to, piece, _board);
                 move.WasPromoted = true;
             }
             //spara draget i history
@@ -160,7 +162,7 @@ namespace Checkers.CheckersGame.GameService
             _currentPlayer = _currentPlayer.Color == _player1.Color ? _player2 : _player1;
         }
 
-        public Board? GetBoard()
+        public IBoard? GetBoard()
         {
             return _board;
         }
@@ -175,7 +177,7 @@ namespace Checkers.CheckersGame.GameService
             return _gameStatus;
         }
 
-        public GameHistory? GetGameHistory()
+        public IGameHistory? GetGameHistory()
         {
             return _gameHistory;
         }
@@ -235,43 +237,6 @@ namespace Checkers.CheckersGame.GameService
             }
 
             return validMoves;
-        }
-
-        private void PromoteToKing(Position position, Piece piece)
-        {
-            _board?.RemovePiece(position);
-            var kingPiece = new KingPiece(piece.Color, position);
-            _board?.PlacePiece(kingPiece, position);
-        }
-        private Piece? HandleCapture(Position from, Position to)
-        {
-            if (_moveValidator == null || _board == null)
-                return null;
-
-            var capturedPosition = _moveValidator.GetCapturedPosition(from, to);
-            if (capturedPosition.HasValue){
-                var capturedPiece = _board.GetPiece(capturedPosition.Value);
-            
-                // Ta bara bort pjäsen om det faktiskt finns en där
-                if (capturedPiece != null)
-                {
-                    _board.RemovePiece(capturedPosition.Value);
-                }
-
-                return capturedPiece;
-            }
-
-            return null;
-        }
-
-        private bool IsPromotionPosition(Position position, PieceColor color)
-        {
-            if (color == PieceColor.Red && position.Row == 0)
-                return true;
-
-            if(color == PieceColor.Black && position.Row == RuleSet.BoardSize -1)
-                return true;
-            return false;
         }
 
         private bool CanPieceCaptureAgain(Position piecePosition)

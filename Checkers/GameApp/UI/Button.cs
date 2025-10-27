@@ -28,12 +28,21 @@ namespace Checkers.UI
         // Text som visas på knappen
         public string Text { get; set; } = "Button";
 
+        /// <summary>
+        /// Skapa en Button komponent med default text
+        /// </summary>
+        /// <param name="buttonRectangle">Button Size</param>
         public Button(Rectangle buttonRectangle)
             : base(buttonRectangle)
         {
 
         }
 
+        /// <summary>
+        /// Skapa en Button komponent med specific text
+        /// </summary>
+        /// <param name="buttonRectangle">Button Size</param>
+        /// <param name="text">Button Text</param>
         public Button(Rectangle buttonRectangle, string text)
             : base(buttonRectangle)
         {

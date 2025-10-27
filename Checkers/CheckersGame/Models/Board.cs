@@ -9,7 +9,7 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
-    public class Board
+    public class Board : IBoard
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
         public int Size { get; private set; } // storleken på brädet
@@ -187,7 +187,7 @@ namespace Checkers.CheckersGame.Models
 
         }
 
-        public Board Clone() // Skapar och returnerar en kopia av brädet
+        public IBoard Clone() // Skapar och returnerar en kopia av brädet
         {
             var copy = new Board(Size); //  Skapar nytt bräde av samma storlek
 

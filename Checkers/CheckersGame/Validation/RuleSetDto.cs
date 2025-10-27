@@ -7,28 +7,16 @@ using System.Text.Json.Serialization;
 
 namespace Checkers.CheckersGame.Validation.Config
 {
-    internal sealed class RuleSetDto // sealed = ingen kan ärva från klassen
+    internal sealed class RuleSetDto
     {
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
-
         [JsonPropertyName("boardSize")]
         public int? BoardSize { get; set; }
 
-        [JsonPropertyName("forcedCaptures")] // tvingat slag
+        [JsonPropertyName("forcedCaptures")]
         public bool? ForcedCaptures { get; set; }
-
-        [JsonPropertyName("allowBackwardCaptures")]
-        public bool? AllowBackwardCaptures { get; set; }
-
-        [JsonPropertyName("allowBackwardCaptures")]
-        public bool? AllowForwardCaptures { get; set; }
 
         [JsonPropertyName("allowMultipleJumps")]
         public bool? AllowMultipleJumps { get; set; }
-
-        [JsonPropertyName("version")]
-        public int? Version { get; set; }
 
     }
 }

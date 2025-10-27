@@ -12,11 +12,6 @@ namespace Checkers.CheckersGame.Models
     {
         public RegularPiece(PieceColor color, Position position) : base(color, position)
         {
-            this.Color = color;
-
-            this.Position = position;
-
-            this.IsKing = false;
         }
 
         public override Piece Clone()
@@ -26,7 +21,7 @@ namespace Checkers.CheckersGame.Models
             return clone;
         }
 
-        public override List<Position> GetValidMoves(Board board)
+        public override List<Position> GetValidMoves(IBoard board)
         {
             var validMoves = new List<Position>();
             validMoves.AddRange(GetForwardMoves(board));
@@ -35,7 +30,7 @@ namespace Checkers.CheckersGame.Models
         }
 
 
-        private List<Position> GetForwardMoves(Board board)
+        private List<Position> GetForwardMoves(IBoard board)
         {
             var forwardMoves = new List<Position>();
 
@@ -59,7 +54,7 @@ namespace Checkers.CheckersGame.Models
             return forwardMoves;
         }
 
-        private List<Position> GetCaptureMoves(Board board)
+        private List<Position> GetCaptureMoves(IBoard board)
         {
             var captureMoves = new List<Position>();
 
