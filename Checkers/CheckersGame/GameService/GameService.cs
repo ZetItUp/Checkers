@@ -27,7 +27,7 @@ namespace Checkers.CheckersGame.GameService
 
         public void InitializeGame(string player1Name, string player2Name)
         {
-            RuleSet = _ruleSetFactory?.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content/standard.json");
+            RuleSet = _ruleSetFactory?.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content/RuleConfig.json");
             _board = new Board(RuleSet!.BoardSize);
             _player1 = new Player(player1Name, PieceColor.Red);
             _player2 = new Player(player2Name, PieceColor.Black);
