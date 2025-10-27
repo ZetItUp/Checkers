@@ -37,10 +37,8 @@ namespace Checkers.CheckersGame.Validation
                 throw new InvalidOperationException("Could not read JSON to RuleSetDto");
 
             return new RuleSet(         // skapa och returnera en rulseset från json
-                dto.Name!.Trim(), 
                 dto.BoardSize!.Value,
                 dto.ForcedCaptures!.Value,
-                dto.AllowBackwardCaptures!.Value,
                 dto.AllowMultipleJumps!.Value
                 );
 

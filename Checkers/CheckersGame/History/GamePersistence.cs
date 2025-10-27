@@ -150,10 +150,8 @@ public static class GamePersistence
             Player2Name = game.GetPlayer2Name(),
             RuleSet = new RuleSetSaveState
             {
-                Name = game.RuleSet.Name,
                 BoardSize = game.RuleSet.BoardSize,
                 ForcedCaptures = game.RuleSet.ForcedCaptures,
-                AllowBackwardCaptures = game.RuleSet.AllowBackwardCaptures,
                 AllowMultipleJumps = game.RuleSet.AllowMultipleJumps
             },
             Moves = SerializeMoves(moves),
@@ -188,10 +186,8 @@ public static class GamePersistence
     {
         // Rekonstruera RuleSet från sparad data
         var ruleSet = new RuleSet(
-            name: gameState.RuleSet.Name,
             boardSize: gameState.RuleSet.BoardSize,
             forcedCaptures: gameState.RuleSet.ForcedCaptures,
-            allowBackwardCaptures: gameState.RuleSet.AllowBackwardCaptures,
             allowMultipleJumps: gameState.RuleSet.AllowMultipleJumps
         );
 

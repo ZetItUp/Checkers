@@ -1,8 +1,5 @@
 {
-  "name": "test",
     "boardSize": 8,
     "forcedCaptures": true,
-    "allowBackwardCaptures": false,
     "allowMultipleJumps": true
-  
 }

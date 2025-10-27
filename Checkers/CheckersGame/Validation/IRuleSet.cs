@@ -8,10 +8,8 @@ namespace Checkers.CheckersGame.Validation
 {
     internal interface IRuleSet // dessa ska MoveValidator kunna hämta
     {
-        string Name { get; }
         int BoardSize { get; }
         bool ForcedCaptures { get; }
-        bool AllowBackwardCaptures { get; }
         bool AllowMultipleJumps { get; }
     }
     internal interface IRuleSetFactory
