@@ -87,6 +87,9 @@
 /processorParam:TextureFormat=Color
 /build:Select.png
 
+#begin standard.json
+/copy:standard.json
+
 #begin UIDown.png
 /importer:TextureImporter
 /processor:TextureProcessor
