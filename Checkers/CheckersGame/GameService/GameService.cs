@@ -12,6 +12,7 @@ namespace Checkers.CheckersGame.GameService
 {
     public class GameService
     {
+        private RuleSetFactory? _ruleSetFactory = new RuleSetFactory();
         private IBoard? _board;
         private Player? _player1;
         private Player? _player2;
@@ -22,17 +23,12 @@ namespace Checkers.CheckersGame.GameService
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
         //RuleSet satt till public så gui kan läsa
-        public RuleSet RuleSet { get; private set; }
-        public GameService()
-        {
-
-        }
+        public IRuleSet? RuleSet { get; private set; }
 
         public void InitializeGame(string player1Name, string player2Name)
         {
-            var RuleSetData = RuleSet.LoadRuleSet();
-            RuleSet = new RuleSet(RuleSetData.BoardSize,RuleSetData.ForcedCaptures, RuleSetData.AllowMultipleJumps);
-            _board = new Board(RuleSet.BoardSize);
+            RuleSet = _ruleSetFactory?.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content\\standard.json");
+            _board = new Board(RuleSet!.BoardSize);
             _player1 = new Player(player1Name, PieceColor.Red);
             _player2 = new Player(player2Name, PieceColor.Black);
             _currentPlayer =  _player1;
@@ -65,7 +61,7 @@ namespace Checkers.CheckersGame.GameService
             var move = new Move(from, to);
 
             //kolla om en pjäs vart tagen
-            var capturedPiece = _pieceOperationsService?.HandleCapture(from, to, _board);
+            var capturedPiece = _pieceOperationsService?.HandleCapture(from, to, _board!);
             bool wasCapture = capturedPiece != null;
             if (capturedPiece != null)
             {
@@ -80,7 +76,7 @@ namespace Checkers.CheckersGame.GameService
             var piece = _board?.GetPiece(to);
             if (piece != null && !piece.IsKing && _pieceOperationsService != null && _pieceOperationsService.IsPromotionPosition(to, piece.Color))
             {
-                _pieceOperationsService.PromoteToKing(to, piece, _board);
+                _pieceOperationsService.PromoteToKing(to, piece, _board!);
                 move.WasPromoted = true;
             }
             //spara draget i history
@@ -95,7 +91,7 @@ namespace Checkers.CheckersGame.GameService
 
             // Kolla om pjäsen kan ta igen 
             // Bara om: det var ett capture och AllowMultipleJumps är på
-            if (wasCapture && RuleSet.AllowMultipleJumps)
+            if (wasCapture && RuleSet!.AllowMultipleJumps)
             {
                 if (CanPieceCaptureAgain(to))
                 {
@@ -276,7 +272,7 @@ namespace Checkers.CheckersGame.GameService
 
         public void EndTurn()
         {
-            if (_gameStatus != GameStatus.InProgress || RuleSet.ForcedCaptures)
+            if (_gameStatus != GameStatus.InProgress || RuleSet!.ForcedCaptures)
                 return;
 
             _isInMultiJump = false;

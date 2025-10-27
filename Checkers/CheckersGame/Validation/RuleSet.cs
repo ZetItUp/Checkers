@@ -8,8 +8,6 @@ public class RuleSet : IRuleSet
     public bool ForcedCaptures { get; }
     public bool AllowMultipleJumps { get; }
 
-    private static RuleSetFactory _ruleSetFactory { get; } = new RuleSetFactory();
-
     public RuleSet(int boardSize, bool forcedCaptures, bool allowMultipleJumps)
     {
         BoardSize = boardSize;
@@ -34,10 +32,5 @@ public class RuleSet : IRuleSet
                $"Multiple Jumps: {AllowMultipleJumps}";
     }
 
-    public static IRuleSet LoadRuleSet()
-    {
-        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content\\standard.json");
-        return jsonData;
-    }
 }    
 

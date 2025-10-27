@@ -10,9 +10,9 @@ namespace Checkers.CheckersGame.Validation
 {
     public class MoveValidator : IMoveValidator
     {
-        private readonly RuleSet _ruleSet;
+        private readonly IRuleSet _ruleSet;
 
-        public MoveValidator(RuleSet ruleSet)
+        public MoveValidator(IRuleSet ruleSet)
         {
             _ruleSet = ruleSet;
         }

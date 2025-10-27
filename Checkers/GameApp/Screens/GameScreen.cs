@@ -202,7 +202,7 @@ namespace Checkers.GameApp.Screens
             // Initiera ett nytt spel
             _gameService.InitializeGame("Player 1", "Player 2");
             // Hämta board size
-            boardSize = _gameService.RuleSet.BoardSize;
+            boardSize = _gameService.RuleSet!.BoardSize;
 
             // Skapa texturer för brädet, en svart och en vit, med cellSize storlek
             _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
@@ -273,7 +273,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
             // Visa EndTurn knappen bara om ForcedCaptures är av
-            btnEndTurn.IsVisible = !_gameService.RuleSet.ForcedCaptures;
+            btnEndTurn.IsVisible = !_gameService.RuleSet!.ForcedCaptures;
             btnEndTurn.Enabled = !_gameService.RuleSet.ForcedCaptures && isPieceSelected;
 
             // Hämta currentPlayer från _gameService
@@ -429,7 +429,7 @@ namespace Checkers.GameApp.Screens
             if (_gameService != null)
             {
                 // Rita ut en border för spelbrädet där det tar slut
-                spriteBatch.Draw(uiTexture, new Rectangle((int)(_gameService.RuleSet.BoardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+                spriteBatch.Draw(uiTexture, new Rectangle((int)(_gameService.RuleSet!.BoardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
             }
 
             spriteBatch.End();
