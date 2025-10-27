@@ -257,6 +257,11 @@ namespace Checkers.GameApp.Screens
 
         public void Update(GameTime gameTime)
         {
+            if (isWinner)
+            {
+                return;
+
+            }
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
@@ -455,6 +460,22 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Draw(spriteBatch);
             btnSaveGame.Draw(spriteBatch);
             spriteBatch.End();
+
+            // rita victory-screen
+           /* if (isWinner)
+            {
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(0, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + 6, WindowRectangle.Width - 12, WindowRectangle.Height - 12), new Rectangle(6, 6, 1, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+            
+            }
+           */
         }
     }
 }
