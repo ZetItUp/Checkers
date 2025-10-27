@@ -36,9 +36,7 @@ public class RuleSet : IRuleSet
 
     public static RuleSet LoadRuleSet()
     {
-        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "");
-
-
+        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "/Content/standard.json");
         return null;
     }
 }    
