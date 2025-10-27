@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Validation
 {
-    internal interface IRuleSetFactory
+    public interface IRuleSetFactory
     {
         IRuleSet CreateFromJsonFile(string path); // läser in regler och skapar objekt
 
