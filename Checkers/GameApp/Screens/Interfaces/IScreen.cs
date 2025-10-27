@@ -11,28 +11,11 @@ namespace Checkers.GameApp.Screens
 {
     // Tom basklass för olika screens i spelet
     // Denna klass skulle kunna vara abstract, men vi var osäkra på om vi skulle behöva en instans av Screen direkt någon gång under testning
-    public class Screen
+    public interface IScreen
     {
-        public Screen()
-        {
-
-        }
-
-        public virtual void LoadContent(ContentManager content)
-        {
-
-        }
-        public virtual void UnloadContent()
-        {
-
-        }
-        public virtual void Update(GameTime gameTime)
-        {
-
-        }
-        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-
-        }
+        public abstract void LoadContent(ContentManager content);
+        public abstract void UnloadContent();
+        public abstract void Update(GameTime gameTime);
+        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
     }
 }

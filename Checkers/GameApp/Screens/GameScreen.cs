@@ -18,7 +18,7 @@ namespace Checkers.GameApp.Screens
     /// <summary>
     /// Screen för spelet
     /// </summary>
-    public class GameScreen : Screen
+    public class GameScreen : IScreen
     {
         // GameService 
         GameService? _gameService;
@@ -188,7 +188,7 @@ namespace Checkers.GameApp.Screens
             }
         }
 
-        public override void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content)
         {
             // Kontrollera att MainGame.graphicsDeviceManager inte är null
             if(MainGame.graphicsDeviceMangager == null)
@@ -239,7 +239,7 @@ namespace Checkers.GameApp.Screens
             // Initiera ett nytt spel
             _gameService.InitializeGame("Player 1", "Player 2");
         }
-        public override void UnloadContent()
+        public void UnloadContent()
         {
             // Töm resurser
             _gameService = null;
@@ -251,7 +251,7 @@ namespace Checkers.GameApp.Screens
             btnMainMenu?.UnloadContent();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
@@ -360,7 +360,7 @@ namespace Checkers.GameApp.Screens
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
             

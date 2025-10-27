@@ -13,18 +13,18 @@ namespace Checkers.GameApp.Screens
     public static class ScreenManager
     {
         // Nuvarande aktiva screen
-        private static Screen? _currentScreen;
+        private static IScreen? _currentScreen;
         // ContentManager för att ladda innehåll
         private static ContentManager? _content;
         // SpriteBatch för att rita grafik
         private static SpriteBatch? _spriteBatch;
         // Dictionary för att lagra olika screens, mappade till deras ScreenID
-        private static Dictionary<ScreenID, Screen> _screens = new Dictionary<ScreenID, Screen>();
+        private static Dictionary<ScreenID, IScreen> _screens = new Dictionary<ScreenID, IScreen>();
 
         /// <summary>
         /// Hämta nuvarande aktiva screen
         /// </summary>
-        public static Screen CurrentScreen
+        public static IScreen CurrentScreen
         {
             get 
             { 
@@ -42,11 +42,16 @@ namespace Checkers.GameApp.Screens
         {
             _content = content;
             _spriteBatch = spriteBatch;
+        }
 
-            // Lägg till screens i dictionaryn
-            _screens.Add(ScreenID.MainMenu, new MainMenuScreen());
-            _screens.Add(ScreenID.Game, new GameScreen());
-            _screens.Add(ScreenID.Replay, new ReplayScreen());
+        /// <summary>
+        /// Lägg till en screen i ScreenManager
+        /// </summary>
+        /// <param name="screenID">ScreenID for screen, must be unique</param>
+        /// <param name="screen">Screen object</param>
+        public static void AddScreen(ScreenID screenID, IScreen screen)
+        {
+            _screens.Add(screenID, screen);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace Checkers.GameApp.Screens
     /// <summary>
     /// Screen för huvudmenyn
     /// </summary>
-    public class MainMenuScreen : Screen
+    public class MainMenuScreen : IScreen
     {
         // Textur för bakgrunden
         Texture2D? background;
@@ -68,7 +68,7 @@ namespace Checkers.GameApp.Screens
             ScreenManager.ChangeScreen(ScreenID.Game);
         }
 
-        public override void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content)
         {
             // Ladda bakgrundstexturen
             background = content.Load<Texture2D>("Checkers");
@@ -81,7 +81,7 @@ namespace Checkers.GameApp.Screens
             btnReplayGames.LoadContent(content);
         }
 
-        public override void UnloadContent()
+        public void UnloadContent()
         {
             // Töm resurser
             btnExitGame.UnloadContent();
@@ -90,7 +90,7 @@ namespace Checkers.GameApp.Screens
             background = null;
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             // Uppdatera knapparna
             btnStartGame.Update(gameTime);
@@ -98,7 +98,7 @@ namespace Checkers.GameApp.Screens
             btnExitGame.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
