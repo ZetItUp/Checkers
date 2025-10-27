@@ -9,9 +9,9 @@ namespace Checkers.CheckersGame.Models
 {
     public abstract class Piece
     {
-        public PieceColor Color { get; set; }
+        public PieceColor Color { get; init; }
 
-        public Position Position { get; set; }
+        public Position Position { get; internal set; }
 
         public bool IsKing { get; protected set; }
 
@@ -21,8 +21,8 @@ namespace Checkers.CheckersGame.Models
 
             Position = position;
         }
-       
-        public abstract List<Position> GetValidMoves(Board board);
+
+        public abstract List<Position> GetValidMoves(IBoard board);
         public abstract Piece Clone();
         
     }

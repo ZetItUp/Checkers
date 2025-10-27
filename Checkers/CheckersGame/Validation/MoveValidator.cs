@@ -8,7 +8,7 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Validation
 {
-    internal class MoveValidator
+    public class MoveValidator : IMoveValidator
     {
         private readonly RuleSet _ruleSet;
 
@@ -17,7 +17,7 @@ namespace Checkers.CheckersGame.Validation
             _ruleSet = ruleSet;
         }
 
-        public bool ValidateMove(Position from, Position to, Board board, Player player)
+        public bool ValidateMove(Position from, Position to, IBoard board, Player player)
         {
             var piece = board.GetPiece(from);
 
@@ -115,7 +115,7 @@ namespace Checkers.CheckersGame.Validation
             return rowDiff == 2 && colDiff == 2;
         }
 
-        public bool HasValidMoves(Player player, Board board)
+        public bool HasValidMoves(Player player, IBoard board)
         {
             var playerPieces = board.GetAllPieces(player.Color);
 
@@ -169,12 +169,12 @@ namespace Checkers.CheckersGame.Validation
             return piece != null && piece.Color == player.Color;
         }
 
-        private bool IsDestinationEmpty(Board board, Position to)
+        private bool IsDestinationEmpty(IBoard board, Position to)
         {
             return board.GetPiece(to) ==  null;
         }
 
-        private bool IsMoveInValidList(Piece piece, Position to, Board board)
+        private bool IsMoveInValidList(Piece piece, Position to, IBoard board)
         {
             var validMoves = piece.GetValidMoves(board);
 

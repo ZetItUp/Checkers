@@ -10,10 +10,10 @@ namespace Checkers.CheckersGame.History
 {
     public class GameHistory
     {
-        private readonly Board _initialBoard;
+        private readonly IBoard _initialBoard;
         private readonly List<Move> _moves;
 
-        public GameHistory(Board initialBoard)
+        public GameHistory(IBoard initialBoard)
         {
             _initialBoard = initialBoard;
             _moves = new List<Move>();
@@ -42,19 +42,19 @@ namespace Checkers.CheckersGame.History
         //     return _moves.Count;
         // }
 
-        public bool Undo(Board board)
+        public bool Undo(IBoard board)
         {
             if (_moves.Count == 0)
                 return false;
-            
+
             //ta bort det sista draget
             _moves.RemoveAt(_moves.Count - 1);
-            
+
             ResetBoard(board);
 
             foreach (var move in _moves)
             {
-                ApplyMove(board, move);    
+                ApplyMove(board, move);
             }
             return true;
         }
@@ -77,7 +77,7 @@ namespace Checkers.CheckersGame.History
             _moves.Clear();    
         }
 
-        private void ResetBoard(Board board)
+        private void ResetBoard(IBoard board)
         {
             // Ta bara bort pjäser från rutor som faktiskt har pjäser
             for (int row = 0; row < board.Size; row++)
@@ -91,7 +91,7 @@ namespace Checkers.CheckersGame.History
                     }
                 }
             }
-        
+
             var initalPieces = _initialBoard.GetAllPieces();
             foreach (var piece in  initalPieces){
                 var clonedPiece = piece.Clone();
@@ -99,7 +99,7 @@ namespace Checkers.CheckersGame.History
             }
         }
 
-        private void ApplyMove(Board board, Move move)
+        private void ApplyMove(IBoard board, Move move)
         {
             board.MovePiece(move.From, move.To);
             

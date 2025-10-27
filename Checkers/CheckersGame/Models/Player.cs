@@ -10,17 +10,17 @@ namespace Checkers.CheckersGame.Models
     public class Player
     {
         // Egenskap för Namn
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         // Egenskap för Färg
-        public PieceColor Color { get; set; }
+        public PieceColor Color { get; init; }
 
         // Konstruktor som tar emot namn och färg och initierar egenskaperna med dessa värden.
         public Player(string name, PieceColor color)
         {
             // Tilldelar de inkommande värdena till klassens egenskaper
-            this.Name = name;
-            this.Color = color;
+            Name = name;
+            Color = color;
         }
     }
 }
