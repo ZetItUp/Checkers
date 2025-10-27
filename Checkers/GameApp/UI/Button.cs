@@ -41,7 +41,7 @@ namespace Checkers.UI
         {
             // Ladda in texturer och font
             base.LoadContent(content);
-            buttonFont = content.Load<SpriteFont>("Font2-14");
+            buttonFont = content.Load<SpriteFont>("Font14");
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
