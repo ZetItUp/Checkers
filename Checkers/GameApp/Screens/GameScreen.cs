@@ -47,6 +47,7 @@ namespace Checkers.GameApp.Screens
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
+        bool isWinner = false;
 
         // Spelbrädes variabler för scaling och size
         int boardSize = 0;
@@ -229,6 +230,9 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
 
+            // ladda ljud
+            Sound.LoadContent(content);
+
             // Ställ in alla knappars default synlighet och om dom är aktiva
             btnRestartGame.Enabled = false;
             btnRestartGame.IsVisible = false;
@@ -253,6 +257,11 @@ namespace Checkers.GameApp.Screens
 
         public void Update(GameTime gameTime)
         {
+            if (isWinner)
+            {
+                return;
+
+            }
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
@@ -260,6 +269,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
+
 
             // Uppdatera inget annat om _gameService är null eller om ett spel inte är GameStatus.InProgress
             if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
@@ -358,6 +368,13 @@ namespace Checkers.GameApp.Screens
                     }
                 }
             }
+
+            if (_gameService.CheckWinner() != null)
+            {
+                isWinner = true;
+                Sound.PlayWinSound();
+            }
+
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -443,6 +460,22 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Draw(spriteBatch);
             btnSaveGame.Draw(spriteBatch);
             spriteBatch.End();
+
+            // rita victory-screen
+           /* if (isWinner)
+            {
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(0, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + 6, WindowRectangle.Width - 12, WindowRectangle.Height - 12), new Rectangle(6, 6, 1, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+            
+            }
+           */
         }
     }
 }
