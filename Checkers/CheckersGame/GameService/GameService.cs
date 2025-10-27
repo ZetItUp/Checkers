@@ -22,14 +22,16 @@ namespace Checkers.CheckersGame.GameService
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
         //RuleSet satt till public så gui kan läsa
-        public RuleSet RuleSet { get; }
+        public RuleSet RuleSet { get; private set; }
         public GameService()
         {
-            RuleSet = RuleSet.CreateStandard(); // blir annorlunda när vi har factoryn
+
         }
 
         public void InitializeGame(string player1Name, string player2Name)
         {
+            var RuleSetData = RuleSet.LoadRuleSet();
+            RuleSet = new RuleSet(RuleSetData.BoardSize,RuleSetData.ForcedCaptures, RuleSetData.AllowMultipleJumps);
             _board = new Board(RuleSet.BoardSize);
             _player1 = new Player(player1Name, PieceColor.Red);
             _player2 = new Player(player2Name, PieceColor.Black);

@@ -34,10 +34,10 @@ public class RuleSet : IRuleSet
                $"Multiple Jumps: {AllowMultipleJumps}";
     }
 
-    public static RuleSet LoadRuleSet()
+    public static IRuleSet LoadRuleSet()
     {
-        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "/Content/standard.json");
-        return null;
+        var jsonData = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "standard.json");
+        return jsonData;
     }
 }    
 

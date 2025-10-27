@@ -199,6 +199,8 @@ namespace Checkers.GameApp.Screens
 
             // Skapa en GameService 
             _gameService = new GameService();
+            // Initiera ett nytt spel
+            _gameService.InitializeGame("Player 1", "Player 2");
             // Hämta board size
             boardSize = _gameService.RuleSet.BoardSize;
 
@@ -236,8 +238,6 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.IsVisible = false;
             btnSaveGame.Enabled = true;
 
-            // Initiera ett nytt spel
-            _gameService.InitializeGame("Player 1", "Player 2");
         }
         public void UnloadContent()
         {
