@@ -118,10 +118,10 @@ namespace Checkers.UI
                 return;
             }
 
-            // Kolla om texturen är laddad
+            // Kolla det finns en aktiv texture
             if (activeTexture == null)
             {
-                // Sätt default textur och hoppa över detta drawcall
+                // Sätt default texture och hoppa över detta drawcall
                 activeTexture = buttonTexture;
                 return;
             }
