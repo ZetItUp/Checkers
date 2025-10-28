@@ -20,7 +20,6 @@ namespace Checkers
         public static bool ExitGame = false;
 
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch? _spriteBatch;
         private ScreenManager? _screenManager;
 
         public MainGame()
@@ -45,7 +44,8 @@ namespace Checkers
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Skapa ett nytt SpriteBatch object
+            var _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Skapa ett AppContext för spelet
             var context = new AppContext(_spriteBatch, Content, _graphics.GraphicsDevice);
@@ -67,6 +67,7 @@ namespace Checkers
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Uppdatera fönstrets titel om det har ändrats
             if (Window.Title != WindowTitle)
             {
                 Window.Title = WindowTitle;
@@ -74,6 +75,7 @@ namespace Checkers
 
             if (ExitGame)
             {
+                // Låt MonoGame rensa alla resurser och avsluta programmet
                 Exit();
             }
 

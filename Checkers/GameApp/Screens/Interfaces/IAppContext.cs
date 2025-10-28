@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens.Interfaces
 {
-    // Application Context Interface, håller reda på Content och GraphicsDevice
+    // Application Context Interface, håller reda på SpriteBatch, ContentManager och GraphicsDevice
     public interface IAppContext
     {
         SpriteBatch SpriteBatch { get; }

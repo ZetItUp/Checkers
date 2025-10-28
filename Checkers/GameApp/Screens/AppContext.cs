@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens
 {
+    /// <summary>
+    /// Application Context klass, denna håller SpriteBatch, ContentManager och GraphicsDevice
+    /// Allt som behövs kunna kommas åt överallt i frontend.
+    /// </summary>
     public sealed class AppContext : IAppContext
     {
         public AppContext(SpriteBatch spriteBatch, ContentManager content, GraphicsDevice graphics) 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens.Interfaces
 {
+    // Interface för att byta screen
     public interface IScreenChanger
     {
         void ChangeScreen(ScreenID screenID);
