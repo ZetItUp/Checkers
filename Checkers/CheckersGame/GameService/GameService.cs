@@ -12,11 +12,11 @@ namespace Checkers.CheckersGame.GameService
 {
     public class GameService
     {
-        private RuleSetFactory? _ruleSetFactory = new RuleSetFactory();
+        private IRuleSetFactory _ruleSetFactory = new RuleSetFactory();
         private IBoard? _board;
-        private Player? _player1;
-        private Player? _player2;
-        private Player? _currentPlayer;
+        private Player _player1;
+        private Player _player2;
+        private Player _currentPlayer;
         private IMoveValidator? _moveValidator;
         private IGameHistory? _gameHistory;
         private PieceOperationsService? _pieceOperationsService;
@@ -25,23 +25,46 @@ namespace Checkers.CheckersGame.GameService
         //RuleSet satt till public så gui kan läsa
         public IRuleSet? RuleSet { get; private set; }
 
+        public GameService()
+        {
+            _player1 = new Player("Unknown Player1", PieceColor.Red);
+            _player2 = new Player("Unknown Player2", PieceColor.Black);
+            _currentPlayer = _player1;
+            _gameStatus = GameStatus.WaitingToStart;
+            _isInMultiJump = false;
+        }
+
         public void InitializeGame(string player1Name, string player2Name)
         {
-            RuleSet = _ruleSetFactory?.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content/RuleConfig.json");
-            _board = new Board(RuleSet!.BoardSize);
+            try
+            {
+                RuleSet = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content/RuleConfig.json");
+                
+                if (RuleSet == null)
+                {
+                    // Skrik, men hantera, krascha inte
+                    return;
+                }
+
+                _board = new Board(RuleSet.BoardSize);
+                _moveValidator = new MoveValidator(RuleSet);
+                _pieceOperationsService = new PieceOperationsService(RuleSet, _moveValidator);
+                _board.Initialize();
+
+                ///init History med brädet som det var initialt
+                //där efter behöver vi bara spara drag
+                _gameHistory = new GameHistory(_board.Clone());
+            }
+            catch (Exception ex)
+            {
+                // ????
+            }
+
             _player1 = new Player(player1Name, PieceColor.Red);
             _player2 = new Player(player2Name, PieceColor.Black);
             _currentPlayer =  _player1;
-            _moveValidator = new MoveValidator(RuleSet);
-            _pieceOperationsService = new PieceOperationsService(RuleSet, _moveValidator);
             _gameStatus = GameStatus.WaitingToStart;
             _isInMultiJump = false;
-
-            _board.Initialize();
-
-            ///init History med brädet som det var initialt
-            //där efter behöver vi bara spara drag
-            _gameHistory = new GameHistory(_board.Clone());
         }
 
         public void StartGame()
@@ -54,14 +77,20 @@ namespace Checkers.CheckersGame.GameService
         {
             if(_gameStatus != GameStatus.InProgress)
                 return false;
-            if(_moveValidator != null && _board != null && _currentPlayer != null && !_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
+
+            if(_gameHistory == null || _pieceOperationsService == null || _moveValidator == null || _board == null || _currentPlayer == null)
                 return false;
+
+            if (!_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
+            {
+                return false;
+            }
 
             //skapa ett move object för att spara movet
             var move = new Move(from, to);
 
             //kolla om en pjäs vart tagen
-            var capturedPiece = _pieceOperationsService?.HandleCapture(from, to, _board!);
+            var capturedPiece = _pieceOperationsService.HandleCapture(from, to, _board);
             bool wasCapture = capturedPiece != null;
             if (capturedPiece != null)
             {
@@ -69,18 +98,18 @@ namespace Checkers.CheckersGame.GameService
             }
 
             //flytta pjäsen på Board
-            _board?.MovePiece(from, to);
-
+            _board.MovePiece(from, to);
 
             //kolla om pjäsen ska bli en Dam (king)
-            var piece = _board?.GetPiece(to);
+            var piece = _board.GetPiece(to);
             if (piece != null && !piece.IsKing && _pieceOperationsService != null && _pieceOperationsService.IsPromotionPosition(to, piece.Color))
             {
-                _pieceOperationsService.PromoteToKing(to, piece, _board!);
+                _pieceOperationsService.PromoteToKing(to, piece, _board);
                 move.WasPromoted = true;
             }
+
             //spara draget i history
-            _gameHistory?.RecordMove(move);
+            _gameHistory.RecordMove(move);
 
             //kolla om det är en vinnare
             var winner = CheckWinner();
@@ -239,8 +268,14 @@ namespace Checkers.CheckersGame.GameService
 
         private bool CanPieceCaptureAgain(Position piecePosition)
         {
-            var piece = _board?.GetPiece(piecePosition);
-            if (_board == null || _moveValidator == null || piece == null || _currentPlayer == null || piece.Color != _currentPlayer.Color)
+            if(_board == null)
+            {
+                return false;
+            }
+
+            var piece = _board.GetPiece(piecePosition);
+
+            if ( _moveValidator == null || piece == null || _currentPlayer == null || piece.Color != _currentPlayer.Color)
                 return false;
 
             var validMoves = piece.GetValidMoves(_board);
