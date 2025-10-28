@@ -13,7 +13,7 @@ namespace Checkers.CheckersGame.GameService
 {
     public class GameService
     {
-        private IRuleSetFactory _ruleSetFactory = new RuleSetFactory();
+        private IRuleSetFactory _ruleSetFactory;
         private IBoard? _board;
         private Player _player1;
         private Player _player2;
@@ -23,11 +23,15 @@ namespace Checkers.CheckersGame.GameService
         private PieceOperationsService? _pieceOperationsService;
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
-        //RuleSet satt till public så gui kan läsa
         public IRuleSet? RuleSet { get; private set; }
-
-        public GameService()
+        
+        /// <summary>
+        /// Constructor med DI för tester
+        /// </summary>
+        /// <param name="ruleSetFactory"></param>
+        public GameService(IRuleSetFactory ruleSetFactory)
         {
+            _ruleSetFactory = ruleSetFactory;
             _player1 = new Player("Unknown Player1", PieceColor.Red);
             _player2 = new Player("Unknown Player2", PieceColor.Black);
             _currentPlayer = _player1;
@@ -35,6 +39,10 @@ namespace Checkers.CheckersGame.GameService
             _isInMultiJump = false;
         }
 
+        public GameService() : this(new RuleSetFactory())
+        {
+        }
+        
         public bool InitializeGame(string player1Name, string player2Name)
         {
             try
@@ -191,7 +199,7 @@ namespace Checkers.CheckersGame.GameService
         {
             return _board;
         }
-
+        
         public Player? GetCurrentPlayer()
         {
             return _currentPlayer;    
