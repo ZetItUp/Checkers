@@ -117,7 +117,7 @@ namespace Checkers.GameApp.UI
                         hoveredIndex = i;
 
                         // Kolla om vänstra musknappen släpptes för att välja item
-                        if (MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+                        if (MouseHelper.MouseReleased(MouseButton.Left))
                         {
                             SelectedIndex = i;
                         }

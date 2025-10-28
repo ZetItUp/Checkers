@@ -17,10 +17,6 @@ namespace Checkers.GameApp.Screens
 
         // Nuvarande aktiva screen
         private IScreen? _currentScreen;
-        // ContentManager för att ladda innehåll
-        private ContentManager? _content;
-        // SpriteBatch för att rita grafik
-        private SpriteBatch? _spriteBatch;
         // Dictionary för att lagra olika screens, mappade till deras ScreenID
         private readonly Dictionary<ScreenID, IScreen> _screens = new Dictionary<ScreenID, IScreen>();
 

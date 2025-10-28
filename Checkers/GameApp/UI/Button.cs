@@ -89,7 +89,7 @@ namespace Checkers.UI
 
             // Hantera Vilken textur som ska användas beroende på musens state
             // Kolla om vänstra musknappen är nedtryckt
-            if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
+            if (IsMouseOver && MouseHelper.MouseDown(MouseButton.Left))
             {
                 activeTexture = buttonPressedTexture;
             }
@@ -103,7 +103,7 @@ namespace Checkers.UI
             }
 
             // Kolla om knappen har klickats
-            if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            if (IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left))
             {
                 // Invoke:a Clicked eventet
                 Clicked?.Invoke(this, EventArgs.Empty);
