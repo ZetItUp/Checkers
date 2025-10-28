@@ -70,7 +70,7 @@ namespace Checkers.GameApp.UI
 
             // Hantera Vilken textur som ska användas beroende på musens state
             // Kolla om vänstra musknappen är nedtryckt
-            if (IsMouseOver && MouseHelper.MouseDown(MouseHelper.MouseButton.Left))
+            if (IsMouseOver && MouseHelper.MouseDown(MouseButton.Left))
             {
                 activeTexture = buttonPressedTexture;
             }
@@ -84,7 +84,7 @@ namespace Checkers.GameApp.UI
             }
 
             // Om musen är över comboboxen och vänstra knappen släpptes, toggla visningen av listan
-            if (IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            if (IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left))
             {
                 showList = !showList;
             }
@@ -98,7 +98,7 @@ namespace Checkers.GameApp.UI
                     itemList.Update(gameTime);
 
                     // Om musen är över itemList och vänstra knappen släpptes, välj det item som musen är över
-                    if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left) && itemList.SelectedIndex >= 0)
+                    if (itemList.IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left) && itemList.SelectedIndex >= 0)
                     {
                         showList = false;
                         SelectedItemText = itemList.Items[itemList.SelectedIndex];
@@ -118,7 +118,7 @@ namespace Checkers.GameApp.UI
             // Stäng listan om musen klickar utanför comboboxen och listan
             // Här spelar ordningen roll, dvs den här checken måste köras efter att itemList har uppdaterats
             // annars blir showList felaktigt satt till false direkt efter att den satts till true ovan
-            if (!IsMouseOver && MouseHelper.MouseReleased(MouseHelper.MouseButton.Left))
+            if (!IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left))
             {
                 showList = false;
             }

@@ -353,7 +353,7 @@ namespace Checkers.GameApp.Screens
             var mousePositionY = (int)(MouseHelper.MousePosition().Y / drawScale);
 
             // Kolla om musen är nedtryckt
-            if (MouseHelper.MousePressed(MouseHelper.MouseButton.Left))
+            if (MouseHelper.MousePressed(MouseButton.Left))
             {
                 // Hämta board
                 var board = _gameService.GetBoard();
