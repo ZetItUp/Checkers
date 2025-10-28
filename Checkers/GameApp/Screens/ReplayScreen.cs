@@ -172,15 +172,15 @@ namespace Checkers.GameApp.Screens
         public void LoadContent(ContentManager content)
         {
             // Kolla så att GraphicsDeviceManager är initialiserad
-            if (MainGame.graphicsDeviceMangager == null)
+            if (MainGame.graphicsDeviceManager == null)
             {
                 // Här kör vi exception, om detta sker så har spelet inte initialiserats korrekt
                 throw new Exception("GraphicsDeviceManager is not initialized.");
             }
 
             // Skapa texturer för brädet (Svart och Vitt)
-            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
-            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _darkColor);
+            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _lightColor);
+            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _darkColor);
 
             // Räkna ut skalning för brädet baserat på fönsterstorlek
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
@@ -206,16 +206,17 @@ namespace Checkers.GameApp.Screens
                 // Ladda in och sätt standardvärde för ComboBox
                 cboGames.LoadContent(content);
                 cboGames.SelectedItemText = "<Select a Previous Game>";
-            }
 
-            // Ladda in sparade spel för replay
-            var savedGames = GamePersistence.GetSavedGamesWithMetadata();
-            foreach (var game in savedGames)
-            {
-                // Lägg till varje sparat spel i ComboBox
-                cboGames?.AddItem(game.FileName);
+                // Ladda in sparade spel för replay
+                var savedGames = GamePersistence.GetSavedGamesWithMetadata();
+                foreach (var game in savedGames)
+                {
+                    // Lägg till varje sparat spel i ComboBox
+                    cboGames.AddItem(game.FileName);
+                }
             }
         }
+
         public void UnloadContent()
         {
             // Töm resurser och återställ variabler
@@ -249,10 +250,12 @@ namespace Checkers.GameApp.Screens
             {
                 btnNextMove.Enabled = _replayService != null && !_replayService.IsAtEnd && !isAutoPlaying;
             }
+
             if (btnPreviousMove != null)
             {
                 btnPreviousMove.Enabled = _replayService != null && !_replayService.IsAtStart && !isAutoPlaying;
             }
+
             if (btnAutoPlay != null)
             {
                 btnAutoPlay.Enabled = _replayService != null;
@@ -303,6 +306,11 @@ namespace Checkers.GameApp.Screens
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
                     Texture2D? cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
 
+                    if (cellTexture == null)
+                    {
+                        return;
+                    }
+
                     // Rita cellen
                     spriteBatch.Draw(cellTexture, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, cellColor, 0f, Vector2.Zero, SpriteEffects.None, 1.0f);
                 }
@@ -342,8 +350,10 @@ namespace Checkers.GameApp.Screens
             }
 
             // Rita en border för spelområdet
-            spriteBatch.Draw(uiTexture, new Rectangle((int)(boardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
-
+            if (uiTexture != null)
+            {
+                spriteBatch.Draw(uiTexture, new Rectangle((int)(boardSize * drawScale), 0, 3 * 3, MainGame.WindowHeight), new Rectangle(0, 7, 3, 1), Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            }
             spriteBatch.End();
 
             // Rita UI komponenter

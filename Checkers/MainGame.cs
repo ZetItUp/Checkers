@@ -7,13 +7,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Checkers
 {
+    /// <summary>
+    /// Spelklass för att initiera MonoGame 
+    /// </summary>
     public class MainGame : Game
     {
+        // Statiska hjälpfunktioner för att uppdatera MonoGame fönstret
         public static string WindowTitle = "Checkers Game";
-        public static GraphicsDeviceManager? graphicsDeviceMangager;
         public static int WindowWidth = 1280;
         public static int WindowHeight = 720;
         public static bool ExitGame = false;
+
+        // Statisk hjälpare för att komma åt graphicsDeviceManager
+        public static GraphicsDeviceManager? graphicsDeviceManager;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch? _spriteBatch;
@@ -23,7 +29,7 @@ namespace Checkers
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            graphicsDeviceMangager = _graphics;
+            graphicsDeviceManager = _graphics;
 
             // Lägg till MouseHelper som en GameComponent
             Components.Add(new MouseHelper(this));

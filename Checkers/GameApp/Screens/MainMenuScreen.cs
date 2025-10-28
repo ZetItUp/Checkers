@@ -15,8 +15,9 @@ namespace Checkers.GameApp.Screens
     /// </summary>
     public class MainMenuScreen : IScreen
     {
-        // Textur för bakgrunden
+        // Texture för bakgrunden
         Texture2D? background;
+
         // Skalningsfaktor och bredd för bakgrunden
         float bgScale = 2.0f;
         int bgWidth = 0;
@@ -72,30 +73,37 @@ namespace Checkers.GameApp.Screens
         {
             // Ladda bakgrundstexturen
             background = content.Load<Texture2D>("Checkers");
+
+            if(background == null)
+            {
+                MainGame.ExitGame = true;
+                return;
+            }
+
             // Ställ in scaling baserat på bakgrunden
             bgWidth = (int)(background.Width * bgScale);
 
             // Ladda knapparna
-            btnStartGame.LoadContent(content);
-            btnExitGame.LoadContent(content);
-            btnReplayGames.LoadContent(content);
+            btnStartGame?.LoadContent(content);
+            btnExitGame?.LoadContent(content);
+            btnReplayGames?.LoadContent(content);
         }
 
         public void UnloadContent()
         {
             // Töm resurser
-            btnExitGame.UnloadContent();
-            btnReplayGames.UnloadContent();
-            btnStartGame.UnloadContent();
+            btnExitGame?.UnloadContent();
+            btnReplayGames?.UnloadContent();
+            btnStartGame?.UnloadContent();
             background = null;
         }
 
         public void Update(GameTime gameTime)
         {
             // Uppdatera knapparna
-            btnStartGame.Update(gameTime);
-            btnReplayGames.Update(gameTime);
-            btnExitGame.Update(gameTime);
+            btnStartGame?.Update(gameTime);
+            btnReplayGames?.Update(gameTime);
+            btnExitGame?.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -113,9 +121,9 @@ namespace Checkers.GameApp.Screens
 
             // Rita ut knapparna
             spriteBatch.Begin(SpriteSortMode.Deferred);
-            btnStartGame.Draw(spriteBatch);
-            btnReplayGames.Draw(spriteBatch);
-            btnExitGame.Draw(spriteBatch);
+            btnStartGame?.Draw(spriteBatch);
+            btnReplayGames?.Draw(spriteBatch);
+            btnExitGame?.Draw(spriteBatch);
             spriteBatch.End();
         }
     }

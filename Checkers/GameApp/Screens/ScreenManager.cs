@@ -62,9 +62,14 @@ namespace Checkers.GameApp.Screens
         {
             // Töm nuvarande screen om den finns
             _currentScreen?.UnloadContent();
-            // Sätt aktiv screen till den nya och ladda dess innehåll
-            _currentScreen = _screens[screenID];
-            _currentScreen.LoadContent(_content!);
+
+            // Kolla så att screenID finns i _screens
+            if(_screens.ContainsKey(screenID))
+            {
+                // Sätt aktiv screen till den nya och ladda dess innehåll
+                _currentScreen = _screens[screenID];
+                _currentScreen.LoadContent(_content!);
+            }
         }
 
         public static void Update(GameTime gameTime)
