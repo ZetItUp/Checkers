@@ -12,6 +12,7 @@ using Checkers.GameApp.Helpers;
 using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.History;
+using Checkers.GameApp.Screens.Interfaces;
 
 namespace Checkers.GameApp.Screens
 {
@@ -20,6 +21,10 @@ namespace Checkers.GameApp.Screens
     /// </summary>
     public class GameScreen : IScreen
     {
+        // Variabler för att hålla reda på screens och AppContext
+        private readonly IScreenChanger _screenChanger;
+        private IAppContext? _appContext;
+
         // GameService 
         GameService? _gameService;
 
@@ -42,7 +47,7 @@ namespace Checkers.GameApp.Screens
         Button btnUndoMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Undo Move");
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
-        Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game"); 
+        Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
 
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
@@ -58,7 +63,7 @@ namespace Checkers.GameApp.Screens
         // Färger som används vid ritning av texturer
         Color _lightColor = new Color(255, 255, 255);
         Color _darkColor = new Color(34, 32, 52);
-        
+
         // Vald position 
         Position selectedPosition;
         // Nuvarande Spelare
@@ -67,9 +72,12 @@ namespace Checkers.GameApp.Screens
         // Lista på tillgängliga moves som en pjäs kan utföra
         List<Position> validMoves = new List<Position>();
 
-        public GameScreen()
+        public GameScreen(IScreenChanger screenChanger)
             : base()
         {
+            // Sätt screenChanger
+            _screenChanger = screenChanger;
+
             // Subscribe:a till alla knappars Clicked event
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnStartGame.Clicked += BtnStartGame_Clicked;
@@ -136,7 +144,7 @@ namespace Checkers.GameApp.Screens
         private void BtnMainMenu_Clicked(object? sender, EventArgs e)
         {
             // Gå tillbaka till huvudmenyn
-            ScreenManager.ChangeScreen(ScreenID.MainMenu);
+            _screenChanger.ChangeScreen(ScreenID.MainMenu);
         }
 
         /// <summary>
@@ -155,7 +163,7 @@ namespace Checkers.GameApp.Screens
                 _gameService.StartGame();
 
                 // Resetar UI
-                isPieceSelected = false; 
+                isPieceSelected = false;
                 // Rensa validMoves listan
                 validMoves.Clear();
             }
@@ -189,22 +197,37 @@ namespace Checkers.GameApp.Screens
             }
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(IAppContext context)
         {
-            // Kontrollera att MainGame.graphicsDeviceManager inte är null
-            if(MainGame.graphicsDeviceManager == null)
+            if (context == null)
             {
                 // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
-                throw new Exception("GraphicsDeviceManager is not initialized.");
+                throw new Exception("IAppContext is not initialized.");
+            }
+
+            // Kontrollera att GraphicsDevice inte är null
+            if (context.GraphicsDevice == null)
+            {
+
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("GraphicsDevice is not initialized.");
+            }
+
+            // Kontrollera att ContentManager inte är null
+            if (context.Content == null)
+            {
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("ContentManager is not initialized.");
             }
 
             // Skapa en GameService 
             _gameService = new GameService();
+            _appContext = context;
 
             // Initiera ett nytt spel
-            if(!_gameService.InitializeGame("Player 1", "Player 2"))
+            if (!_gameService.InitializeGame("Player 1", "Player 2"))
             {
-                ScreenManager.ChangeScreen(ScreenID.MainMenu);
+                _screenChanger.ChangeScreen(ScreenID.MainMenu);
                 return;
             }
 
@@ -215,12 +238,14 @@ namespace Checkers.GameApp.Screens
             }
 
             // Skapa texturer för brädet, en svart och en vit, med cellSize storlek
-            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _lightColor);
-            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _darkColor);
+            _lightTexture = GraphicsHelper.CreateTexture(context.GraphicsDevice, cellSize, cellSize, _lightColor);
+            _darkTexture = GraphicsHelper.CreateTexture(context.GraphicsDevice, cellSize, cellSize, _darkColor);
 
             // Beräkna scaling så vi kan rita ut brädet anpassat efter fönstrets storlek och board size
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
             drawScale = (cellSize * boardScale);
+
+            var content = context.Content;
 
             // Ladda texturer
             whitePiece = content.Load<Texture2D>("White");
@@ -239,7 +264,7 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
 
-            // ladda ljud
+            // Ladda ljud
             Sound.LoadContent(content);
 
             // Ställ in alla knappars default synlighet och om dom är aktiva
@@ -310,12 +335,12 @@ namespace Checkers.GameApp.Screens
                 var board = _gameService.GetBoard();
                 // Försök hämta en pjäs från board där musen är
                 var hoveredPiece = board?.GetPiece(new Position(mousePositionY, mousePositionX));
-                
+
                 // Om pjäsen inte är null
                 if (hoveredPiece != null)
                 {
                     // Kontrollera att vi har en currentPlayer och att currentPlayers färg är samma som sig själv
-                    if(currentPlayer != null && currentPlayer.Color != hoveredPiece.Color)
+                    if (currentPlayer != null && currentPlayer.Color != hoveredPiece.Color)
                     {
                         // Avmarkera pjäsen och returnera
                         isPieceSelected = false;
@@ -339,10 +364,10 @@ namespace Checkers.GameApp.Screens
                 else
                 {
                     // Loopa igenom alla validMoves
-                    foreach(var move in validMoves)
+                    foreach (var move in validMoves)
                     {
                         // Kontrollera så att draget som görs är på samma plats som musens position
-                        if(move.Row == mousePositionY && move.Column == mousePositionX)
+                        if (move.Row == mousePositionY && move.Column == mousePositionX)
                         {
                             // Gör draget och spara position
                             var moveToPosition = move;
@@ -360,7 +385,7 @@ namespace Checkers.GameApp.Screens
                                 // Markera pjäsen
                                 isPieceSelected = true;
                                 // Nu är vi i multi-jump läge
-                                isInMultiJumpMode = true; 
+                                isInMultiJumpMode = true;
                             }
                             else
                             {
@@ -378,6 +403,7 @@ namespace Checkers.GameApp.Screens
                 }
             }
 
+            // Kolla om någon har vunnit spelet ännu
             if (_gameService.CheckWinner() != null)
             {
                 isWinner = true;
@@ -386,19 +412,33 @@ namespace Checkers.GameApp.Screens
 
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
+            // Felhantering för AppContext och SpriteBatch
+            // Om något är null så ska inget försökas ritas ut och vi hoppar över drawcall
+            if(_appContext == null)
+            {
+                return;
+            }
+
+            var spriteBatch = _appContext.SpriteBatch;
+
+            if (spriteBatch == null)
+            {
+                return;
+            }
+
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
-            
+
             // Rita ett schackbräde
             for (int y = 0; y < boardSize; y++)
             {
-                for(int x = 0; x < boardSize; x++)
+                for (int x = 0; x < boardSize; x++)
                 {
                     // Hämta färg baserat på position, varannan svart, varannan vit
                     Color cellColor = ((x + y) % 2 == 0) ? _lightColor : _darkColor;
                     Texture2D? cellTexture = ((x + y) % 2 == 0) ? _lightTexture : _darkTexture;
-                    
+
                     // Rita ut cellen
                     spriteBatch.Draw(cellTexture, new Rectangle((int)(x * drawScale), (int)(y * drawScale), (int)drawScale, (int)drawScale), null, cellColor, 0f, Vector2.Zero, SpriteEffects.None, 1.0f);
                 }
@@ -471,20 +511,20 @@ namespace Checkers.GameApp.Screens
             spriteBatch.End();
 
             // rita victory-screen
-           /* if (isWinner)
-            {
-                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(0, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + 6, WindowRectangle.Width - 12, WindowRectangle.Height - 12), new Rectangle(6, 6, 1, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-            
-            }
-           */
+            /* if (isWinner)
+             {
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(0, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + 6, WindowRectangle.Width - 12, WindowRectangle.Height - 12), new Rectangle(6, 6, 1, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + 6, 6, WindowRectangle.Height - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                 spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+
+             }
+            */
         }
     }
 }

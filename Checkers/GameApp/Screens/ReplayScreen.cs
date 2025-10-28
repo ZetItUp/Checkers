@@ -3,6 +3,7 @@ using Checkers.CheckersGame.GameService;
 using Checkers.CheckersGame.History;
 using Checkers.CheckersGame.Models;
 using Checkers.GameApp.Helpers;
+using Checkers.GameApp.Screens.Interfaces;
 using Checkers.GameApp.UI;
 using Checkers.UI;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,10 @@ namespace Checkers.GameApp.Screens
     /// </summary>
     public class ReplayScreen : IScreen
     {
+        // Variabler för att hålla reda på screens och AppContext
+        private readonly IScreenChanger _screenChanger;
+        private IAppContext? _appContext;
+
         // Tjänst för replay av sparade spel
         ReplayService? _replayService;
 
@@ -57,9 +63,11 @@ namespace Checkers.GameApp.Screens
         float lastAutoPlayTime = 0f;
         bool isAutoPlaying = false;
 
-        public ReplayScreen()
+        public ReplayScreen(IScreenChanger screenChanger)
             : base()
         {
+            _screenChanger = screenChanger;
+
             // Subscriba till knapp event handlers
             btnMainMenu.Clicked += BtnMainMenu_Clicked;
             btnNextMove.Clicked += BtnNextMove_Clicked;
@@ -166,25 +174,43 @@ namespace Checkers.GameApp.Screens
         private void BtnMainMenu_Clicked(object? sender, EventArgs e)
         {
             // Gå tillbaka till huvudmenyn
-            ScreenManager.ChangeScreen(ScreenID.MainMenu);
+            _screenChanger.ChangeScreen(ScreenID.MainMenu);
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(IAppContext context)
         {
-            // Kolla så att GraphicsDeviceManager är initialiserad
-            if (MainGame.graphicsDeviceManager == null)
+            // Kontrollera att context inte är null
+            if (context == null)
             {
-                // Här kör vi exception, om detta sker så har spelet inte initialiserats korrekt
-                throw new Exception("GraphicsDeviceManager is not initialized.");
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("IAppContext is not initialized.");
+            }
+
+            // Kontrollera att GraphicsDevice inte är null
+            if (context.GraphicsDevice == null)
+            {
+
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("GraphicsDevice is not initialized.");
+            }
+
+            // Kontrollera att ContentManager inte är null
+            if (context.Content == null)
+            {
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("ContentManager is not initialized.");
             }
 
             // Skapa texturer för brädet (Svart och Vitt)
-            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _lightColor);
-            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _darkColor);
+            _lightTexture = GraphicsHelper.CreateTexture(context.GraphicsDevice, cellSize, cellSize, _lightColor);
+            _darkTexture = GraphicsHelper.CreateTexture(context.GraphicsDevice, cellSize, cellSize, _darkColor);
 
             // Räkna ut skalning för brädet baserat på fönsterstorlek
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
             drawScale = (cellSize * boardScale);
+
+            _appContext = context;
+            var content = context.Content;
 
             // Ladda in texturer för pjäser och UI
             whitePiece = content.Load<Texture2D>("White");
@@ -293,8 +319,22 @@ namespace Checkers.GameApp.Screens
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
+            // Felhantering för AppContext och SpriteBatch
+            // Om något är null så ska inget försökas ritas ut och vi hoppar över drawcall
+            if (_appContext == null)
+            {
+                return;
+            }
+
+            var spriteBatch = _appContext.SpriteBatch;
+
+            if (spriteBatch == null)
+            {
+                return;
+            }
+
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
             // Rita ett schackbräde

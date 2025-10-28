@@ -9,7 +9,5 @@ namespace Checkers.CheckersGame.Validation
     public interface IRuleSetFactory
     {
         IRuleSet CreateFromJsonFile(string path); // läser in regler och skapar objekt
-
-        IRuleSet CreateFromJson(string json); // skapar IRuleset objekt från sträng
     }
 }

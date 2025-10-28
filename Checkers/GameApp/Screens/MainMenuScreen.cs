@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Checkers.GameApp.Screens.Interfaces;
 using Checkers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -15,6 +16,10 @@ namespace Checkers.GameApp.Screens
     /// </summary>
     public class MainMenuScreen : IScreen
     {
+        // Variabler för att hålla reda på screens och AppContext
+        private readonly IScreenChanger _screenChanger;
+        private IAppContext? _appContext;
+
         // Texture för bakgrunden
         Texture2D? background;
 
@@ -27,9 +32,11 @@ namespace Checkers.GameApp.Screens
         Button btnReplayGames= new Button(new Rectangle(MainGame.WindowWidth / 2 - (250 / 2), MainGame.WindowHeight / 2 - 50 + 100, 250, 80), "Replay Games");
         Button btnExitGame = new Button(new Rectangle(MainGame.WindowWidth - 160, MainGame.WindowHeight - 70, 140, 50), "Exit Game");
 
-        public MainMenuScreen()
+        public MainMenuScreen(IScreenChanger screenChanger)
             : base()
         {
+            _screenChanger = screenChanger;
+
             // Subscribe:a till knapparnas Clicked event
             btnStartGame.Clicked += BtnStartGame_Clicked;
             btnExitGame.Clicked += BtnExitGame_Clicked;
@@ -44,7 +51,7 @@ namespace Checkers.GameApp.Screens
         private void BtnReplayGames_Clicked(object? sender, EventArgs e)
         {
             // Byt screen till ReplayScreen
-            ScreenManager.ChangeScreen(ScreenID.Replay);
+            _screenChanger.ChangeScreen(ScreenID.Replay);
         }
 
         /// <summary>
@@ -66,11 +73,36 @@ namespace Checkers.GameApp.Screens
         private void BtnStartGame_Clicked(object? sender, EventArgs e)
         {
             // Byt till GameScreen
-            ScreenManager.ChangeScreen(ScreenID.Game);
+            _screenChanger.ChangeScreen(ScreenID.Game);
         }
 
-        public void LoadContent(ContentManager content)
+        public void LoadContent(IAppContext context)
         {
+            // Kontrollera att context inte är null
+            if (context == null)
+            {
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("IAppContext is not initialized.");
+            }
+
+            // Kontrollera att GraphicsDevice inte är null
+            if (context.GraphicsDevice == null)
+            {
+
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("GraphicsDevice is not initialized.");
+            }
+
+            // Kontrollera att ContentManager inte är null
+            if (context.Content == null)
+            {
+                // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
+                throw new Exception("ContentManager is not initialized.");
+            }
+
+            _appContext = context;
+            var content = context.Content;
+
             // Ladda bakgrundstexturen
             background = content.Load<Texture2D>("Checkers");
 
@@ -106,8 +138,22 @@ namespace Checkers.GameApp.Screens
             btnExitGame?.Update(gameTime);
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
+            // Felhantering för AppContext och SpriteBatch
+            // Om något är null så ska inget försökas ritas ut och vi hoppar över drawcall
+            if (_appContext == null)
+            {
+                return;
+            }
+
+            var spriteBatch = _appContext.SpriteBatch;
+
+            if (spriteBatch == null)
+            {
+                return;
+            }
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
 
             // Kolla så att bakgrunden existerar

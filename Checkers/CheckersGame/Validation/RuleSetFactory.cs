@@ -22,7 +22,8 @@ namespace Checkers.CheckersGame.Validation
             var json = File.ReadAllText(path); // läser in filen som text
             return CreateFromJson(json); // skickar till metoden som hanterar Json-strängen
         }
-        public IRuleSet CreateFromJson(string json)
+
+        private IRuleSet CreateFromJson(string json)
         {
             if (string.IsNullOrEmpty(json))
                 throw new ArgumentException("JSON får inte vara tom", nameof(json));
@@ -46,8 +47,6 @@ namespace Checkers.CheckersGame.Validation
             if(!dto.AllowMultipleJumps.HasValue)
                 Console.WriteLine("Warning: Missing 'allowMultipleJumps' in config, using default: true");
             return new RuleSet(boardSize, forceCapture, allowMultipleJumps);
-
-
 
         }
     }

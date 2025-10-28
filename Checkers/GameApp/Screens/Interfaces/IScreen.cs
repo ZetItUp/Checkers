@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Checkers.GameApp.Screens.Interfaces;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,13 +10,12 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens
 {
-    // Tom basklass för olika screens i spelet
-    // Denna klass skulle kunna vara abstract, men vi var osäkra på om vi skulle behöva en instans av Screen direkt någon gång under testning
+    // Screen Interface
     public interface IScreen
     {
-        public abstract void LoadContent(ContentManager content);
-        public abstract void UnloadContent();
-        public abstract void Update(GameTime gameTime);
-        public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+        public void LoadContent(IAppContext appContext);
+        public void UnloadContent();
+        public void Update(GameTime gameTime);
+        public void Draw(GameTime gameTime);
     }
 }

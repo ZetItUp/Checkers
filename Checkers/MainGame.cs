@@ -1,5 +1,6 @@
 ﻿using Checkers.GameApp.Helpers;
 using Checkers.GameApp.Screens;
+using Checkers.GameApp.Screens.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,18 +19,15 @@ namespace Checkers
         public static int WindowHeight = 720;
         public static bool ExitGame = false;
 
-        // Statisk hjälpare för att komma åt graphicsDeviceManager
-        public static GraphicsDeviceManager? graphicsDeviceManager;
-
         private GraphicsDeviceManager _graphics;
         private SpriteBatch? _spriteBatch;
+        private ScreenManager? _screenManager;
 
         public MainGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            graphicsDeviceManager = _graphics;
 
             // Lägg till MouseHelper som en GameComponent
             Components.Add(new MouseHelper(this));
@@ -38,6 +36,8 @@ namespace Checkers
         protected override void Initialize()
         {
             base.Initialize();
+
+            // Ändra fönstrets storlek
             _graphics.PreferredBackBufferWidth = WindowWidth;
             _graphics.PreferredBackBufferHeight = WindowHeight;
             _graphics.ApplyChanges();
@@ -47,16 +47,19 @@ namespace Checkers
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ScreenManager.Initialize(_spriteBatch, Content);
+            // Skapa ett AppContext för spelet
+            var context = new AppContext(_spriteBatch, Content, _graphics.GraphicsDevice);
+            
+            // Skapa ScreenManager
+            _screenManager = new ScreenManager(context);
 
             // Lägg till screens i ScreenManager
-            ScreenManager.AddScreen(ScreenID.MainMenu, new MainMenuScreen());
-            ScreenManager.AddScreen(ScreenID.Game, new GameScreen());
-            ScreenManager.AddScreen(ScreenID.Replay, new ReplayScreen());
+            _screenManager.AddScreen(ScreenID.MainMenu, new MainMenuScreen(_screenManager));
+            _screenManager.AddScreen(ScreenID.Game, new GameScreen(_screenManager));
+            _screenManager.AddScreen(ScreenID.Replay, new ReplayScreen(_screenManager));
 
-            ScreenManager.ChangeScreen(ScreenID.MainMenu);
-
-
+            // Ändra screen till MainMenu
+            _screenManager.ChangeScreen(ScreenID.MainMenu);
         }
 
         protected override void Update(GameTime gameTime)
@@ -74,16 +77,19 @@ namespace Checkers
                 Exit();
             }
 
-            ScreenManager.Update(gameTime);
+            // Uppdatera nuvarande screen
+            _screenManager?.Update(gameTime);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            // Rensa fönstret så det bara är en svart färg
             GraphicsDevice.Clear(Color.Black);
 
-            ScreenManager.Draw(gameTime);
+            // Rita nuvarande screen
+            _screenManager?.Draw(gameTime);
 
             base.Draw(gameTime);
         }
