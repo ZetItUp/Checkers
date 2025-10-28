@@ -27,8 +27,8 @@ namespace Checkers.GameApp.UI
         private SpriteFont? buttonFont;
 
         // Lista med items och state för att visa listan
-        bool showList = false;
-        ItemList? itemList;
+        private bool showList = false;
+        private ItemList itemList;
         public string SelectedItemText = string.Empty;
 
         // Färg för texten
@@ -50,7 +50,7 @@ namespace Checkers.GameApp.UI
             buttonTexture = content.Load<Texture2D>("UINormal");
             buttonHoverTexture = content.Load<Texture2D>("UIHover");
             buttonPressedTexture = content.Load<Texture2D>("UIDown");
-            itemList?.LoadContent(content);
+            itemList.LoadContent(content);
             activeTexture = buttonTexture;
         }
 
@@ -130,7 +130,7 @@ namespace Checkers.GameApp.UI
         /// <param name="item">Strängen att lägga till</param>
         public void AddItem(string item)
         {
-            itemList?.Items.Add(item);
+            itemList.Items.Add(item);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Checkers.GameApp.UI
         /// <param name="item">Strängen att ta bort</param>
         public void RemoveItem(string item)
         {
-            itemList?.Items.Remove(item);
+            itemList.Items.Remove(item);
         }
 
         /// <summary>
@@ -147,14 +147,14 @@ namespace Checkers.GameApp.UI
         /// </summary>
         public void ClearItems()
         {
-            itemList?.Items.Clear();
+            itemList.Items.Clear();
             SelectedItemText = string.Empty;
         }
 
         public override void UnloadContent()
         {
             base.UnloadContent();
-            itemList?.UnloadContent();
+            itemList.UnloadContent();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

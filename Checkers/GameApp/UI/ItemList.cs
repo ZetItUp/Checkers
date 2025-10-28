@@ -49,6 +49,7 @@ namespace Checkers.GameApp.UI
             base.LoadContent(content);
             itemFont = content.Load<SpriteFont>("Font14");
             buttonTexture = content.Load<Texture2D>("UINormal");
+            activeTexture = buttonTexture;
         }
 
         public override void UnloadContent()
