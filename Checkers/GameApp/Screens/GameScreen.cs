@@ -200,8 +200,13 @@ namespace Checkers.GameApp.Screens
 
             // Skapa en GameService 
             _gameService = new GameService();
+
             // Initiera ett nytt spel
-            _gameService.InitializeGame("Player 1", "Player 2");
+            if(!_gameService.InitializeGame("Player 1", "Player 2"))
+            {
+                ScreenManager.ChangeScreen(ScreenID.MainMenu);
+                return;
+            }
             // Hämta board size
             boardSize = _gameService.RuleSet!.BoardSize;
 

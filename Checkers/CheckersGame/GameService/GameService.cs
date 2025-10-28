@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Checkers.CheckersGame.GameService
             _isInMultiJump = false;
         }
 
-        public void InitializeGame(string player1Name, string player2Name)
+        public bool InitializeGame(string player1Name, string player2Name)
         {
             try
             {
@@ -42,8 +43,7 @@ namespace Checkers.CheckersGame.GameService
                 
                 if (RuleSet == null)
                 {
-                    // Skrik, men hantera, krascha inte
-                    return;
+                    return false;
                 }
 
                 _board = new Board(RuleSet.BoardSize);
@@ -54,17 +54,20 @@ namespace Checkers.CheckersGame.GameService
                 ///init History med brädet som det var initialt
                 //där efter behöver vi bara spara drag
                 _gameHistory = new GameHistory(_board.Clone());
+
+                _player1 = new Player(player1Name, PieceColor.Red);
+                _player2 = new Player(player2Name, PieceColor.Black);
+                _currentPlayer = _player1;
+                _gameStatus = GameStatus.WaitingToStart;
+                _isInMultiJump = false;
             }
             catch (Exception ex)
             {
-                // ????
+                Debug.Write(ex.ToString());
+                return false;
             }
 
-            _player1 = new Player(player1Name, PieceColor.Red);
-            _player2 = new Player(player2Name, PieceColor.Black);
-            _currentPlayer =  _player1;
-            _gameStatus = GameStatus.WaitingToStart;
-            _isInMultiJump = false;
+            return true;
         }
 
         public void StartGame()
@@ -155,7 +158,7 @@ namespace Checkers.CheckersGame.GameService
 
         public Player? CheckWinner()
         {
-            if(_board == null || _player1 == null || _player2 == null || _moveValidator == null)
+            if(_board == null || _moveValidator == null)
                 return null;
 
             //om spelaren inte har nå pjäserkvar så förlorar dom
@@ -181,11 +184,6 @@ namespace Checkers.CheckersGame.GameService
 
         public void SwitchTurn()
         {
-            if(_currentPlayer == null || _player1 == null || _player2 == null)
-            {
-                throw new InvalidOperationException("Current player or players are not initialized.");
-            }
-
             _currentPlayer = _currentPlayer.Color == _player1.Color ? _player2 : _player1;
         }
 
@@ -275,7 +273,7 @@ namespace Checkers.CheckersGame.GameService
 
             var piece = _board.GetPiece(piecePosition);
 
-            if ( _moveValidator == null || piece == null || _currentPlayer == null || piece.Color != _currentPlayer.Color)
+            if ( _moveValidator == null || piece == null || piece.Color != _currentPlayer.Color)
                 return false;
 
             var validMoves = piece.GetValidMoves(_board);
@@ -307,7 +305,7 @@ namespace Checkers.CheckersGame.GameService
 
         public void EndTurn()
         {
-            if (_gameStatus != GameStatus.InProgress || RuleSet!.ForcedCaptures)
+            if (RuleSet == null || _gameStatus != GameStatus.InProgress || RuleSet.ForcedCaptures)
                 return;
 
             _isInMultiJump = false;
