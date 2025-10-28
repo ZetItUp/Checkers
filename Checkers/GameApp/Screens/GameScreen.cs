@@ -13,6 +13,7 @@ using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.History;
 using Checkers.GameApp.Screens.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace Checkers.GameApp.Screens
 {
@@ -55,8 +56,19 @@ namespace Checkers.GameApp.Screens
         bool isWinner = false;
 
         // Spelbrädes variabler för scaling och size
+        int windowWidth = 420;   
+        int windowHeight = 220;  
         int boardSize = 0;
         int cellSize = 32;
+        int windowX;
+        int windowY;
+        int currX;
+        int currY;
+        Rectangle WindowRectangle;
+        Texture2D? activeTexture;
+        Color EnabledColor = Color.White;
+
+
         float boardScale = 1f;
         float drawScale = 1f;
 
@@ -266,6 +278,18 @@ namespace Checkers.GameApp.Screens
 
             // Ladda ljud
             Sound.LoadContent(content);
+
+            // sätter upp victory window
+            activeTexture = uiTexture;
+
+            // räkna ut vart fönstret hamnar
+            windowX = (MainGame.WindowWidth - windowWidth) / 2;   
+            windowY = (MainGame.WindowHeight - windowHeight) / 2;
+
+            currX = windowX;
+            currY = windowY;
+
+            WindowRectangle = new Rectangle(windowX, windowY, windowWidth, windowHeight);
 
             // Ställ in alla knappars default synlighet och om dom är aktiva
             btnRestartGame.Enabled = false;
@@ -508,11 +532,12 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Draw(spriteBatch);
             btnEndTurn.Draw(spriteBatch);
             btnSaveGame.Draw(spriteBatch);
-            spriteBatch.End();
+
+            
 
             // rita victory-screen
-            /* if (isWinner)
-             {
+             if (isWinner)
+            {
                  spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
@@ -524,7 +549,8 @@ namespace Checkers.GameApp.Screens
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
 
              }
-            */
+            spriteBatch.End();
+            
         }
     }
 }
