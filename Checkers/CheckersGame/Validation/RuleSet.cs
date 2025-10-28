@@ -14,17 +14,6 @@ public class RuleSet : IRuleSet
         ForcedCaptures = forcedCaptures;
         AllowMultipleJumps = allowMultipleJumps;
     }
-
-    public static RuleSet CreateStandard() 
-    {                                      
-        return new RuleSet(
-            boardSize: 8, 
-            forcedCaptures: true,
-            allowMultipleJumps: true
-        );
-    }
-
-    
     public override string ToString()
     {
         return $"{BoardSize}x{BoardSize}, " +
