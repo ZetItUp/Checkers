@@ -22,25 +22,13 @@ namespace Checkers.CheckersGame.History
         public void RecordMove(Move move)
         {
             move.MoveNumber = _moves.Count + 1;
-            _moves.Add(move);;     
+            _moves.Add(move);
         }
-
-        // public Move GetLastMove()
-        // {
-        //     if (_moves.Count == 0)
-        //         return null;
-        //     return _moves[_moves.Count - 1];
-        // }
 
         public List<Move> GetAllMoves()
         {
             return new List<Move>(_moves);
         }
-        
-        // public int GetMoveCount()
-        // {
-        //     return _moves.Count;
-        // }
 
         public bool Undo(IBoard board)
         {
@@ -58,19 +46,6 @@ namespace Checkers.CheckersGame.History
             }
             return true;
         }
-
-        // public void ReplayToMove(Board board, int moveIndex)
-        // {
-        //     if (moveIndex < 0 || moveIndex > _moves.Count)
-        //         return;
-        //     
-        //     ResetBoard(board);
-        //
-        //     for (int i = 0; i < moveIndex; i++)
-        //     {
-        //         ApplyMove(board, _moves[i]);    
-        //     }
-        // }
 
         public void Clear()
         {
