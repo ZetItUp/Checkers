@@ -38,13 +38,13 @@ namespace Checkers.CheckersGame.Validation
 
             int boardSize = dto.BoardSize ?? 8;
             if(!dto.BoardSize.HasValue)
-                throw new InvalidOperationException("Warning: Missing 'boardSize' in config, using default: 8");
+                Console.WriteLine("Warning: Missing 'boardSize' in config, using default: 8");
             bool forceCapture = dto.ForcedCaptures ?? true;
             if(!dto.ForcedCaptures.HasValue)
-                throw new InvalidOperationException("Warning: Missing 'forceCapture' in config, using default: true");
+                Console.WriteLine("Warning: Missing 'forceCapture' in config, using default: true");
             bool allowMultipleJumps = dto.AllowMultipleJumps ?? true;
             if(!dto.AllowMultipleJumps.HasValue)
-                throw new InvalidOperationException("Warning: Missing 'allowMultipleJumps' in config, using default: true");
+                Console.WriteLine("Warning: Missing 'allowMultipleJumps' in config, using default: true");
             return new RuleSet(boardSize, forceCapture, allowMultipleJumps);
 
 
