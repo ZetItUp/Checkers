@@ -107,8 +107,7 @@ namespace Checkers.CheckersGame.Models
                 throw new ArgumentOutOfRangeException(nameof(from),
                     $"Source position ({fr}, {fc}) is out of board bounds {Size}x{Size}.");
 
-            if  
-              (tr < 0 || tr >= Size || tc < 0 || tc >= Size)
+            if (tr < 0 || tr >= Size || tc < 0 || tc >= Size)
                 throw new ArgumentOutOfRangeException(nameof(to),
                     $"Target position ({tr}, {tc}) is out of board bounds {Size}x{Size}.");
             
