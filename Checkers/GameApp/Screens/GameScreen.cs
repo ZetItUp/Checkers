@@ -192,7 +192,7 @@ namespace Checkers.GameApp.Screens
         public void LoadContent(ContentManager content)
         {
             // Kontrollera att MainGame.graphicsDeviceManager inte är null
-            if(MainGame.graphicsDeviceMangager == null)
+            if(MainGame.graphicsDeviceManager == null)
             {
                 // Kasta exception, händer detta så har inladdningen misslyckats i MainGame.cs, detta ska inte ske.
                 throw new Exception("GraphicsDeviceManager is not initialized.");
@@ -207,12 +207,16 @@ namespace Checkers.GameApp.Screens
                 ScreenManager.ChangeScreen(ScreenID.MainMenu);
                 return;
             }
-            // Hämta board size
-            boardSize = _gameService.RuleSet!.BoardSize;
+
+            if (_gameService.RuleSet != null)
+            {
+                // Hämta board size
+                boardSize = _gameService.RuleSet.BoardSize;
+            }
 
             // Skapa texturer för brädet, en svart och en vit, med cellSize storlek
-            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _lightColor);
-            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceMangager.GraphicsDevice, cellSize, cellSize, _darkColor);
+            _lightTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _lightColor);
+            _darkTexture = GraphicsHelper.CreateTexture(MainGame.graphicsDeviceManager.GraphicsDevice, cellSize, cellSize, _darkColor);
 
             // Beräkna scaling så vi kan rita ut brädet anpassat efter fönstrets storlek och board size
             boardScale = (float)MainGame.WindowHeight / (boardSize * cellSize);
@@ -277,7 +281,7 @@ namespace Checkers.GameApp.Screens
 
 
             // Uppdatera inget annat om _gameService är null eller om ett spel inte är GameStatus.InProgress
-            if (_gameService == null || _gameService.GetGameStatus() != GameStatus.InProgress)
+            if (_gameService == null || _gameService.RuleSet == null || _gameService.GetGameStatus() != GameStatus.InProgress)
             {
                 return;
             }
@@ -288,7 +292,7 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
             // Visa EndTurn knappen bara om ForcedCaptures är av
-            btnEndTurn.IsVisible = !_gameService.RuleSet!.ForcedCaptures;
+            btnEndTurn.IsVisible = !_gameService.RuleSet.ForcedCaptures;
             btnEndTurn.Enabled = !_gameService.RuleSet.ForcedCaptures && isPieceSelected;
 
             // Hämta currentPlayer från _gameService
