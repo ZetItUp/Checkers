@@ -9,7 +9,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Checkers.UI
+namespace Checkers.GameApp.UI
 {
     /// <summary>
     /// Basklass för UI Komponenter

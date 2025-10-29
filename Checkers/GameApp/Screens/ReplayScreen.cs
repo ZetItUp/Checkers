@@ -5,7 +5,6 @@ using Checkers.CheckersGame.Models;
 using Checkers.GameApp.Helpers;
 using Checkers.GameApp.Screens.Interfaces;
 using Checkers.GameApp.UI;
-using Checkers.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

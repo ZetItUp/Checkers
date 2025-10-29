@@ -1,5 +1,5 @@
 ﻿using Checkers.GameApp.Helpers;
-using Checkers.UI;
+using Checkers.GameApp.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

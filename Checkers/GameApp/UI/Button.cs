@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Checkers.UI
+namespace Checkers.GameApp.UI
 {
     /// <summary>
     /// Knapp Komponent

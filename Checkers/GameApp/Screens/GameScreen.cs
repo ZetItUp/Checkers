@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Checkers.CheckersGame.GameService;
-using Checkers.UI;
 using Checkers.GameApp.Helpers;
 using Checkers.CheckersGame.DataTypes;
 using Checkers.CheckersGame.Models;
 using Checkers.CheckersGame.History;
 using Checkers.GameApp.Screens.Interfaces;
 using System.Runtime.CompilerServices;
+using Checkers.GameApp.UI;
 
 namespace Checkers.GameApp.Screens
 {
@@ -49,6 +49,9 @@ namespace Checkers.GameApp.Screens
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
+
+        // Labels
+        Label lblDescription = new Label(new Rectangle());
 
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
