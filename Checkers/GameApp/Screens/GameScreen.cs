@@ -353,7 +353,6 @@ namespace Checkers.GameApp.Screens
 
             // ställ in synlighet för labels
             lbVictory.IsVisible=false;
-
         }
         public void UnloadContent()
         {
@@ -373,15 +372,7 @@ namespace Checkers.GameApp.Screens
 
         public void Update(GameTime gameTime)
         {
-            if (isWinner)
-            {
-                btnVictory.Enabled = true;
-                lbVictory.IsVisible = true;
-                
-            }
-            
-
-                // Uppdatera knapparna
+            // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
             btnUndoMove.Update(gameTime);
@@ -517,10 +508,12 @@ namespace Checkers.GameApp.Screens
             // Kolla om någon har vunnit spelet ännu
             if (_gameService.CheckWinner() != null)
             {
+                btnVictory.Enabled = true;
+                btnVictory.IsVisible = true;
+                lbVictory.IsVisible = true;
                 isWinner = true;
                 Sound.PlayWinSound();
             }
-
         }
 
         public void Draw(GameTime gameTime)
