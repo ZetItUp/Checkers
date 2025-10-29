@@ -377,7 +377,6 @@ namespace Checkers.GameApp.Screens
             {
                 btnVictory.Enabled = true;
                 lbVictory.IsVisible = true;
-                btnVictory.Update(gameTime); // upddatera endast vid vinst
                 
             }
             
@@ -389,6 +388,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
+            btnVictory.Update(gameTime); // upddatera endast vid vinst
 
             // Uppdatera labels
             lblDescription.Update(gameTime);
