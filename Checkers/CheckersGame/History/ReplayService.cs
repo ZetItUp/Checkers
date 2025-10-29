@@ -42,8 +42,8 @@ public class ReplayService
         _currentMoveIndex = 0;
 
         // Skapa spelare
-        _player1 = new Player(savedGame.Player1Name, PieceColor.Red);
-        _player2 = new Player(savedGame.Player2Name, PieceColor.Black);
+        _player1 = new Player(savedGame.Player1Name, PieceColor.Light);
+        _player2 = new Player(savedGame.Player2Name, PieceColor.Dark);
 
         // Röd börjar alltid
         CurrentPlayer = _player1;
@@ -122,7 +122,7 @@ public class ReplayService
 
     private void SwitchPlayer()
     {
-        CurrentPlayer = CurrentPlayer.Color == PieceColor.Red
+        CurrentPlayer = CurrentPlayer.Color == PieceColor.Light
             ? _player2
             : _player1;
     }

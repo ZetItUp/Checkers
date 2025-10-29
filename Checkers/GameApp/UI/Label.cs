@@ -57,10 +57,10 @@ namespace Checkers.GameApp.UI
 
             // Klipp bort överflödigt innehåll utanför komponentens rektangel
             // Definiera klipprektangeln
-            int clipX = WindowRectangle.X + 6;
-            int clipY = WindowRectangle.Y + 6;
-            int clipW = Math.Max(0, WindowRectangle.Width - 12);
-            int clipH = Math.Max(0, WindowRectangle.Height - 12);
+            int clipX = WindowRectangle.X;
+            int clipY = WindowRectangle.Y;
+            int clipW = Math.Max(0, WindowRectangle.Width);
+            int clipH = Math.Max(0, WindowRectangle.Height);
             var clipRect = new Rectangle(clipX, clipY, clipW, clipH);
 
             if (clipW <= 0 || clipH <= 0)

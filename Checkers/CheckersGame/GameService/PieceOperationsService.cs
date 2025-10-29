@@ -45,10 +45,10 @@ namespace Checkers.CheckersGame.GameService
 
         public bool IsPromotionPosition(Position position, PieceColor color)
         {
-            if (color == PieceColor.Red && position.Row == 0)
+            if (color == PieceColor.Light && position.Row == 0)
                 return true;
 
-            if (color == PieceColor.Black && position.Row == _ruleSet.BoardSize - 1)
+            if (color == PieceColor.Dark && position.Row == _ruleSet.BoardSize - 1)
                 return true;
 
             return false;

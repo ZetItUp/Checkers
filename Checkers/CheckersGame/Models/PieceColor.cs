@@ -9,7 +9,7 @@ namespace Checkers.CheckersGame.Models
     // Enumdefinition för PieceColor
     public enum PieceColor
     {
-        Red,
-        Black
+        Light,
+        Dark
     }
 }

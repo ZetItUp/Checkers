@@ -43,13 +43,14 @@ namespace Checkers.GameApp.Screens
         Texture2D? blackKingPiece;
         Texture2D? uiTexture;
 
-        // Knappar och ComboBox
+        // UI 
         Button? btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
         Button? btnAutoPlay = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Auto Play: ON");
         Button? btnReset = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Reset");
         Button? btnNextMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Next >>");
         Button? btnPreviousMove = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "<< Previous");
-        ComboBox? cboGames = new ComboBox(new Rectangle(MainGame.WindowWidth - 410, 10, 400, 40));
+        ComboBox? cboGames = new ComboBox(new Rectangle(MainGame.WindowWidth - 500, 45, 480, 40));
+        Label lblGames = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 100));
 
         // Board inställningar
         int boardSize = 8;
@@ -218,12 +219,15 @@ namespace Checkers.GameApp.Screens
             blackKingPiece = content.Load<Texture2D>("BlackKing");
             uiTexture = content.Load<Texture2D>("UINormal");
 
-            // Ladda in knappar och ComboBox
+            // Ladda in UI komponenter
             btnMainMenu?.LoadContent(content);
             btnReset?.LoadContent(content);
             btnNextMove?.LoadContent(content);
             btnPreviousMove?.LoadContent(content);
             btnAutoPlay?.LoadContent(content);
+            lblGames.LoadContent(content);
+            lblGames.Text = "Previous Games";
+            lblGames.FontColor = Color.White;
 
             // Säkerställ att cboGames inte är null innan vi laddar in innehåll
             if (cboGames != null)
@@ -373,7 +377,7 @@ namespace Checkers.GameApp.Screens
                         Texture2D? pieceTexture = null;
 
                         // Hämta rätt textur baserat på pjäsens färg och typ
-                        if (piece.Color == PieceColor.Red)
+                        if (piece.Color == PieceColor.Light)
                         {
                             pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
                         }
@@ -402,7 +406,7 @@ namespace Checkers.GameApp.Screens
             btnNextMove?.Draw(spriteBatch);
             btnPreviousMove?.Draw(spriteBatch);
             btnAutoPlay?.Draw(spriteBatch);
-
+            lblGames?.Draw(spriteBatch);
             cboGames?.Draw(spriteBatch);
             spriteBatch.End();
         }

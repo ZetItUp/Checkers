@@ -32,8 +32,8 @@ namespace Checkers.CheckersGame.GameService
         public GameService(IRuleSetFactory ruleSetFactory)
         {
             _ruleSetFactory = ruleSetFactory;
-            _player1 = new Player("Unknown Player1", PieceColor.Red);
-            _player2 = new Player("Unknown Player2", PieceColor.Black);
+            _player1 = new Player("Unknown Player1", PieceColor.Light);
+            _player2 = new Player("Unknown Player2", PieceColor.Dark);
             _currentPlayer = _player1;
             _gameStatus = GameStatus.WaitingToStart;
             _isInMultiJump = false;
@@ -63,8 +63,8 @@ namespace Checkers.CheckersGame.GameService
                 //där efter behöver vi bara spara drag
                 _gameHistory = new GameHistory(_board.Clone());
 
-                _player1 = new Player(player1Name, PieceColor.Red);
-                _player2 = new Player(player2Name, PieceColor.Black);
+                _player1 = new Player(player1Name, PieceColor.Light);
+                _player2 = new Player(player2Name, PieceColor.Dark);
                 _currentPlayer = _player1;
                 _gameStatus = GameStatus.WaitingToStart;
                 _isInMultiJump = false;

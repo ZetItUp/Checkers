@@ -41,7 +41,7 @@ namespace Checkers.CheckersGame.Models
                 {
                     if ((row + col) % 2 == 1)
                     {
-                        var piece = new RegularPiece(PieceColor.Black, new Position(row, col));
+                        var piece = new RegularPiece(PieceColor.Dark, new Position(row, col));
                         PlacePiece(piece, new Position(row, col));
                     }
                 }
@@ -55,7 +55,7 @@ namespace Checkers.CheckersGame.Models
                 {
                     if ((row + col) % 2 == 1)
                     {
-                        var piece = new RegularPiece(PieceColor.Red, new Position(row, col));
+                        var piece = new RegularPiece(PieceColor.Light, new Position(row, col));
                         PlacePiece(piece, new Position(row, col));
                     }
                 }

@@ -35,7 +35,7 @@ namespace Checkers.CheckersGame.Models
             var forwardMoves = new List<Position>();
 
             // Svarta pjäser rör sig NER (rad ökar), Röda pjäser rör sig UPP (rad minskar)
-            int direction = (Color == PieceColor.Black) ? 1 : -1;
+            int direction = (Color == PieceColor.Dark) ? 1 : -1;
 
             // Beräkna de två diagonala fram-dragen
             Position forwardLeft = new Position(Position.Row + direction, Position.Column - 1);
@@ -59,7 +59,7 @@ namespace Checkers.CheckersGame.Models
             var captureMoves = new List<Position>();
 
             // Svarta pjäser tar NER (rad ökar med 2), Röda pjäser tar UPP (rad minskar med 2)
-            int direction = (Color == PieceColor.Black) ? 2 : -2;
+            int direction = (Color == PieceColor.Dark) ? 2 : -2;
 
             // Beräkna de två diagonala landningspositionerna för capture (hoppa över motståndarens pjäs)
             Position captureLeft = new Position(Position.Row + direction, Position.Column - 2);

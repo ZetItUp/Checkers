@@ -51,7 +51,9 @@ namespace Checkers.GameApp.Screens
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
 
         // Labels
-        Label lblDescription = new Label(new Rectangle());
+        Label lblDescription = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 400));
+        Label lblRules = new Label(new Rectangle(MainGame.WindowWidth - 500, 200, 480, 100));
+        Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
 
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
@@ -279,6 +281,17 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
 
+            // Ladda alla labels
+            lblDescription.LoadContent(content);
+            lblDescription.FontColor = Color.White;
+            lblDescription.Text = $"RULES\nStandard Checkers rules apply.\nMove pieces diagonal, a piece is not allowed to move\nbackwards. Capture an opponent by j umping over them.\n" +
+                                   $"If a piece reaches the other players edge row, that piece\nbecomes a King and can move backwards.";
+            lblRules.LoadContent(content);
+            lblRules.FontColor = Color.White;
+            lblRules.Text = "Force Capture: ON";
+            lblCurrentPlayer.LoadContent(content);
+            lblCurrentPlayer.FontColor = Color.White;
+
             // Ladda ljud
             Sound.LoadContent(content);
 
@@ -314,6 +327,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame?.UnloadContent();
             btnSaveGame?.UnloadContent();
             btnMainMenu?.UnloadContent();
+            lblDescription?.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -323,6 +337,7 @@ namespace Checkers.GameApp.Screens
                 return;
 
             }
+
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
@@ -331,9 +346,13 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
 
+            // Uppdatera labels
+            lblDescription.Update(gameTime);
+            lblRules.Update(gameTime);
+            lblCurrentPlayer.Update(gameTime);
 
-            // Uppdatera inget annat om _gameService är null eller om ett spel inte är GameStatus.InProgress
-            if (_gameService == null || _gameService.RuleSet == null || _gameService.GetGameStatus() != GameStatus.InProgress)
+            // Uppdatera inget annat om _gameService är null
+            if (_gameService == null || _gameService.RuleSet == null)
             {
                 return;
             }
@@ -343,12 +362,28 @@ namespace Checkers.GameApp.Screens
             // Uppdatera UndoMove knappen beroende på history state eller om det finns några moves gjorda
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
+            string forceCapture = _gameService.RuleSet.ForcedCaptures == true ? "ON" : "OFF";
+            lblRules.Text = $"Force Capture: { forceCapture }";
+
+            // Uppdatera inte om ett spel inte är GameStatus.InProgress
+            if (_gameService.GetGameStatus() != GameStatus.InProgress)
+            {
+                return;
+            }
+
             // Visa EndTurn knappen bara om ForcedCaptures är av
             btnEndTurn.IsVisible = !_gameService.RuleSet.ForcedCaptures;
             btnEndTurn.Enabled = !_gameService.RuleSet.ForcedCaptures && isPieceSelected;
 
             // Hämta currentPlayer från _gameService
             currentPlayer = _gameService.GetCurrentPlayer();
+
+            if (currentPlayer != null)
+            {
+                string currPlayer = "Players Turn:\n";
+                currPlayer += currentPlayer.Color == PieceColor.Light ? "Light" : "Dark";
+                lblCurrentPlayer.Text = currPlayer;
+            }
 
             // Räkna ut musens position på brädet
             // Vi delar med drawScale för att få exakta rutan som musen är över
@@ -490,7 +525,7 @@ namespace Checkers.GameApp.Screens
                         Texture2D? pieceTexture = null;
 
                         // Sätt dess texture baserat på vilken färg pjäsen är
-                        if (piece.Color == PieceColor.Red)
+                        if (piece.Color == PieceColor.Light)
                         {
                             pieceTexture = piece is KingPiece ? whiteKingPiece : whitePiece;
                         }
@@ -536,7 +571,10 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Draw(spriteBatch);
             btnSaveGame.Draw(spriteBatch);
 
-            
+            // Rita alla labels
+            lblDescription.Draw(spriteBatch);
+            lblRules.Draw(spriteBatch);
+            lblCurrentPlayer.Draw(spriteBatch);
 
             // rita victory-screen
              if (isWinner)

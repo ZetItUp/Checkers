@@ -157,6 +157,9 @@ namespace Checkers.GameApp.UI
                 spriteBatch.Draw(activeTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
             }
 
+            spriteBatch.End();
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap);
             // Rita texten centrerad på knappen
             if (buttonFont != null)
             {
@@ -168,7 +171,7 @@ namespace Checkers.GameApp.UI
                 );
 
                 // Rita texten
-                spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black);
+                spriteBatch.DrawString(buttonFont, Text, textPosition, Color.Black, 0f, Vector2.Zero, new Vector2(1f, 1.0f), SpriteEffects.None, 1f);
             }
         }
     }
