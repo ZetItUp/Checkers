@@ -49,14 +49,14 @@ namespace Checkers.GameApp.Screens
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
-        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 850, MainGame.WindowHeight - 470, 420, 250), "OK!");
+        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 760, MainGame.WindowHeight - 360, 220, 100), "OK!");
 
 
         // Labels
         Label lblDescription = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 400));
         Label lblRules = new Label(new Rectangle(MainGame.WindowWidth - 500, 200, 480, 100));
         Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
-        Label lbVictory = new Label(new Rectangle(MainGame.WindowWidth - 850, MainGame.WindowHeight - 470, 420, 250));
+        Label lbVictory = new Label(new Rectangle(MainGame.WindowWidth - 750, MainGame.WindowHeight - 450, 320, 250));
 
         // Checkbox
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
@@ -64,11 +64,11 @@ namespace Checkers.GameApp.Screens
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
-        bool isWinner = false;
+        bool isWinner = true;
 
         // Spelbrädes variabler för scaling och size
-        int windowWidth = 420;   
-        int windowHeight = 220;  
+        int windowWidth = 400;   
+        int windowHeight = 200;  
         int boardSize = 0;
         int cellSize = 32;
         int windowX;
@@ -372,6 +372,12 @@ namespace Checkers.GameApp.Screens
 
         public void Update(GameTime gameTime)
         {
+            if (isWinner)
+            {
+                btnVictory.Enabled = true;
+                btnVictory.IsVisible = true;
+                lbVictory.IsVisible = true;
+            }
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
