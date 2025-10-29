@@ -47,6 +47,7 @@ namespace Checkers.CheckersGame.GameService
         {
             try
             {
+                RuleSet = null;
                 RuleSet = _ruleSetFactory.CreateFromJsonFile(AppDomain.CurrentDomain.BaseDirectory + "Content/RuleConfig.json");
                 
                 if (RuleSet == null)

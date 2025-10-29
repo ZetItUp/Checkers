@@ -1,5 +1,5 @@
 {
     "boardSize": 8,
-    "forcedCaptures": false,
-    "allowMultipleJumps": true
+    "forcedCaptures": true,
+    "allowMultipleJumps": false
 }
