@@ -65,6 +65,12 @@ namespace Checkers.GameApp.UI
 
         public virtual void Update(GameTime gameTime)
         {
+            // Hantera inte input om knappen är inaktiverad
+            if (!Enabled || !IsVisible)
+            {
+                return;
+            }
+
             // Kolla om musen är över componenten
             if (MouseHelper.MouseRectangle().Intersects(WindowRectangle))
             {
