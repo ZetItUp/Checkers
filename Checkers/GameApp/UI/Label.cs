@@ -12,7 +12,12 @@ namespace Checkers.GameApp.UI
 {
     internal class Label : WindowComponent
     {
+        // Label Font
         SpriteFont? buttonFont;
+        // Font Color
+        public Color FontColor = Color.Black;
+        // Text som skrivs ut
+        public string Text { get; set; } = string.Empty;
 
         public Label(Rectangle windowRectangle)
             : base(windowRectangle)
@@ -34,7 +39,59 @@ namespace Checkers.GameApp.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            // Skippa drawcall om fonten inte är laddad
+            if(buttonFont == null)
+            {
+                return;
+            }
+
+            // Kolla om knappen är synlig
+            if (!IsVisible)
+            {
+                return;
+            }
+
             base.Draw(spriteBatch);
+
+            int currX = WindowRectangle.X;
+            int currY = WindowRectangle.Y;
+
+            // Klipp bort överflödigt innehåll utanför komponentens rektangel
+            // Definiera klipprektangeln
+            int clipX = WindowRectangle.X + 6;
+            int clipY = WindowRectangle.Y + 6;
+            int clipW = Math.Max(0, WindowRectangle.Width - 12);
+            int clipH = Math.Max(0, WindowRectangle.Height - 12);
+            var clipRect = new Rectangle(clipX, clipY, clipW, clipH);
+
+            if (clipW <= 0 || clipH <= 0)
+            {
+                return;
+            }
+
+            spriteBatch.End();
+
+            var gd = spriteBatch.GraphicsDevice;
+            var prevScissor = gd.ScissorRectangle;
+
+            // Sätt scissor rektangeln för att begränsa ritningen
+            gd.ScissorRectangle = clipRect;
+            using (var rasterizer = new RasterizerState() { ScissorTestEnable = true })
+            {
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, rasterizer);
+
+                // Mät textstorleken för nuvarande item
+                Vector2 textSize = buttonFont.MeasureString(Text);
+                spriteBatch.DrawString(buttonFont, Text, new Vector2(currX + 5, currY), FontColor);
+
+                spriteBatch.End();
+            }
+
+            // Återställ tidigare scissor rektangel
+            gd.ScissorRectangle = prevScissor;
+
+            // Återuppta spritebatchen
+            spriteBatch.Begin(SpriteSortMode.Deferred);
         }
     }
 }
