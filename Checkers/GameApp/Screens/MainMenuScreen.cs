@@ -154,7 +154,7 @@ namespace Checkers.GameApp.Screens
                 return;
             }
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
 
             // Kolla så att bakgrunden existerar
             if (background != null)

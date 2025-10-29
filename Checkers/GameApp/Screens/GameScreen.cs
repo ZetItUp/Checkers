@@ -502,10 +502,12 @@ namespace Checkers.GameApp.Screens
         {
             // Felhantering för AppContext och SpriteBatch
             // Om något är null så ska inget försökas ritas ut och vi hoppar över drawcall
-            if(_appContext == null)
+            if (_appContext == null)
             {
                 return;
             }
+
+            _appContext.GraphicsDevice.Clear(new Color(36, 45, 66));
 
             var spriteBatch = _appContext.SpriteBatch;
 

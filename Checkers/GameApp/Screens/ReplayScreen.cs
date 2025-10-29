@@ -56,7 +56,7 @@ namespace Checkers.GameApp.Screens
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
 
         // Färgblindhet
-        Color colorBlindTint = Color.Yellow;
+        Color colorBlindTint = new Color(0x56, 0xB4, 0xE9, 120);
         bool colorBlindMode = false;
 
         // Board inställningar
@@ -351,6 +351,8 @@ namespace Checkers.GameApp.Screens
             {
                 return;
             }
+
+            _appContext.GraphicsDevice.Clear(new Color(36, 45, 66));
 
             var spriteBatch = _appContext.SpriteBatch;
 

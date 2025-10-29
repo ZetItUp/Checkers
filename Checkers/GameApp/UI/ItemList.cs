@@ -27,7 +27,7 @@ namespace Checkers.GameApp.UI
         // Färger
         public Color FontColor { get; set; } = Color.Black;
 
-        public Color HoverBackgroundColor { get; set; } = new Color(100, 100, 100, 255);
+        public Color HoverBackgroundColor { get; set; } = new Color(66, 79, 153);
         public Color HoverFontColor { get; set; } = Color.White;
 
         // Beteende variabler för itemlista
