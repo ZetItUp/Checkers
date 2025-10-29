@@ -49,11 +49,14 @@ namespace Checkers.GameApp.Screens
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
+        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 850, MainGame.WindowHeight - 470, 420, 250), "OK!");
+
 
         // Labels
         Label lblDescription = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 400));
         Label lblRules = new Label(new Rectangle(MainGame.WindowWidth - 500, 200, 480, 100));
         Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
+        Label lbVictory = new Label(new Rectangle(MainGame.WindowWidth - 850, MainGame.WindowHeight - 470, 420, 250));
 
         // Checkbox
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
@@ -61,7 +64,7 @@ namespace Checkers.GameApp.Screens
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
-        bool isWinner = false;
+        bool isWinner = true;
 
         // Spelbrädes variabler för scaling och size
         int windowWidth = 420;   
@@ -108,12 +111,19 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Clicked += BtnRestartGame_Clicked;
             btnEndTurn.Clicked += BtnEndTurn_Clicked;
             btnSaveGame.Clicked += BtnSaveGame_Clicked;
+            btnVictory.Clicked += BtnVictory_Clicked;
 
             // Subscribe:a till checkboxens CheckedChanged event
             chkColorBlindMode.Clicked += ChangeColorBlindMode;
 
             // Disable:a Undo knappen
             btnUndoMove.Enabled = false;
+        }
+
+        private void BtnVictory_Clicked(object? sender, EventArgs e)
+        {
+            // går till main meny
+            _screenChanger.ChangeScreen(ScreenID.MainMenu);
         }
 
         /// <summary>
@@ -299,6 +309,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.LoadContent(content);
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
+            btnVictory.LoadContent(content);
 
             // Ladda alla labels
             lblDescription.LoadContent(content);
@@ -307,6 +318,8 @@ namespace Checkers.GameApp.Screens
             lblRules.LoadContent(content);
             lblRules.Text = "Force Capture: ON";
             lblCurrentPlayer.LoadContent(content);
+            lbVictory.LoadContent(content);
+            lbVictory.Text = "Congratulations, you won";
 
             // Ladda checkbox
             chkColorBlindMode.LoadContent(content);
@@ -334,6 +347,9 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Enabled = false;
             btnEndTurn.IsVisible = false;
             btnSaveGame.Enabled = true;
+            btnVictory.Enabled = false;
+            btnVictory.IsVisible = false;
+
 
         }
         public void UnloadContent()
@@ -348,13 +364,15 @@ namespace Checkers.GameApp.Screens
             btnMainMenu?.UnloadContent();
             lblDescription?.UnloadContent();
             chkColorBlindMode?.UnloadContent();
+            btnVictory?.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
         {
             if (isWinner)
             {
-                return;
+                btnVictory.Enabled = true;
+                
 
             }
 
@@ -365,11 +383,13 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
+            btnVictory.Update(gameTime);
 
             // Uppdatera labels
             lblDescription.Update(gameTime);
             lblRules.Update(gameTime);
             lblCurrentPlayer.Update(gameTime);
+            lbVictory.Update(gameTime);
 
             // Uppdatera checkbox
             chkColorBlindMode.Update(gameTime);
@@ -621,6 +641,10 @@ namespace Checkers.GameApp.Screens
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(uiTexture.Width - 6, uiTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
 
              }
+            // rita victoryknapp och label. Ligger här nere för att skriva över victoryscreen
+            lbVictory.Draw(spriteBatch);
+            btnVictory.Draw(spriteBatch);
+
             spriteBatch.End();
             
         }
