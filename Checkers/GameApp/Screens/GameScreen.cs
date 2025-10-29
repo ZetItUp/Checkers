@@ -363,7 +363,8 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Enabled = history != null && history.GetAllMoves().Count > 0;
 
             string forceCapture = _gameService.RuleSet.ForcedCaptures == true ? "ON" : "OFF";
-            lblRules.Text = $"Force Capture: { forceCapture }";
+            string multiJumps = _gameService.RuleSet.AllowMultipleJumps == true ? "YES" : "NO";
+            lblRules.Text = $"Force Capture:            { forceCapture }\nAllow Multiple Jumps:   { multiJumps }";
 
             // Uppdatera inte om ett spel inte är GameStatus.InProgress
             if (_gameService.GetGameStatus() != GameStatus.InProgress)
@@ -380,7 +381,7 @@ namespace Checkers.GameApp.Screens
 
             if (currentPlayer != null)
             {
-                string currPlayer = "Players Turn:\n";
+                string currPlayer = "Players Turn:\n      ";
                 currPlayer += currentPlayer.Color == PieceColor.Light ? "Light" : "Dark";
                 lblCurrentPlayer.Text = currPlayer;
             }
