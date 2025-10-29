@@ -78,12 +78,6 @@ namespace Checkers.GameApp.UI
                 activeTexture = buttonTexture;
             }
 
-            // Hantera inte input om knappen är inaktiverad
-            if (!Enabled)
-            {
-                return;
-            }
-
             // Hantera Vilken textur som ska användas beroende på musens state
             // Kolla om vänstra musknappen är nedtryckt
             if (IsMouseOver && MouseHelper.MouseDown(MouseButton.Left))
