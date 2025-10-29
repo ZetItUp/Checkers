@@ -64,7 +64,7 @@ namespace Checkers.GameApp.Screens
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
-        bool isWinner = true;
+        bool isWinner = false;
 
         // Spelbrädes variabler för scaling och size
         int windowWidth = 420;   
@@ -180,6 +180,7 @@ namespace Checkers.GameApp.Screens
             // Visa och enable:a knappar som behövs
             btnRestartGame.IsVisible = true;
             btnRestartGame.Enabled = true;
+            
         }
 
         /// <summary>
