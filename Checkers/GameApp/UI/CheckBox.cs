@@ -75,12 +75,12 @@ namespace Checkers.GameApp.UI
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             if (!IsVisible || !Enabled)
             {
                 return;
             }
-
-            base.Update(gameTime);
 
             // Sätt default textur om ingen är satt
             if (activeTexture == null)

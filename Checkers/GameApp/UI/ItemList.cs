@@ -64,12 +64,6 @@ namespace Checkers.GameApp.UI
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-            // Felhantering för komponentens synlighet och om den är aktiverad
-            if (!IsVisible)
-            {
-                return;
-            }
             
             if (activeTexture == null)
             {
@@ -78,7 +72,7 @@ namespace Checkers.GameApp.UI
 
             hoveredIndex = -1;
 
-            if (!Enabled)
+            if (!Enabled || !IsVisible)
             {
                 return;
             }
