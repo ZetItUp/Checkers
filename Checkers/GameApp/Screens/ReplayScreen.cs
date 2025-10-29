@@ -52,6 +52,13 @@ namespace Checkers.GameApp.Screens
         ComboBox? cboGames = new ComboBox(new Rectangle(MainGame.WindowWidth - 500, 45, 480, 40));
         Label lblGames = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 100));
 
+        // Checkbox
+        CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
+
+        // Färgblindhet
+        Color colorBlindTint = Color.Yellow;
+        bool colorBlindMode = false;
+
         // Board inställningar
         int boardSize = 8;
         int cellSize = 32;
@@ -76,6 +83,18 @@ namespace Checkers.GameApp.Screens
             btnAutoPlay.Clicked += btnAutoPlay_Clicked;
             // Subscriba till ComboBox SelectedItemChanged event
             cboGames.SelectedItemChanged += CboGames_SelectedItemChanged;
+            // Subscriba till Checkbox CheckedChanged event
+            chkColorBlindMode.CheckedChanged += ChkColorBlindMode_CheckedChanged;
+        }
+
+        /// <summary>
+        /// Hantera ändring av ColorBlindMode checkbox
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
+        private void ChkColorBlindMode_CheckedChanged(object? sender, EventArgs e)
+        {
+            colorBlindMode = chkColorBlindMode.Checked;
         }
 
         /// <summary>
@@ -228,6 +247,7 @@ namespace Checkers.GameApp.Screens
             lblGames.LoadContent(content);
             lblGames.Text = "Previous Games";
             lblGames.FontColor = Color.White;
+            chkColorBlindMode.LoadContent(content);
 
             // Säkerställ att cboGames inte är null innan vi laddar in innehåll
             if (cboGames != null)
@@ -267,6 +287,7 @@ namespace Checkers.GameApp.Screens
             btnPreviousMove?.Update(gameTime);
             btnAutoPlay?.Update(gameTime);
             cboGames?.Update(gameTime);
+            chkColorBlindMode?.Update(gameTime);
 
             // Uppdatera inget om replay service är null
             if (_replayService == null)
@@ -369,6 +390,7 @@ namespace Checkers.GameApp.Screens
                 // Om pjäser finns
                 if (pieces != null)
                 {
+                    Color drawColor = colorBlindMode ? colorBlindTint : Color.White;
                     // Gå igenom varje pjäs
                     for (int i = 0; i < pieces.Count; i++)
                     {
@@ -387,7 +409,7 @@ namespace Checkers.GameApp.Screens
                         }
 
                         // Rita pjäsen på dess position
-                        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                     }
                 }
             }
@@ -408,6 +430,7 @@ namespace Checkers.GameApp.Screens
             btnAutoPlay?.Draw(spriteBatch);
             lblGames?.Draw(spriteBatch);
             cboGames?.Draw(spriteBatch);
+            chkColorBlindMode?.Draw(spriteBatch);
             spriteBatch.End();
         }
     }

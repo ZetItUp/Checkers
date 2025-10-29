@@ -56,7 +56,7 @@ namespace Checkers.GameApp.Screens
         Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
 
         // Checkbox
-        CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 130, 200, 50), "Color Blind Mode");
+        CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
 
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
@@ -116,9 +116,14 @@ namespace Checkers.GameApp.Screens
             btnUndoMove.Enabled = false;
         }
 
+        /// <summary>
+        /// Hantera ändring av ColorBlindMode checkbox
+        /// </summary>
+        /// <param name="sender">Ej använt</param>
+        /// <param name="e">Ej använt</param>
         private void ChangeColorBlindMode(object? sender, EventArgs e)
         {
-            colorBlindMode = !colorBlindMode;
+            colorBlindMode = chkColorBlindMode.Checked;
         }
 
         /// <summary>
