@@ -351,6 +351,8 @@ namespace Checkers.GameApp.Screens
             btnVictory.Enabled = false;
             btnVictory.IsVisible = false;
 
+            // ställ in synlighet för labels
+            lbVictory.IsVisible=false;
 
         }
         public void UnloadContent()
@@ -373,7 +375,7 @@ namespace Checkers.GameApp.Screens
             if (isWinner)
             {
                 btnVictory.Enabled = true;
-                
+                lbVictory.IsVisible = true;
 
             }
 
