@@ -368,6 +368,7 @@ namespace Checkers.GameApp.Screens
             lblDescription?.UnloadContent();
             chkColorBlindMode?.UnloadContent();
             btnVictory?.UnloadContent();
+            lbVictory?.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -376,17 +377,18 @@ namespace Checkers.GameApp.Screens
             {
                 btnVictory.Enabled = true;
                 lbVictory.IsVisible = true;
-
+                
             }
+            
 
-            // Uppdatera knapparna
+                // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
             btnUndoMove.Update(gameTime);
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
-            btnVictory.Update(gameTime);
+            btnVictory.Update(gameTime); 
 
             // Uppdatera labels
             lblDescription.Update(gameTime);
@@ -643,10 +645,10 @@ namespace Checkers.GameApp.Screens
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, uiTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(uiTexture.Width - 6, uiTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
 
+                 lbVictory.Draw(spriteBatch);
+                 btnVictory.Draw(spriteBatch);
              }
             // rita victoryknapp och label. Ligger här nere för att skriva över victoryscreen
-            lbVictory.Draw(spriteBatch);
-            btnVictory.Draw(spriteBatch);
 
             spriteBatch.End();
             
