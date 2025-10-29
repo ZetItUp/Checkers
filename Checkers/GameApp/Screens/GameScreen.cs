@@ -388,7 +388,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
-            btnVictory.Update(gameTime); // upddatera endast vid vinst
+            btnVictory.Update(gameTime); 
 
             // Uppdatera labels
             lblDescription.Update(gameTime);
