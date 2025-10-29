@@ -14,7 +14,7 @@ namespace Checkers.GameApp.UI
         // Label Font
         SpriteFont? buttonFont;
         // Font Color
-        public Color FontColor = Color.Black;
+        public Color FontColor = Color.White;
         // Text som skrivs ut
         public string Text { get; set; } = string.Empty;
 
@@ -29,6 +29,13 @@ namespace Checkers.GameApp.UI
             base.LoadContent(content);
 
             buttonFont = content.Load<SpriteFont>("Font14");
+        }
+
+        public override void UnloadContent()
+        {
+            base.UnloadContent();
+            buttonFont = null;
+            Text = string.Empty;
         }
 
         public override void Update(GameTime gameTime)

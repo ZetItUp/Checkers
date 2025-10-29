@@ -15,9 +15,6 @@ namespace Checkers.GameApp.UI
     /// </summary>
     internal class Button : WindowComponent
     {
-        // Event som triggas när knappen klickas
-        public event EventHandler? Clicked;
-
         // Textur och font 
         Texture2D? buttonTexture;
         Texture2D? buttonHoverTexture;
@@ -100,13 +97,6 @@ namespace Checkers.GameApp.UI
             else
             {
                 activeTexture = buttonTexture;
-            }
-
-            // Kolla om knappen har klickats
-            if (IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left))
-            {
-                // Invoke:a Clicked eventet
-                Clicked?.Invoke(this, EventArgs.Empty);
             }
         }
 

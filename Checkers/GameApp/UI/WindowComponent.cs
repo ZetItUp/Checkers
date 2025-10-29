@@ -16,6 +16,9 @@ namespace Checkers.GameApp.UI
     /// </summary>
     internal class WindowComponent
     {
+        // Event som triggas när knappen klickas
+        public event EventHandler? Clicked;
+
         // Värden för minimistorlek på fönstret
         private const int MIN_WINDOW_WIDTH = 20;
         private const int MIN_WINDOW_HEIGHT = 20;
@@ -70,6 +73,13 @@ namespace Checkers.GameApp.UI
             else
             {
                 IsMouseOver = false;
+            }
+
+            // Kolla om komponenten har klickats på
+            if (IsMouseOver && MouseHelper.MouseReleased(MouseButton.Left))
+            {
+                // Invoke:a Clicked eventet
+                Clicked?.Invoke(this, EventArgs.Empty);
             }
         }
 

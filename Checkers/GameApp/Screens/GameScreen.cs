@@ -55,6 +55,9 @@ namespace Checkers.GameApp.Screens
         Label lblRules = new Label(new Rectangle(MainGame.WindowWidth - 500, 200, 480, 100));
         Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
 
+        // Checkbox
+        CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 130, 200, 50), "Color Blind Mode");
+
         // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
         bool isPieceSelected = false;
         bool isInMultiJumpMode = false;
@@ -72,7 +75,10 @@ namespace Checkers.GameApp.Screens
         Rectangle WindowRectangle;
         Texture2D? activeTexture;
         Color EnabledColor = Color.White;
-
+        
+        // Färgblindhet
+        Color colorBlindTint = Color.Yellow;
+        bool colorBlindMode = false;
 
         float boardScale = 1f;
         float drawScale = 1f;
@@ -103,8 +109,16 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Clicked += BtnEndTurn_Clicked;
             btnSaveGame.Clicked += BtnSaveGame_Clicked;
 
+            // Subscribe:a till checkboxens CheckedChanged event
+            chkColorBlindMode.Clicked += ChangeColorBlindMode;
+
             // Disable:a Undo knappen
             btnUndoMove.Enabled = false;
+        }
+
+        private void ChangeColorBlindMode(object? sender, EventArgs e)
+        {
+            colorBlindMode = !colorBlindMode;
         }
 
         /// <summary>
@@ -283,14 +297,14 @@ namespace Checkers.GameApp.Screens
 
             // Ladda alla labels
             lblDescription.LoadContent(content);
-            lblDescription.FontColor = Color.White;
             lblDescription.Text = $"RULES\nStandard Checkers rules apply.\nMove pieces diagonal, a piece is not allowed to move\nbackwards. Capture an opponent by j umping over them.\n" +
                                    $"If a piece reaches the other players edge row, that piece\nbecomes a King and can move backwards.";
             lblRules.LoadContent(content);
-            lblRules.FontColor = Color.White;
             lblRules.Text = "Force Capture: ON";
             lblCurrentPlayer.LoadContent(content);
-            lblCurrentPlayer.FontColor = Color.White;
+
+            // Ladda checkbox
+            chkColorBlindMode.LoadContent(content);
 
             // Ladda ljud
             Sound.LoadContent(content);
@@ -328,6 +342,7 @@ namespace Checkers.GameApp.Screens
             btnSaveGame?.UnloadContent();
             btnMainMenu?.UnloadContent();
             lblDescription?.UnloadContent();
+            chkColorBlindMode?.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -350,6 +365,9 @@ namespace Checkers.GameApp.Screens
             lblDescription.Update(gameTime);
             lblRules.Update(gameTime);
             lblCurrentPlayer.Update(gameTime);
+
+            // Uppdatera checkbox
+            chkColorBlindMode.Update(gameTime);
 
             // Uppdatera inget annat om _gameService är null
             if (_gameService == null || _gameService.RuleSet == null)
@@ -510,6 +528,8 @@ namespace Checkers.GameApp.Screens
             // Rita bara pjäser om _gameService inte är null och ett game är i GameStatus.InProgress
             if (_gameService != null && _gameService.GetGameStatus() == GameStatus.InProgress)
             {
+                Color drawColor = colorBlindMode ? colorBlindTint : Color.White;
+
                 // Hämta brädet från GameService
                 var board = _gameService.GetBoard();
                 // hämta alla pjäser från brädet
@@ -536,7 +556,7 @@ namespace Checkers.GameApp.Screens
                         }
 
                         // Rita ut pjäsen på dess position med dess texture
-                        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                        spriteBatch.Draw(pieceTexture, new Rectangle((int)(piece.Position.Column * drawScale), (int)(piece.Position.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                     }
                 }
 
@@ -544,13 +564,13 @@ namespace Checkers.GameApp.Screens
                 if (isPieceSelected)
                 {
                     // Rita ut markering
-                    spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale), (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
+                    spriteBatch.Draw(selectTexture, new Rectangle((int)(selectedPosition.Column * drawScale), (int)(selectedPosition.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.8f);
 
                     // Loopa igenom alla validMoves
                     foreach (var move in validMoves)
                     {
                         // Rita en markör som visar alla giltiga moves pjäsen kan göra baserat på dess position och omgivning
-                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
+                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
                     }
                 }
             }
@@ -577,8 +597,11 @@ namespace Checkers.GameApp.Screens
             lblRules.Draw(spriteBatch);
             lblCurrentPlayer.Draw(spriteBatch);
 
+            // Rita checkbox
+            chkColorBlindMode.Draw(spriteBatch);
+
             // rita victory-screen
-             if (uiTexture != null && isWinner)
+            if (uiTexture != null && isWinner)
             {
                  spriteBatch.Draw(uiTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY, WindowRectangle.Width - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
