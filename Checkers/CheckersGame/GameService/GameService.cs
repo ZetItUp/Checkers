@@ -89,7 +89,7 @@ namespace Checkers.CheckersGame.GameService
             if(_gameStatus != GameStatus.InProgress)
                 return false;
 
-            if(_gameHistory == null || _pieceOperationsService == null || _moveValidator == null || _board == null || _currentPlayer == null)
+            if(_gameHistory == null || RuleSet == null || _pieceOperationsService == null || _moveValidator == null || _board == null || _currentPlayer == null)
                 return false;
 
             if (!_moveValidator.ValidateMove(from, to, _board, _currentPlayer))
@@ -131,7 +131,7 @@ namespace Checkers.CheckersGame.GameService
 
             // Kolla om pjäsen kan ta igen 
             // Bara om: det var ett capture och AllowMultipleJumps är på
-            if (wasCapture && RuleSet!.AllowMultipleJumps)
+            if (wasCapture && RuleSet.AllowMultipleJumps)
             {
                 if (CanPieceCaptureAgain(to))
                 {
