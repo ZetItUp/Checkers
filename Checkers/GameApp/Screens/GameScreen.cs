@@ -75,9 +75,9 @@ namespace Checkers.GameApp.Screens
         Rectangle WindowRectangle;
         Texture2D? activeTexture;
         Color EnabledColor = Color.White;
-        
+
         // Färgblindhet
-        Color colorBlindTint = Color.Yellow;
+        Color colorBlindTint = new Color(0x56, 0xB4, 0xE9, 120);
         bool colorBlindMode = false;
 
         float boardScale = 1f;
@@ -575,7 +575,7 @@ namespace Checkers.GameApp.Screens
                     foreach (var move in validMoves)
                     {
                         // Rita en markör som visar alla giltiga moves pjäsen kan göra baserat på dess position och omgivning
-                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
+                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
                     }
                 }
             }
