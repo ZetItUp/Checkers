@@ -23,6 +23,12 @@ namespace Checkers.CheckersGame.GameService
         private PieceOperationsService? _pieceOperationsService;
         private GameStatus _gameStatus;
         private bool _isInMultiJump = false; // Tracker om vi är i en multi-jump sekvens
+
+        /// <summary>
+        /// Indikerar om spelet är i en multi-jump sekvens
+        /// </summary>
+        public bool IsInMultiJump => _isInMultiJump;
+
         public IRuleSet? RuleSet { get; private set; }
         
         /// <summary>

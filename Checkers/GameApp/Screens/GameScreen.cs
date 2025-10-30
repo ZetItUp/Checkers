@@ -61,11 +61,9 @@ namespace Checkers.GameApp.Screens
         // Checkbox
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
 
-        // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
+        // Variabler för att hantera om en pjäs är markerad
         bool isPieceSelected = false;
-        bool isInMultiJumpMode = false;
         bool isWinner = false;
-
         // Spelbrädes variabler för scaling och size
         int windowWidth = 400;   
         int windowHeight = 200;  
@@ -149,8 +147,6 @@ namespace Checkers.GameApp.Screens
             isPieceSelected = false;
             // Rensa validMoves listan
             validMoves.Clear();
-            // Vi är inte längre i MultiJumpMode
-            isInMultiJumpMode = false;
         }
 
         /// <summary>
@@ -456,7 +452,7 @@ namespace Checkers.GameApp.Screens
                     }
 
                     // Om vi är i multi-jump läge, tillåt inte byte av pjäs
-                    if (isInMultiJumpMode && (mousePositionY != selectedPosition.Row || mousePositionX != selectedPosition.Column))
+                    if (_gameService.IsInMultiJump && (mousePositionY != selectedPosition.Row || mousePositionX != selectedPosition.Column))
                     {
                         return; // Måste fortsätta med samma pjäs i multi-jump
                     }
@@ -492,8 +488,6 @@ namespace Checkers.GameApp.Screens
                                 validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
                                 // Markera pjäsen
                                 isPieceSelected = true;
-                                // Nu är vi i multi-jump läge
-                                isInMultiJumpMode = true;
                             }
                             else
                             {
@@ -502,8 +496,6 @@ namespace Checkers.GameApp.Screens
                                 validMoves.Clear();
                                 // Avmarkera pjäs
                                 isPieceSelected = false;
-                                // Se till att vi inte är i multi-jump läge
-                                isInMultiJumpMode = false;
                             }
                             break;
                         }
