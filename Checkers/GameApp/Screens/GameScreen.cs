@@ -49,7 +49,7 @@ namespace Checkers.GameApp.Screens
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
-        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 760, MainGame.WindowHeight - 360, 220, 100), "OK!");
+        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 760, MainGame.WindowHeight - 380, 220, 100), "OK!");
 
 
         // Labels
@@ -120,8 +120,11 @@ namespace Checkers.GameApp.Screens
 
         private void BtnVictory_Clicked(object? sender, EventArgs e)
         {
-            // går till main meny
-            _screenChanger.ChangeScreen(ScreenID.MainMenu);
+            // Stäng victory-fönstret
+            btnVictory.Enabled = false;
+            btnVictory.IsVisible = false;
+            lbVictory.IsVisible = false;
+            isWinner = false;
         }
 
         /// <summary>
@@ -316,7 +319,7 @@ namespace Checkers.GameApp.Screens
             lblRules.Text = "Force Capture: ON";
             lblCurrentPlayer.LoadContent(content);
             lbVictory.LoadContent(content);
-            lbVictory.Text = "Congratulations, you won";
+            lbVictory.Text = ""; // Texten sätts dynamiskt när någon vinner
 
             // Ladda checkbox
             chkColorBlindMode.LoadContent(content);
@@ -472,8 +475,13 @@ namespace Checkers.GameApp.Screens
                             var previousPlayer = _gameService.GetCurrentPlayer();
                             _gameService.MakeMove(selectedPosition, move);
                             // Kolla om någon har vunnit spelet ännu
-                            if (_gameService.CheckWinner() != null)
+                            var winner = _gameService.CheckWinner();
+                            if (winner != null)
                             {
+                                // Sätt victory-texten att visa vilken färg som vann
+                                string winnerColor = winner.Color == PieceColor.Light ? "Light" : "Dark";
+                                lbVictory.Text = $"Congratulations!\n{winnerColor} wins!";
+
                                 btnVictory.Enabled = true;
                                 btnVictory.IsVisible = true;
                                 lbVictory.IsVisible = true;
