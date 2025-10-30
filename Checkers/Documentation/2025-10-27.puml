@@ -1,0 +1,330 @@
+@startuml Checkers Class Diagram
+
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+
+' ====================
+' GAME SERVICE LAYER
+' ====================
+
+package "Game Service Layer" #DDDDDD {
+    class GameService {
+        - _board: Board?
+        - _player1: Player?
+        - _player2: Player?
+        - _currentPlayer: Player?
+        - _moveValidator: MoveValidator?
+        - _gameHistory: GameHistory?
+        - _gameStatus: GameStatus
+        - _isInMultiJump: bool
+        + RuleSet: RuleSet
+        __
+        + InitializeGame(player1Name, player2Name)
+        + StartGame()
+        + MakeMove(from, to): bool
+        + Undo(): bool
+        + CheckWinner(): Player?
+        + SwitchTurn()
+        + GetBoard(): Board?
+        + GetCurrentPlayer(): Player?
+        + GetGameStatus(): GameStatus
+        + GetGameHistory(): GameHistory?
+        + GetValidMovesForPiece(position): List<Position>
+        + EndTurn()
+    }
+}
+
+' ====================
+' DOMAIN MODELS
+' ====================
+
+package "Domain Models" #E8F4F8 {
+    abstract class Piece {
+        + Color: PieceColor
+        + Position: Position
+        + IsKing: bool
+        __
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    class RegularPiece {
+        __
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    class KingPiece {
+        __
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    class Board {
+        - squares: Piece?[,]
+        + Size: int
+        __
+        + Initialize()
+        + GetPiece(position): Piece?
+        + PlacePiece(piece, position)
+        + MovePiece(from, to)
+        + RemovePiece(position)
+        + GetAllPieces(): List<Piece>
+        + GetAllPieces(color): List<Piece>
+        + CountPieces(color): int
+        + Clone(): Board
+    }
+
+    class Player {
+        + Name: string
+        + Color: PieceColor
+    }
+}
+
+' ====================
+' VALIDATION & RULES
+' ====================
+
+package "Validation & Rules" #FFF4E6 {
+    class MoveValidator {
+        - _ruleSet: RuleSet
+        __
+        + ValidateMove(from, to, board, player): bool
+        + GetCapturedPosition(from, to): Position?
+        + IsCapture(from, to): bool
+        + HasValidMoves(player, board): bool
+    }
+
+    interface IRuleSet {
+        + Name: string
+        + BoardSize: int
+        + ForcedCaptures: bool
+        + AllowBackwardCaptures: bool
+        + AllowMultipleJumps: bool
+    }
+
+    class RuleSet {
+        + Name: string
+        + BoardSize: int
+        + ForcedCaptures: bool
+        + AllowBackwardCaptures: bool
+        + AllowMultipleJumps: bool
+        __
+        + CreateStandard(): RuleSet <<static>>
+        + ToString(): string
+    }
+}
+
+' ====================
+' HISTORY & PERSISTENCE
+' ====================
+
+package "History & Persistence" #E8F5E9 {
+    class GameHistory {
+        - _initialBoard: Board
+        - _moves: List<Move>
+        __
+        + RecordMove(move)
+        + Undo(board): bool
+        + GetAllMoves(): List<Move>
+        + Clear()
+    }
+
+    class Move {
+        + From: Position
+        + To: Position
+        + CapturedPiece: Piece?
+        + WasPromoted: bool
+        + Timestamp: DateTime
+        + MoveNumber: int
+        __
+        + GenerateNotation(): string
+    }
+
+    class GamePersistence <<static>> {
+        __
+        + SaveGame(game): string <<static>>
+        + LoadGameForReplay(fileName): SavedGame? <<static>>
+        + GetSavedGamesWithMetadata(): List<GameMetadata> <<static>>
+        + GetSavedGames(): List<string> <<static>>
+        + DeleteGame(fileName) <<static>>
+    }
+
+    class ReplayService {
+        - _savedGame: SavedGame
+        - _board: Board
+        - _gameHistory: GameHistory
+        - _currentMoveIndex: int
+        + CurrentPlayer: Player
+        + CurrentMoveIndex: int
+        + TotalMoves: int
+        + IsAtStart: bool
+        + IsAtEnd: bool
+        __
+        + StepForward(): bool
+        + StepBackward(): bool
+        + ResetToStart()
+        + GetBoard(): Board?
+    }
+
+    class SavedGame {
+        + FileName: string
+        + Player1Name: string
+        + Player2Name: string
+        + RuleSet: RuleSet
+        + Moves: List<Move>
+        + DatePlayed: DateTime
+        + Winner: string?
+    }
+
+    class GameMetadata {
+        + FileName: string
+        + Player1Name: string
+        + Player2Name: string
+        + DatePlayed: DateTime
+        + Winner: string?
+        + TotalMoves: int
+        + BoardSize: int
+        __
+        + GetDisplayName(): string
+        + GetWinnerDisplay(): string
+    }
+}
+
+' ====================
+' DATA TYPES
+' ====================
+
+package "Data Types" #FCE4EC {
+    struct Position <<struct>> {
+        + Row: int
+        + Column: int
+        __
+        + IsValid(boardSize): bool
+        + Equals(obj): bool
+        + GetHashCode(): int
+        + ToString(): string
+    }
+
+    enum GameStatus <<enumeration>> {
+        WaitingToStart
+        InProgress
+        Completed
+        Abandoned
+    }
+
+    enum PieceColor <<enumeration>> {
+        Red
+        Black
+    }
+}
+
+' ====================
+' UI LAYER
+' ====================
+
+package "UI Layer" #F3E5F5 {
+    class ScreenManager <<static>> {
+        - currentScreen: Screen?
+        - screens: Dictionary<ScreenID, Screen>
+        __
+        + Initialize(spriteBatch, content) <<static>>
+        + ChangeScreen(screenID) <<static>>
+        + Update(gameTime) <<static>>
+        + Draw(gameTime) <<static>>
+    }
+
+    abstract class Screen {
+        __
+        + LoadContent(content)
+        + UnloadContent()
+        + Update(gameTime)
+        + Draw(spriteBatch, gameTime)
+    }
+
+    class MainMenuScreen {
+        __
+        + LoadContent(content)
+        + Update(gameTime)
+        + Draw(spriteBatch, gameTime)
+    }
+
+    class GameScreen {
+        - _gameService: GameService
+        __
+        + LoadContent(content)
+        + Update(gameTime)
+        + Draw(spriteBatch, gameTime)
+    }
+
+    class ReplayScreen {
+        - _replayService: ReplayService
+        __
+        + LoadContent(content)
+        + Update(gameTime)
+        + Draw(spriteBatch, gameTime)
+    }
+
+    enum ScreenID <<enumeration>> {
+        MainMenu
+        Game
+        Replay
+    }
+}
+
+' ====================
+' Relationships
+' ====================
+
+' Inheritance
+Piece <|-- RegularPiece
+Piece <|-- KingPiece
+IRuleSet <|.. RuleSet
+Screen <|-- MainMenuScreen
+Screen <|-- GameScreen
+Screen <|-- ReplayScreen
+
+' Composition & Aggregation
+GameService *-- Board
+GameService *-- Player
+GameService *-- MoveValidator
+GameService *-- GameHistory
+GameService o-- RuleSet
+Board *-- Piece
+MoveValidator o-- RuleSet
+GameHistory *-- Move
+GameHistory o-- Board
+Move o-- Piece
+Move *-- Position
+ReplayService *-- SavedGame
+ReplayService *-- Board
+ReplayService *-- GameHistory
+ReplayService *-- Player
+ReplayService o-- RuleSet
+SavedGame o-- RuleSet
+SavedGame *-- Move
+
+' Dependencies
+GameService ..> GameStatus
+GameService ..> Position
+Board ..> PieceColor
+Piece ..> Position
+Piece ..> PieceColor
+Player ..> PieceColor
+MoveValidator ..> Board
+MoveValidator ..> Player
+MoveValidator ..> Position
+GameScreen ..> GameService
+ReplayScreen ..> ReplayService
+ScreenManager ..> Screen
+ScreenManager ..> ScreenID
+GamePersistence ..> GameService
+GamePersistence ..> SavedGame
+GamePersistence ..> GameMetadata
+GamePersistence ..> Move
+ReplayService ..> Position
+ReplayService ..> PieceColor
+
+@enduml
