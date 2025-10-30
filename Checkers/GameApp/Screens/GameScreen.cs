@@ -368,12 +368,6 @@ namespace Checkers.GameApp.Screens
 
         public void Update(GameTime gameTime)
         {
-            if (isWinner)
-            {
-                btnVictory.Enabled = true;
-                btnVictory.IsVisible = true;
-                lbVictory.IsVisible = true;
-            }
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
@@ -477,6 +471,15 @@ namespace Checkers.GameApp.Screens
                             var moveToPosition = move;
                             var previousPlayer = _gameService.GetCurrentPlayer();
                             _gameService.MakeMove(selectedPosition, move);
+                            // Kolla om någon har vunnit spelet ännu
+                            if (_gameService.CheckWinner() != null)
+                            {
+                                btnVictory.Enabled = true;
+                                btnVictory.IsVisible = true;
+                                lbVictory.IsVisible = true;
+                                isWinner = true;
+                                Sound.PlayWinSound();
+                            }
 
                             // Kolla om samma spelare fortfarande är i tur (betyder multi-jump möjligt)
                             var newPlayer = _gameService.GetCurrentPlayer();
@@ -501,16 +504,6 @@ namespace Checkers.GameApp.Screens
                         }
                     }
                 }
-            }
-
-            // Kolla om någon har vunnit spelet ännu
-            if (_gameService.CheckWinner() != null)
-            {
-                btnVictory.Enabled = true;
-                btnVictory.IsVisible = true;
-                lbVictory.IsVisible = true;
-                isWinner = true;
-                Sound.PlayWinSound();
             }
         }
 
