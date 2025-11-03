@@ -1,5 +1,5 @@
 using System;
-using Checkers.CheckersGame.Validation.Config; // f�r RuleSetDto
+using Checkers.CheckersGame.Validation.Config; // för RuleSetDto
 namespace Checkers.CheckersGame.Validation;
 
 public class RuleSet : IRuleSet
