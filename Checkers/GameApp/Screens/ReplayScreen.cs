@@ -45,7 +45,7 @@ namespace Checkers.GameApp.Screens
 
         // UI 
         Button? btnMainMenu = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 70, 120, 50), "Main Menu");
-        Button? btnAutoPlay = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Auto Play: ON");
+        Button? btnAutoPlay = new Button(new Rectangle(MainGame.WindowWidth - 160, MainGame.WindowHeight - 130, 150, 50), "Auto Play: ON");
         Button? btnReset = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Reset");
         Button? btnNextMove = new Button(new Rectangle(MainGame.WindowWidth - 390, MainGame.WindowHeight - 70, 120, 50), "Next >>");
         Button? btnPreviousMove = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "<< Previous");
@@ -56,7 +56,7 @@ namespace Checkers.GameApp.Screens
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
 
         // Färgblindhet
-        Color colorBlindTint = Color.Yellow;
+        Color colorBlindTint = new Color(0x56, 0xB4, 0xE9, 120);
         bool colorBlindMode = false;
 
         // Board inställningar
@@ -171,6 +171,15 @@ namespace Checkers.GameApp.Screens
                 return;
             }
 
+            // Aktivera knappar
+            if (btnAutoPlay != null && btnReset != null)
+            {
+                isAutoPlaying = false;
+                btnAutoPlay.Text = "Auto Play: OFF";
+                btnAutoPlay.Enabled = true;
+                btnReset.Enabled = true;
+            }
+
             // Hämta sparat spel från GamePersistence
             var savedGame = GamePersistence.LoadGameForReplay(fileName);
 
@@ -248,6 +257,14 @@ namespace Checkers.GameApp.Screens
             lblGames.Text = "Previous Games";
             lblGames.FontColor = Color.White;
             chkColorBlindMode.LoadContent(content);
+
+            if (btnPreviousMove != null && btnNextMove != null && btnAutoPlay != null && btnReset != null)
+            {
+                btnPreviousMove.Enabled = false;
+                btnNextMove.Enabled = false;
+                btnAutoPlay.Enabled = false;
+                btnReset.Enabled = false;
+            }
 
             // Säkerställ att cboGames inte är null innan vi laddar in innehåll
             if (cboGames != null)
@@ -351,6 +368,8 @@ namespace Checkers.GameApp.Screens
             {
                 return;
             }
+
+            _appContext.GraphicsDevice.Clear(new Color(36, 45, 66));
 
             var spriteBatch = _appContext.SpriteBatch;
 

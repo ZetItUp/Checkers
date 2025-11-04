@@ -35,7 +35,6 @@ namespace Checkers.GameApp.UI
         {
             base.UnloadContent();
             buttonFont = null;
-            Text = string.Empty;
         }
 
         public override void Update(GameTime gameTime)

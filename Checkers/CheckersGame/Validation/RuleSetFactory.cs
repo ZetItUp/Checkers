@@ -26,7 +26,7 @@ namespace Checkers.CheckersGame.Validation
         private IRuleSet CreateFromJson(string json)
         {
             if (string.IsNullOrEmpty(json))
-                throw new ArgumentException("JSON får inte vara tom", nameof(json));
+                throw new ArgumentException("JSON cannot be empty", nameof(json));
 
             // ej känslig för små/stora bokstäver
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

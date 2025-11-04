@@ -58,7 +58,7 @@ namespace Checkers.GameApp.UI
         {
             base.Update(gameTime);
 
-            if (!Enabled)
+            if (!Enabled || !IsVisible)
             {
                 if (activeTexture == null)
                 {

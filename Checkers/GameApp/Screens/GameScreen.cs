@@ -49,23 +49,24 @@ namespace Checkers.GameApp.Screens
         Button btnRestartGame = new Button(new Rectangle(MainGame.WindowWidth - 260, MainGame.WindowHeight - 70, 120, 50), "Restart Game");
         Button btnEndTurn = new Button(new Rectangle(MainGame.WindowWidth - 520, MainGame.WindowHeight - 70, 120, 50), "End Turn");
         Button btnSaveGame = new Button(new Rectangle(MainGame.WindowWidth - 130, MainGame.WindowHeight - 130, 120, 50), "Save Game");
+        Button btnVictory = new Button(new Rectangle(MainGame.WindowWidth - 760, MainGame.WindowHeight - 380, 220, 100), "OK!");
+
 
         // Labels
         Label lblDescription = new Label(new Rectangle(MainGame.WindowWidth - 500, 10, 480, 400));
         Label lblRules = new Label(new Rectangle(MainGame.WindowWidth - 500, 200, 480, 100));
         Label lblCurrentPlayer = new Label(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight / 2, 480, 200));
+        Label lbVictory = new Label(new Rectangle(MainGame.WindowWidth - 750, MainGame.WindowHeight - 450, 320, 250));
 
         // Checkbox
         CheckBox chkColorBlindMode = new CheckBox(new Rectangle(MainGame.WindowWidth - 500, MainGame.WindowHeight - 115, 200, 50), "Color Blind Mode");
 
-        // Variabler för att hantera om en pjäs är markerad och om man måste flytta igen
+        // Variabler för att hantera om en pjäs är markerad
         bool isPieceSelected = false;
-        bool isInMultiJumpMode = false;
         bool isWinner = false;
-
         // Spelbrädes variabler för scaling och size
-        int windowWidth = 420;   
-        int windowHeight = 220;  
+        int windowWidth = 400;   
+        int windowHeight = 200;  
         int boardSize = 0;
         int cellSize = 32;
         int windowX;
@@ -75,9 +76,9 @@ namespace Checkers.GameApp.Screens
         Rectangle WindowRectangle;
         Texture2D? activeTexture;
         Color EnabledColor = Color.White;
-        
+
         // Färgblindhet
-        Color colorBlindTint = Color.Yellow;
+        Color colorBlindTint = new Color(0x56, 0xB4, 0xE9, 120);
         bool colorBlindMode = false;
 
         float boardScale = 1f;
@@ -108,12 +109,22 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Clicked += BtnRestartGame_Clicked;
             btnEndTurn.Clicked += BtnEndTurn_Clicked;
             btnSaveGame.Clicked += BtnSaveGame_Clicked;
+            btnVictory.Clicked += BtnVictory_Clicked;
 
             // Subscribe:a till checkboxens CheckedChanged event
             chkColorBlindMode.Clicked += ChangeColorBlindMode;
 
             // Disable:a Undo knappen
             btnUndoMove.Enabled = false;
+        }
+
+        private void BtnVictory_Clicked(object? sender, EventArgs e)
+        {
+            // Stäng victory-fönstret
+            btnVictory.Enabled = false;
+            btnVictory.IsVisible = false;
+            lbVictory.IsVisible = false;
+            isWinner = false;
         }
 
         /// <summary>
@@ -139,8 +150,6 @@ namespace Checkers.GameApp.Screens
             isPieceSelected = false;
             // Rensa validMoves listan
             validMoves.Clear();
-            // Vi är inte längre i MultiJumpMode
-            isInMultiJumpMode = false;
         }
 
         /// <summary>
@@ -170,6 +179,7 @@ namespace Checkers.GameApp.Screens
             // Visa och enable:a knappar som behövs
             btnRestartGame.IsVisible = true;
             btnRestartGame.Enabled = true;
+            
         }
 
         /// <summary>
@@ -299,6 +309,7 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.LoadContent(content);
             btnEndTurn.LoadContent(content);
             btnSaveGame.LoadContent(content);
+            btnVictory.LoadContent(content);
 
             // Ladda alla labels
             lblDescription.LoadContent(content);
@@ -307,6 +318,8 @@ namespace Checkers.GameApp.Screens
             lblRules.LoadContent(content);
             lblRules.Text = "Force Capture: ON";
             lblCurrentPlayer.LoadContent(content);
+            lbVictory.LoadContent(content);
+            lbVictory.Text = ""; // Texten sätts dynamiskt när någon vinner
 
             // Ladda checkbox
             chkColorBlindMode.LoadContent(content);
@@ -334,7 +347,11 @@ namespace Checkers.GameApp.Screens
             btnEndTurn.Enabled = false;
             btnEndTurn.IsVisible = false;
             btnSaveGame.Enabled = true;
+            btnVictory.Enabled = false;
+            btnVictory.IsVisible = false;
 
+            // ställ in synlighet för labels
+            lbVictory.IsVisible=false;
         }
         public void UnloadContent()
         {
@@ -348,16 +365,12 @@ namespace Checkers.GameApp.Screens
             btnMainMenu?.UnloadContent();
             lblDescription?.UnloadContent();
             chkColorBlindMode?.UnloadContent();
+            btnVictory?.UnloadContent();
+            lbVictory?.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
         {
-            if (isWinner)
-            {
-                return;
-
-            }
-
             // Uppdatera knapparna
             btnMainMenu.Update(gameTime);
             btnStartGame.Update(gameTime);
@@ -365,11 +378,13 @@ namespace Checkers.GameApp.Screens
             btnRestartGame.Update(gameTime);
             btnEndTurn.Update(gameTime);
             btnSaveGame.Update(gameTime);
+            btnVictory.Update(gameTime); 
 
             // Uppdatera labels
             lblDescription.Update(gameTime);
             lblRules.Update(gameTime);
             lblCurrentPlayer.Update(gameTime);
+            lbVictory.Update(gameTime);
 
             // Uppdatera checkbox
             chkColorBlindMode.Update(gameTime);
@@ -434,7 +449,7 @@ namespace Checkers.GameApp.Screens
                     }
 
                     // Om vi är i multi-jump läge, tillåt inte byte av pjäs
-                    if (isInMultiJumpMode && (mousePositionY != selectedPosition.Row || mousePositionX != selectedPosition.Column))
+                    if (_gameService.IsInMultiJump && (mousePositionY != selectedPosition.Row || mousePositionX != selectedPosition.Column))
                     {
                         return; // Måste fortsätta med samma pjäs i multi-jump
                     }
@@ -459,6 +474,20 @@ namespace Checkers.GameApp.Screens
                             var moveToPosition = move;
                             var previousPlayer = _gameService.GetCurrentPlayer();
                             _gameService.MakeMove(selectedPosition, move);
+                            // Kolla om någon har vunnit spelet ännu
+                            var winner = _gameService.CheckWinner();
+                            if (winner != null)
+                            {
+                                // Sätt victory-texten att visa vilken färg som vann
+                                string winnerColor = winner.Color == PieceColor.Light ? "Light" : "Dark";
+                                lbVictory.Text = $"Congratulations!\n{winnerColor} wins!";
+
+                                btnVictory.Enabled = true;
+                                btnVictory.IsVisible = true;
+                                lbVictory.IsVisible = true;
+                                isWinner = true;
+                                Sound.PlayWinSound();
+                            }
 
                             // Kolla om samma spelare fortfarande är i tur (betyder multi-jump möjligt)
                             var newPlayer = _gameService.GetCurrentPlayer();
@@ -470,8 +499,6 @@ namespace Checkers.GameApp.Screens
                                 validMoves = _gameService.GetValidMovesForPiece(selectedPosition);
                                 // Markera pjäsen
                                 isPieceSelected = true;
-                                // Nu är vi i multi-jump läge
-                                isInMultiJumpMode = true;
                             }
                             else
                             {
@@ -480,32 +507,24 @@ namespace Checkers.GameApp.Screens
                                 validMoves.Clear();
                                 // Avmarkera pjäs
                                 isPieceSelected = false;
-                                // Se till att vi inte är i multi-jump läge
-                                isInMultiJumpMode = false;
                             }
                             break;
                         }
                     }
                 }
             }
-
-            // Kolla om någon har vunnit spelet ännu
-            if (_gameService.CheckWinner() != null)
-            {
-                isWinner = true;
-                Sound.PlayWinSound();
-            }
-
         }
 
         public void Draw(GameTime gameTime)
         {
             // Felhantering för AppContext och SpriteBatch
             // Om något är null så ska inget försökas ritas ut och vi hoppar över drawcall
-            if(_appContext == null)
+            if (_appContext == null)
             {
                 return;
             }
+
+            _appContext.GraphicsDevice.Clear(new Color(36, 45, 66));
 
             var spriteBatch = _appContext.SpriteBatch;
 
@@ -575,7 +594,7 @@ namespace Checkers.GameApp.Screens
                     foreach (var move in validMoves)
                     {
                         // Rita en markör som visar alla giltiga moves pjäsen kan göra baserat på dess position och omgivning
-                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, drawColor, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
+                        spriteBatch.Draw(validMoveTexture, new Rectangle((int)(move.Column * drawScale), (int)(move.Row * drawScale), (int)drawScale, (int)drawScale), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
                     }
                 }
             }
@@ -618,7 +637,11 @@ namespace Checkers.GameApp.Screens
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + 6, currY + WindowRectangle.Height - 6, WindowRectangle.Width - 12, 6), new Rectangle(6, uiTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                  spriteBatch.Draw(uiTexture, new Rectangle(currX + WindowRectangle.Width - 6, currY + WindowRectangle.Height - 6, 6, 6), new Rectangle(uiTexture.Width - 6, uiTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
 
+                 lbVictory.Draw(spriteBatch);
+                 btnVictory.Draw(spriteBatch);
              }
+            // rita victoryknapp och label. Ligger här nere för att skriva över victoryscreen
+
             spriteBatch.End();
             
         }

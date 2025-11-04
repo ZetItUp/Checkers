@@ -33,7 +33,7 @@ namespace Checkers.GameApp.UI
         public bool Enabled { get; set; } = true;
         // Färger för enabled och disabled state
         public Color EnabledColor { get; set; } = Color.White;
-        public Color DisabledColor { get; set; } = Color.CadetBlue;
+        public Color DisabledColor { get; set; } = new Color(0x56, 0xB4, 0xE9, 120);
 
         public WindowComponent(Rectangle windowRectangle)
         {
@@ -65,6 +65,12 @@ namespace Checkers.GameApp.UI
 
         public virtual void Update(GameTime gameTime)
         {
+            // Hantera inte input om knappen är inaktiverad
+            if (!Enabled || !IsVisible)
+            {
+                return;
+            }
+
             // Kolla om musen är över componenten
             if (MouseHelper.MouseRectangle().Intersects(WindowRectangle))
             {

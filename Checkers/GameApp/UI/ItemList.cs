@@ -27,7 +27,7 @@ namespace Checkers.GameApp.UI
         // Färger
         public Color FontColor { get; set; } = Color.Black;
 
-        public Color HoverBackgroundColor { get; set; } = new Color(100, 100, 100, 255);
+        public Color HoverBackgroundColor { get; set; } = new Color(66, 79, 153);
         public Color HoverFontColor { get; set; } = Color.White;
 
         // Beteende variabler för itemlista
@@ -64,12 +64,6 @@ namespace Checkers.GameApp.UI
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-            // Felhantering för komponentens synlighet och om den är aktiverad
-            if (!IsVisible)
-            {
-                return;
-            }
             
             if (activeTexture == null)
             {
@@ -78,7 +72,7 @@ namespace Checkers.GameApp.UI
 
             hoveredIndex = -1;
 
-            if (!Enabled)
+            if (!Enabled || !IsVisible)
             {
                 return;
             }
