@@ -35,7 +35,7 @@ namespace Checkers.CheckersGame.History
             if (_moves.Count == 0)
                 return false;
 
-            //ta bort det sista draget
+            //ta bort det senaste draget
             _moves.RemoveAt(_moves.Count - 1);
 
             ResetBoard(board);
