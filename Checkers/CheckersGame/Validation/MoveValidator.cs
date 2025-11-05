@@ -8,6 +8,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Validation
 {
+    /// <summary>
+    /// Klass för att validera drag enligt reglerna i RuleSet
+    /// </summary>
     public class MoveValidator : IMoveValidator
     {
         private readonly IRuleSet _ruleSet;
@@ -17,6 +20,14 @@ namespace Checkers.CheckersGame.Validation
             _ruleSet = ruleSet;
         }
 
+        /// <summary>
+        /// Kolla om ett drag är giltigt
+        /// </summary>
+        /// <param name="from">From</param>
+        /// <param name="to">To</param>
+        /// <param name="board">IBoard</param>
+        /// <param name="player">Player</param>
+        /// <returns>True if the move is valid</returns>
         public bool ValidateMove(Position from, Position to, IBoard board, Player player)
         {
             var piece = board.GetPiece(from);
@@ -94,6 +105,12 @@ namespace Checkers.CheckersGame.Validation
             return true;
         }
 
+        /// <summary>
+        /// Hämta positionen för den tagna pjäsen vid ett capture-drag
+        /// </summary>
+        /// <param name="from">From</param>
+        /// <param name="to">To</param>
+        /// <returns>Position?</returns>
         public Position? GetCapturedPosition(Position from, Position to)
         {
             if(!IsCapture(from, to))
@@ -107,6 +124,12 @@ namespace Checkers.CheckersGame.Validation
             return new Position(captureRow, captureCol);
         }
 
+        /// <summary>
+        /// Kollar om distansen mellan två positioner är 2 rutor bort
+        /// </summary>
+        /// <param name="from">From</param>
+        /// <param name="to">To</param>
+        /// <returns>True if it is 2 tiles away</returns>
         public bool IsCapture(Position from, Position to)
         {
             int rowDiff = Math.Abs(to.Row - from.Row);
@@ -115,6 +138,12 @@ namespace Checkers.CheckersGame.Validation
             return rowDiff == 2 && colDiff == 2;
         }
 
+        /// <summary>
+        /// Kollar om en spelare har några giltiga drag kvar
+        /// </summary>
+        /// <param name="player">Player</param>
+        /// <param name="board">IBoard</param>
+        /// <returns>True if any moves</returns>
         public bool HasValidMoves(Player player, IBoard board)
         {
             var playerPieces = board.GetAllPieces(player.Color);
@@ -164,16 +193,35 @@ namespace Checkers.CheckersGame.Validation
             return false;
         }
 
+        /// <summary>
+        /// Kolla om en pjäs ägs av spelaren
+        /// </summary>
+        /// <param name="piece">Piece</param>
+        /// <param name="player">Player</param>
+        /// <returns>True if the Player owns the Piece</returns>
         private bool IsPieceOwnedByPlayer(Piece piece, Player player)
         {
             return piece != null && piece.Color == player.Color;
         }
 
+        /// <summary>
+        /// Kolla om destinationen är tom
+        /// </summary>
+        /// <param name="board">IBoard</param>
+        /// <param name="to">To</param>
+        /// <returns>True if free place</returns>
         private bool IsDestinationEmpty(IBoard board, Position to)
         {
             return board.GetPiece(to) ==  null;
         }
 
+        /// <summary>
+        /// Kolla om draget finns i pjäsens giltiga draglista
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <param name="to"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
         private bool IsMoveInValidList(Piece piece, Position to, IBoard board)
         {
             var validMoves = piece.GetValidMoves(board);
