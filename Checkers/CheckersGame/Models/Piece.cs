@@ -7,6 +7,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
+    /// <summary>
+    /// håller kontraktet för alla pjästyper
+    /// </summary>
     public abstract class Piece
     {
         public PieceColor Color { get; init; }
