@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Validation
 {
-    public interface IRuleSet // dessa ska MoveValidator kunna hämta
+    /// <summary>
+    /// Interface för RuleSet
+    /// </summary>
+    public interface IRuleSet
     {
         int BoardSize { get; }
         bool ForcedCaptures { get; }
