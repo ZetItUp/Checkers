@@ -34,7 +34,8 @@ namespace Checkers.GameApp.Helpers
             if(_winSoundInstance == null)
                 return;
 
-            _winSoundInstance.Pitch = 0.5f;
+            _winSoundInstance.Volume = 0.5f;
+            _winSoundInstance.Play();
         }
     }
 }
