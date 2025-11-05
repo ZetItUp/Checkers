@@ -14,7 +14,7 @@ namespace Checkers.GameApp.Helpers
     public static class Sound
     {
         private static SoundEffect? _winSound; // Referens till ljudet
-        private static SoundEffectInstance? _winSoundInstance;
+        private static SoundEffectInstance? _winSoundInstance; // Instance för uppspelning
 
         /// <summary>
         /// Ladda in ljudresurset
