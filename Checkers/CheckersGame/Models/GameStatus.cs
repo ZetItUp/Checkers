@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Models
 {
-    // Enumdefinition för GameStatus
+    /// <summary>
+    /// Enumdefinition för GameStatus
+    /// </summary>
     public enum GameStatus
     {
         WaitingToStart,
