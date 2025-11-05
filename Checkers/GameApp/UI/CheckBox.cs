@@ -1,11 +1,14 @@
-﻿using Checkers.GameApp.Helpers;
+﻿using System;
+using Checkers.GameApp.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace Checkers.GameApp.UI
 {
+    /// <summary>
+    /// En enkel checkbox komponent
+    /// </summary>
     internal class CheckBox : WindowComponent
     {
         const int CHECKBOX_SIZE = 26;
@@ -21,20 +24,21 @@ namespace Checkers.GameApp.UI
         public bool Checked { get; private set; } = false;
         public Color FontColor
         {
-            get
-            {
-                return lblText.FontColor;
-            }
-            set
-            {
-                lblText.FontColor = value;
-            }
+            get { return lblText.FontColor; }
+            set { lblText.FontColor = value; }
         }
 
         public CheckBox(Rectangle windowRectangle)
             : base(windowRectangle)
         {
-            lblText = new Label(new Rectangle(windowRectangle.X + CHECKBOX_SIZE, windowRectangle.Y, windowRectangle.Width - CHECKBOX_SIZE, windowRectangle.Height));
+            lblText = new Label(
+                new Rectangle(
+                    windowRectangle.X + CHECKBOX_SIZE,
+                    windowRectangle.Y,
+                    windowRectangle.Width - CHECKBOX_SIZE,
+                    windowRectangle.Height
+                )
+            );
             Clicked += CheckBox_Clicked;
             FontColor = Color.White;
         }
@@ -137,32 +141,203 @@ namespace Checkers.GameApp.UI
 
             if (Enabled)
             {
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY, boxWidth - 12, 6), new Rectangle(6, 0, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY + 6, 6, boxHeight - 12), new Rectangle(0, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY + 6, boxWidth - 12, boxHeight - 12), new Rectangle(6, 6, 1, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY + 6, 6, boxHeight - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY + boxHeight - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY + boxHeight - 6, boxWidth - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY + boxHeight - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), EnabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY, 6, 6),
+                    new Rectangle(0, 0, 6, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY, boxWidth - 12, 6),
+                    new Rectangle(6, 0, 1, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY, 6, 6),
+                    new Rectangle(activeTexture.Width - 6, 0, 6, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY + 6, 6, boxHeight - 12),
+                    new Rectangle(0, 6, 6, 1),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY + 6, boxWidth - 12, boxHeight - 12),
+                    new Rectangle(6, 6, 1, 1),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY + 6, 6, boxHeight - 12),
+                    new Rectangle(activeTexture.Width - 6, 6, 6, 1),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY + boxHeight - 6, 6, 6),
+                    new Rectangle(0, activeTexture.Height - 6, 6, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY + boxHeight - 6, boxWidth - 12, 6),
+                    new Rectangle(6, activeTexture.Height - 6, 1, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY + boxHeight - 6, 6, 6),
+                    new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6),
+                    EnabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
             }
             else
             {
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY, 6, 6), new Rectangle(0, 0, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY, boxWidth - 12, 6), new Rectangle(6, 0, 1, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY, 6, 6), new Rectangle(activeTexture.Width - 6, 0, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY + 6, 6, boxHeight - 12), new Rectangle(0, 6, 6, 1), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY + 6, boxWidth - 12, boxHeight - 12), new Rectangle(6, 6, 1, 1), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY + 6, 6, boxHeight - 12), new Rectangle(activeTexture.Width - 6, 6, 6, 1), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX, currY + boxHeight - 6, 6, 6), new Rectangle(0, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + 6, currY + boxHeight - 6, boxWidth - 12, 6), new Rectangle(6, activeTexture.Height - 6, 1, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.Draw(activeTexture, new Rectangle(currX + boxWidth - 6, currY + boxHeight - 6, 6, 6), new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6), DisabledColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY, 6, 6),
+                    new Rectangle(0, 0, 6, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY, boxWidth - 12, 6),
+                    new Rectangle(6, 0, 1, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY, 6, 6),
+                    new Rectangle(activeTexture.Width - 6, 0, 6, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY + 6, 6, boxHeight - 12),
+                    new Rectangle(0, 6, 6, 1),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY + 6, boxWidth - 12, boxHeight - 12),
+                    new Rectangle(6, 6, 1, 1),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY + 6, 6, boxHeight - 12),
+                    new Rectangle(activeTexture.Width - 6, 6, 6, 1),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX, currY + boxHeight - 6, 6, 6),
+                    new Rectangle(0, activeTexture.Height - 6, 6, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + 6, currY + boxHeight - 6, boxWidth - 12, 6),
+                    new Rectangle(6, activeTexture.Height - 6, 1, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
+                spriteBatch.Draw(
+                    activeTexture,
+                    new Rectangle(currX + boxWidth - 6, currY + boxHeight - 6, 6, 6),
+                    new Rectangle(activeTexture.Width - 6, activeTexture.Height - 6, 6, 6),
+                    DisabledColor,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.0f
+                );
             }
 
-            if(Checked)
+            if (Checked)
             {
-                spriteBatch.Draw(markTexture, new Rectangle(currX, currY, boxWidth, boxHeight), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
+                spriteBatch.Draw(
+                    markTexture,
+                    new Rectangle(currX, currY, boxWidth, boxHeight),
+                    null,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    SpriteEffects.None,
+                    0.1f
+                );
             }
 
             lblText.Draw(spriteBatch);

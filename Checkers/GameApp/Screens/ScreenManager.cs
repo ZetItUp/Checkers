@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
+using Checkers.GameApp.Screens.Interfaces;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Checkers.GameApp.Screens.Interfaces;
 
 namespace Checkers.GameApp.Screens
 {
-    // Klass för att hantera olika screens i spelet
+    ///<summary>
+    /// Klass för att hantera olika screens i spelet
+    /// </summary>
     public sealed class ScreenManager : IScreenChanger
     {
         private readonly IAppContext _appContext;
 
         // Nuvarande aktiva screen
         private IScreen? _currentScreen;
-        // Dictionary för att lagra olika screens, mappade till deras ScreenID
-        private readonly Dictionary<ScreenID, IScreen> _screens = new Dictionary<ScreenID, IScreen>();
 
-        public ScreenManager(IAppContext context) 
+        // Dictionary för att lagra olika screens, mappade till deras ScreenID
+        private readonly Dictionary<ScreenID, IScreen> _screens =
+            new Dictionary<ScreenID, IScreen>();
+
+        public ScreenManager(IAppContext context)
         {
             _appContext = context;
         }
@@ -30,10 +34,7 @@ namespace Checkers.GameApp.Screens
         /// </summary>
         public IScreen CurrentScreen
         {
-            get 
-            { 
-                return _currentScreen!; 
-            }
+            get { return _currentScreen!; }
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Checkers.GameApp.Screens
             _currentScreen?.UnloadContent();
 
             // Kolla så att screenID finns i _screens
-            if(_screens.ContainsKey(screenID))
+            if (_screens.ContainsKey(screenID))
             {
                 // Sätt aktiv screen till den nya och ladda dess innehåll
                 _currentScreen = _screens[screenID];

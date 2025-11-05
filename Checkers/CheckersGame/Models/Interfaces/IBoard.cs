@@ -3,6 +3,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
+    /// <summary>
+    /// brädets gränssnitt
+    /// </summary>
     public interface IBoard
     {
         int Size { get; }
