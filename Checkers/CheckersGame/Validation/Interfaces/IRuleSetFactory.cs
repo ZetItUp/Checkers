@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Validation
 {
+    /// <summary>
+    /// Interface för RuleSetFactory
+    /// </summary>
     public interface IRuleSetFactory
     {
-        IRuleSet CreateFromJsonFile(string path); // läser in regler och skapar objekt
+        IRuleSet CreateFromJsonFile(string path);
     }
 }
