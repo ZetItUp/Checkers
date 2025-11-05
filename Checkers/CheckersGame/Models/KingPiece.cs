@@ -7,6 +7,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
+    /// <summary>
+    /// beskriver hur en kung/dam rör sig
+    /// </summary>
     public class KingPiece : Piece
     {
         private static readonly int[] DirectionRows = { -1, 1 };
