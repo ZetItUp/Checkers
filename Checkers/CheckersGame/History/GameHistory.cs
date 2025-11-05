@@ -8,6 +8,9 @@ using Checkers.CheckersGame.Models;
 
 namespace Checkers.CheckersGame.History
 {
+    /// <summary>
+    /// Håller reda på alla drag som gjorts i ett spel
+    /// </summary>
     public class GameHistory : IGameHistory
     {
         private readonly IBoard _initialBoard;
@@ -19,17 +22,30 @@ namespace Checkers.CheckersGame.History
             _moves = new List<Move>();
         }
 
+        /// <summary>
+        /// Spara ett drag i historiken
+        /// </summary>
+        /// <param name="move">Move</param>
         public void RecordMove(Move move)
         {
             move.MoveNumber = _moves.Count + 1;
             _moves.Add(move);
         }
 
+        /// <summary>
+        /// Hämta alla drag som sparats hitills
+        /// </summary>
+        /// <returns>List<Move></returns>
         public List<Move> GetAllMoves()
         {
             return new List<Move>(_moves);
         }
 
+        /// <summary>
+        /// Ångra det senaste draget i historiken
+        /// </summary>
+        /// <param name="board">IBoard current board</param>
+        /// <returns>True if success</returns>
         public bool Undo(IBoard board)
         {
             if (_moves.Count == 0)
@@ -47,11 +63,18 @@ namespace Checkers.CheckersGame.History
             return true;
         }
 
+        /// <summary>
+        /// Cleara all historik
+        /// </summary>
         public void Clear()
         {
             _moves.Clear();    
         }
 
+        /// <summary>
+        /// Resettar brädet till initialt tillstånd
+        /// </summary>
+        /// <param name="board">Current board</param>
         private void ResetBoard(IBoard board)
         {
             // Ta bara bort pjäser från rutor som faktiskt har pjäser
@@ -74,6 +97,11 @@ namespace Checkers.CheckersGame.History
             }
         }
 
+        /// <summary>
+        /// Appliserar ett drag på brädet
+        /// </summary>
+        /// <param name="board">Current board</param>
+        /// <param name="move">Current move</param>
         private void ApplyMove(IBoard board, Move move)
         {
             board.MovePiece(move.From, move.To);

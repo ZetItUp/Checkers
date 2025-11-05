@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Validation
-{ 
-    public sealed class RuleSetLoadException : Exception // felhantering
+{
+    /// <summary>
+    /// Exception som kastas när RuleSet inte kan laddas korrekt
+    /// </summary>
+    public sealed class RuleSetLoadException : Exception
     {
         public RuleSetLoadException(string message) : base(message)
         {
