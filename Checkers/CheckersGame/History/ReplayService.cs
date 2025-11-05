@@ -7,7 +7,9 @@ using Checkers.CheckersGame.Validation;
 
 namespace Checkers.CheckersGame.History;
 
+/// <summary>
 /// Hanterar replay av sparade spel
+/// </summary>
 public class ReplayService
 {
     private readonly SavedGame _savedGame;
@@ -31,6 +33,11 @@ public class ReplayService
     public string? Winner => _savedGame.Winner;
     public DateTime DatePlayed => _savedGame.DatePlayed;
 
+    /// <summary>
+    /// starta upp replaytjänsten genom att skapa bräde, historik och spelare utifrån sparat spelet
+    /// </summary>
+    /// <param name="savedGame"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public ReplayService(SavedGame savedGame)
     {
         _savedGame = savedGame ?? throw new ArgumentNullException(nameof(savedGame));
@@ -53,7 +60,10 @@ public class ReplayService
         _pieceOperationsService = new PieceOperationsService(_ruleSet, moveValidator);
     }
 
+    /// <summary>
     /// Gå framåt ett drag i replay
+    /// </summary>
+    /// <returns></returns>
     public bool StepForward()
     {
         if (IsAtEnd)
@@ -66,7 +76,10 @@ public class ReplayService
         return true;
     }
 
+    /// <summary>
     /// Gå bakåt ett drag i replay
+    /// </summary>
+    /// <returns></returns>
     public bool StepBackward()
     {
         if (IsAtStart)
@@ -79,7 +92,9 @@ public class ReplayService
         return true;
     }
 
+    /// <summary>
     /// Återställ replay till början
+    /// </summary>
     public void ResetToStart()
     {
         _board.Initialize();
@@ -89,10 +104,17 @@ public class ReplayService
     }
 
 
+    /// <summary>
     /// Hämta brädet i sitt nuvarande tillstånd
+    /// </summary>
+    /// <returns></returns>
     public IBoard? GetBoard() => _board;
 
-
+    /// <summary>
+    /// definierar hur draget utförs
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
     private void ExecuteMove(Position from, Position to)
     {
         var move = new Move(from, to);
@@ -119,7 +141,9 @@ public class ReplayService
         // Byt spelare
         SwitchPlayer();
     }
-
+    /// <summary>
+    /// byter den aktiva spelaren mellan ljus och mörk färg
+    /// </summary>
     private void SwitchPlayer()
     {
         CurrentPlayer = CurrentPlayer.Color == PieceColor.Light

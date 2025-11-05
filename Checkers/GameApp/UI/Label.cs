@@ -1,28 +1,30 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Checkers.GameApp.UI
 {
+    ///<summary>
+    /// En enkel textetikett för att visa text i UI:t.
+    /// </summary>
     internal class Label : WindowComponent
     {
         // Label Font
         SpriteFont? buttonFont;
+
         // Font Color
         public Color FontColor = Color.White;
+
         // Text som skrivs ut
         public string Text { get; set; } = string.Empty;
 
         public Label(Rectangle windowRectangle)
-            : base(windowRectangle)
-        {
-
-        }
+            : base(windowRectangle) { }
 
         public override void LoadContent(ContentManager content)
         {
@@ -45,7 +47,7 @@ namespace Checkers.GameApp.UI
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Skippa drawcall om fonten inte är laddad
-            if(buttonFont == null)
+            if (buttonFont == null)
             {
                 return;
             }
@@ -83,7 +85,13 @@ namespace Checkers.GameApp.UI
             gd.ScissorRectangle = clipRect;
             using (var rasterizer = new RasterizerState() { ScissorTestEnable = true })
             {
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, rasterizer);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    DepthStencilState.None,
+                    rasterizer
+                );
 
                 // Mät textstorleken för nuvarande item
                 Vector2 textSize = buttonFont.MeasureString(Text);

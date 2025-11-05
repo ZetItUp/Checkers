@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Screens
 {
-    // ScreenID enum för att identifiera olika screens i spelet
+    ///<summary>
+    /// ScreenID enum för att identifiera olika screens i spelet
+    /// </summary>
     public enum ScreenID
     {
         MainMenu,
         Game,
         Replay,
         Settings,
-        Restart
+        Restart,
     }
 }
