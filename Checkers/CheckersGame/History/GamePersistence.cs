@@ -19,7 +19,11 @@ public static class GamePersistence
         Directory.CreateDirectory(SaveDirectory);
     }
 
+    /// <summary>
     /// Sparar ett spel automatiskt med timestamp som filnamn
+    /// </summary>
+    /// <param name="game">GameService</param>
+    /// <returns> Retunerar strängen med filnamnet </returns>
     public static string SaveGame(GameService.GameService game)
     {
         // Säkerställ att Save-katalogen finns
@@ -36,7 +40,11 @@ public static class GamePersistence
         return fileName;
     }
 
+    /// <summary>
     /// Laddar ett sparat spel för replay
+    /// </summary>
+    /// <param name="fileName">SavedGame</param>
+    /// <returns> Retunerar den deserialiserade formen av den angivna parametern + spelets status vid sparande </returns>
     public static SavedGame? LoadGameForReplay(string fileName)
     {
         try
@@ -59,7 +67,10 @@ public static class GamePersistence
         }
     }
 
+    /// <summary>
     /// Hämtar alla sparade spel med metadata för UI-listan
+    /// </summary>
+    /// <returns> Retunerar en lista med alla sparade spel i fallande ordning </returns>
     public static List<GameMetadata> GetSavedGamesWithMetadata()
     {
         var files = Directory.GetFiles(SaveDirectory, "*.json");
@@ -97,7 +108,10 @@ public static class GamePersistence
         return gameMetadataList.OrderByDescending(g => g.DatePlayed).ToList();
     }
 
-    /// Hämtar filnamn för alla sparade spel (för bakåtkompatibilitet)
+    /// <summary>
+    /// Hämtar filnamn för alla sparade spel för bakåtkompatibilitet (vid vissa tester)
+    /// </summary>
+    /// <returns> Retunerar en lista med alla sparade spel för bakåtkompabilitet (vid vissa tester) </returns>
     public static List<string> GetSavedGames()
     {
         var files = Directory.GetFiles(SaveDirectory, "*.json");
@@ -111,6 +125,10 @@ public static class GamePersistence
         return fileNames;
     }
 
+    /// <summary>
+    /// Tar bort en specifik spelomgång
+    /// </summary>
+    /// <param name="fileName">GameService</param>
     public static void DeleteGame(string fileName)
     {
         string filePath = Path.Combine(SaveDirectory, $"{fileName}.json");
@@ -120,6 +138,11 @@ public static class GamePersistence
 
     #region Serialization
 
+    /// <summary>
+    /// Serilaiserar spelets status
+    /// </summary>
+    /// <param name="game">GameService</param>
+    /// <returns> Retunerar spelets nuvarande tillstånd, vid vinst deklareras vinnaren </returns>
     private static GameSaveState SerializeGame(GameService.GameService game)
     {
         var history = game.GetGameHistory();
@@ -160,6 +183,11 @@ public static class GamePersistence
         };
     }
 
+    /// <summary>
+    /// Serilaiserar listan med utförda drag
+    /// </summary>
+    /// <param name="moves">List<paramref name="Move"/>></param>
+    /// <returns> Retunerar den serialiserade listan </returns>
     private static List<MoveSaveState> SerializeMoves(List<Move> moves)
     {
         var result = new List<MoveSaveState>();
@@ -182,6 +210,12 @@ public static class GamePersistence
 
     #region Deserialization
 
+    /// <summary>
+    /// Deserialiserar en färdig spelomgång för att sparas
+    /// </summary>
+    /// <param name="gameState">GameSaveState</param>
+    /// <param name="fileName">GameService</param>
+    /// <returns> Retunerar all relevant information om spelomgången </returns>
     private static SavedGame DeserializeGame(GameSaveState gameState, string fileName)
     {
         // Rekonstruera RuleSet från sparad data
@@ -274,6 +308,10 @@ public class GameMetadata
     public int TotalMoves { get; set; }
     public int BoardSize { get; set; }
 
+    /// <summary>
+    /// Visar spelarnas namn och datum för spelomgången
+    /// </summary>
+    /// <returns>Retunerar namnet på vinnaren, om NULL retuneras "Ingen vinnare"</returns>
     public string GetDisplayName()
     {
         return $"{Player1Name} vs {Player2Name} - {DatePlayed:yyyy-MM-dd HH:mm}";

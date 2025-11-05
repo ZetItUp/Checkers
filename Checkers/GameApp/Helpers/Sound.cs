@@ -14,7 +14,7 @@ namespace Checkers.GameApp.Helpers
     public static class Sound
     {
         private static SoundEffect? _winSound; // Referens till ljudet
-        private static SoundEffectInstance? _winSoundInstance;
+        private static SoundEffectInstance? _winSoundInstance; // Instance för uppspelning
 
         /// <summary>
         /// Ladda in ljudresurset
@@ -34,7 +34,8 @@ namespace Checkers.GameApp.Helpers
             if(_winSoundInstance == null)
                 return;
 
-            _winSoundInstance.Pitch = 0.5f;
+            _winSoundInstance.Volume = 0.5f;
+            _winSoundInstance.Play();
         }
     }
 }
