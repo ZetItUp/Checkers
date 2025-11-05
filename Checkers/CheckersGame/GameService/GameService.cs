@@ -45,10 +45,19 @@ namespace Checkers.CheckersGame.GameService
             _isInMultiJump = false;
         }
 
+        /// <summary>
+        /// Tom konstruktor, skapar en ny RuleSetFactory
+        /// </summary>
         public GameService() : this(new RuleSetFactory())
         {
         }
-        
+
+        /// <summary>
+        /// Initialiserar ett nytt spel
+        /// </summary>
+        /// <param name="player1Name">Name of player 1</param>
+        /// <param name="player2Name">Name of player 2</param>
+        /// <returns>True if a game was successfully initialized</returns>
         public bool InitializeGame(string player1Name, string player2Name)
         {
             try
@@ -85,12 +94,21 @@ namespace Checkers.CheckersGame.GameService
             return true;
         }
 
+        /// <summary>
+        /// Startar spelet
+        /// </summary>
         public void StartGame()
         {
             if (_gameStatus == GameStatus.WaitingToStart)
                 _gameStatus = GameStatus.InProgress;
         }
 
+        /// <summary>
+        /// Gör ett drag från en position till en annan
+        /// </summary>
+        /// <param name="from">From</param>
+        /// <param name="to">To</param>
+        /// <returns>True on successfull move</returns>
         public bool MakeMove(Position from, Position to)
         {
             if(_gameStatus != GameStatus.InProgress)
@@ -155,6 +173,10 @@ namespace Checkers.CheckersGame.GameService
             return true;
         }
 
+        /// <summary>
+        /// Ångra senast registrerade drag
+        /// </summary>
+        /// <returns>True on success</returns>
         public bool Undo()
         {
             if(_gameHistory == null || _board == null || _gameStatus != GameStatus.InProgress)
@@ -171,6 +193,10 @@ namespace Checkers.CheckersGame.GameService
             return success;
         }
 
+        /// <summary>
+        /// Koll om det finns en vinnare
+        /// </summary>
+        /// <returns>Player if any winner, else null</returns>
         public Player? CheckWinner()
         {
             if(_board == null || _moveValidator == null)
@@ -197,41 +223,73 @@ namespace Checkers.CheckersGame.GameService
             return null; //ingen vinnare än
         }
 
+        /// <summary>
+        /// Ändra tur till nästa spelare
+        /// </summary>
         public void SwitchTurn()
         {
             _currentPlayer = _currentPlayer.Color == _player1.Color ? _player2 : _player1;
         }
 
+        /// <summary>
+        /// Hämta ett bräde
+        /// </summary>
+        /// <returns>IBoard?</returns>
         public IBoard? GetBoard()
         {
             return _board;
         }
-        
+
+        /// <summary>
+        /// Returnerar den nuvarande spelaren
+        /// </summary>
+        /// <returns>Player object, null if no current player</returns>
         public Player? GetCurrentPlayer()
         {
             return _currentPlayer;    
         }
 
+        /// <summary>
+        /// Hämta spelets status
+        /// </summary>
+        /// <returns>GameStatus</returns>
         public GameStatus GetGameStatus()
         {
             return _gameStatus;
         }
 
+        /// <summary>
+        /// Hämta spelets historik
+        /// </summary>
+        /// <returns>IGameHistory?</returns>
         public IGameHistory? GetGameHistory()
         {
             return _gameHistory;
         }
 
+        /// <summary>
+        /// Hämta namn på spelare 1
+        /// </summary>
+        /// <returns>Player name of first player</returns>
         public string GetPlayer1Name()
         {
             return _player1?.Name ?? "Player 1";
         }
 
+        /// <summary>
+        /// Hämta namn på spelare 2
+        /// </summary>
+        /// <returns>Player name of second player</returns>
         public string GetPlayer2Name()
         {
             return _player2?.Name ?? "Player 2";
         }
 
+        /// <summary>
+        /// Hämta alla nuvarande giltiga drag för en pjäs på en given position
+        /// </summary>
+        /// <param name="position">Piece current position</param>
+        /// <returns>List of possible positions</returns>
         public List<Position> GetValidMovesForPiece(Position position)
         {
             var validMoves = new List<Position>();
@@ -279,6 +337,11 @@ namespace Checkers.CheckersGame.GameService
             return validMoves;
         }
 
+        /// <summary>
+        /// Gör en kontroll om en pjäs kan ta igen efter ett capture-drag
+        /// </summary>
+        /// <param name="piecePosition">Current piece position</param>
+        /// <returns>True if piece can capture again</returns>
         private bool CanPieceCaptureAgain(Position piecePosition)
         {
             if(_board == null)
@@ -318,6 +381,9 @@ namespace Checkers.CheckersGame.GameService
             return false;
         }
 
+        /// <summary>
+        /// Avslutar nuvarande spelares tur
+        /// </summary>
         public void EndTurn()
         {
             if (RuleSet == null || _gameStatus != GameStatus.InProgress || RuleSet.ForcedCaptures)
