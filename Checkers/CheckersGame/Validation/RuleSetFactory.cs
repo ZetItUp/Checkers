@@ -9,9 +9,19 @@ using Checkers.CheckersGame.Validation.Config;
 
 namespace Checkers.CheckersGame.Validation
 {
-    internal class RuleSetFactory : IRuleSetFactory // fabrik som skapar IRuleSet från JSON
+    /// <summary>
+    /// RuleSetFactory som skapar IRuleSet från JSON
+    /// </summary>
+    internal class RuleSetFactory : IRuleSetFactory
     {
-        public IRuleSet CreateFromJsonFile(string path) // läs in json-fil och skapa IRuleSet objekt
+        /// <summary>
+        /// Hämtar IRuleSet från en JSON-fil
+        /// </summary>
+        /// <param name="path">Path to the JSON-file</param>
+        /// <returns>IRuleSet object from the file</returns>
+        /// <exception cref="ArgumentException">Is path empty</exception>
+        /// <exception cref="FileNotFoundException">File not found</exception>
+        public IRuleSet CreateFromJsonFile(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 throw new ArgumentException("path cannot be empty.", nameof(path));
@@ -23,6 +33,13 @@ namespace Checkers.CheckersGame.Validation
             return CreateFromJson(json); // skickar till metoden som hanterar Json-strängen
         }
 
+        /// <summary>
+        /// Skapar ett IRuleSet objekt från en JSON-sträng
+        /// </summary>
+        /// <param name="json">string containing the JSON data</param>
+        /// <returns>IRuleSet</returns>
+        /// <exception cref="ArgumentException">Empty JSON string</exception>
+        /// <exception cref="InvalidOperationException">Invalid JSON data</exception>
         private IRuleSet CreateFromJson(string json)
         {
             if (string.IsNullOrEmpty(json))

@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Checkers.GameApp.Helpers
 {
+    ///<summary>
+    /// Hanterar ljud i spelet
+    /// </summary>
     public static class Sound
     {
         private static SoundEffect? _winSound; // referensen till ljudet
@@ -17,6 +20,7 @@ namespace Checkers.GameApp.Helpers
         {
             _winSound = content.Load<SoundEffect>("win");
         }
+
         public static void PlayWinSound()
         {
             _winSound?.Play();

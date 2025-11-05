@@ -1,14 +1,16 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Checkers.GameApp.Helpers
 {
-    // MouseHelper komponent för att hantera musen i MonoGame
+    ///<summary>
+    /// MouseHelper komponent för att hantera musen i MonoGame
+    /// </summary>
     public class MouseHelper : GameComponent
     {
         // Statiska variabler som ska vara samma för alla instancer
@@ -84,42 +86,51 @@ namespace Checkers.GameApp.Helpers
             {
                 // I alla cases så jämförs current state mot last state, har det ändrats korrekt, returnera true, annars false
                 case MouseButton.Left:
+                {
+                    if (
+                        mouseState.LeftButton == ButtonState.Released
+                        && lastMouseState.LeftButton == ButtonState.Pressed
+                    )
                     {
-                        if (mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                case MouseButton.Middle:
-                    {
-                        if (mouseState.MiddleButton == ButtonState.Released && lastMouseState.MiddleButton == ButtonState.Pressed)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                case MouseButton.Right:
-                    {
-                        if (mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                default:
+                    else
                     {
                         return false;
                     }
+                }
+                case MouseButton.Middle:
+                {
+                    if (
+                        mouseState.MiddleButton == ButtonState.Released
+                        && lastMouseState.MiddleButton == ButtonState.Pressed
+                    )
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                case MouseButton.Right:
+                {
+                    if (
+                        mouseState.RightButton == ButtonState.Released
+                        && lastMouseState.RightButton == ButtonState.Pressed
+                    )
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                default:
+                {
+                    return false;
+                }
             }
         }
 
@@ -135,42 +146,51 @@ namespace Checkers.GameApp.Helpers
             {
                 // I alla cases så jämförs current state mot last state, har det ändrats korrekt, returnera true, annars false
                 case MouseButton.Left:
+                {
+                    if (
+                        mouseState.LeftButton == ButtonState.Pressed
+                        && lastMouseState.LeftButton == ButtonState.Released
+                    )
                     {
-                        if (mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                case MouseButton.Middle:
-                    {
-                        if (mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                case MouseButton.Right:
-                    {
-                        if (mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                default:
+                    else
                     {
                         return false;
                     }
+                }
+                case MouseButton.Middle:
+                {
+                    if (
+                        mouseState.MiddleButton == ButtonState.Pressed
+                        && lastMouseState.MiddleButton == ButtonState.Released
+                    )
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                case MouseButton.Right:
+                {
+                    if (
+                        mouseState.RightButton == ButtonState.Pressed
+                        && lastMouseState.RightButton == ButtonState.Released
+                    )
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                default:
+                {
+                    return false;
+                }
             }
         }
 
@@ -186,16 +206,16 @@ namespace Checkers.GameApp.Helpers
             {
                 // I alla cases så kollas det om knappen hålls nedtryckt
                 case MouseButton.Left:
+                {
+                    if (mouseState.LeftButton == ButtonState.Pressed)
                     {
-                        if (mouseState.LeftButton == ButtonState.Pressed)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
+                    else
+                    {
+                        return false;
+                    }
+                }
                 case MouseButton.Middle:
                     if (mouseState.MiddleButton == ButtonState.Pressed)
                     {
@@ -215,9 +235,9 @@ namespace Checkers.GameApp.Helpers
                         return false;
                     }
                 default:
-                    {
-                        return false;
-                    }
+                {
+                    return false;
+                }
             }
         }
     }

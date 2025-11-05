@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Checkers.GameApp.Helpers
 {
-    // Enum för musknapparna
+    ///<summary>
+    /// Enum för musknapparna
+    /// </summary>
     public enum MouseButton
     {
         Left,
         Middle,
-        Right
+        Right,
     }
 }

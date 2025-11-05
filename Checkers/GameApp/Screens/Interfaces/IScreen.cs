@@ -1,16 +1,18 @@
-﻿using Checkers.GameApp.Screens.Interfaces;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Checkers.GameApp.Screens.Interfaces;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Checkers.GameApp.Screens
 {
-    // Screen Interface
+    /// <summary>
+    /// Interface för skärmar i spelet
+    /// </summary>
     public interface IScreen
     {
         public void LoadContent(IAppContext appContext);
