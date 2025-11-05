@@ -9,6 +9,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
+    /// <summary>
+    /// representerar själva spelbrädet, hanterar pjäser
+    /// </summary>
     public class Board : IBoard
     {
         private readonly Piece?[,] squares; // [,] = 2d array. den lagrar pjäser
@@ -18,6 +21,9 @@ namespace Checkers.CheckersGame.Models
             this.Size = size; // this.Size nuvarande klassobjeket
             squares = new Piece?[Size, Size]; // skapa rutnät som börjar som null (inga pjäser där) och är Size brett och Size högt
         }
+        /// <summary>
+        /// rensar brädet och placerar ut pjäser
+        /// </summary>
         public void Initialize()
         {
             //rensa brädet
@@ -61,7 +67,12 @@ namespace Checkers.CheckersGame.Models
                 }
             }
         }
-        public Piece? GetPiece(Position position) // hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
+        /// <summary>
+        /// hämtar pjäsen från en viss ruta, returnerar null om rutan är tom
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public Piece? GetPiece(Position position)
         {
             // Måste göra en bounds check här
             if (position.IsValid(Size))
@@ -73,7 +84,14 @@ namespace Checkers.CheckersGame.Models
                 return null;
             }
         }
-
+        /// <summary>
+        /// en pjäs sätts på en tom ruta i brädet
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <param name="position"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public void PlacePiece(Piece piece, Position position)
         {
             if (piece == null)
@@ -97,7 +115,13 @@ namespace Checkers.CheckersGame.Models
             squares[r, c] = piece;
         }
 
-
+        /// <summary>
+        /// flyttar en pjäs till en tom ruta, uppdaterar sedan positionen
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public void MovePiece(Position from, Position to)
         {
             int fr = from.Row, fc = from.Column;
@@ -128,7 +152,12 @@ namespace Checkers.CheckersGame.Models
             squares[tr, tc] = piece;
             piece.Position = to;
         }
-
+        /// <summary>
+        /// tar bort pjäsen från angiven ruta i brädet
+        /// </summary>
+        /// <param name="position"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public void RemovePiece(Position position)
         {
 
@@ -148,7 +177,11 @@ namespace Checkers.CheckersGame.Models
             
             squares[r, c] = null;
         }
-        public List<Piece> GetAllPieces() // returnernar en lista med alla pjäser på brädet (oavsett färg)
+        /// <summary>
+        /// returnernar en lista med alla pjäser på brädet (oavsett färg)
+        /// </summary>
+        /// <returns></returns>
+        public List<Piece> GetAllPieces() 
         {  
             var result = new List<Piece>();
 
@@ -166,8 +199,12 @@ namespace Checkers.CheckersGame.Models
             }
             return result;
         }
-
-        public List<Piece> GetAllPieces(PieceColor color) // Overload: returnerar alla pjäser av den valda färgen
+        /// <summary>
+        /// Overload: returnerar alla pjäser av den valda färgen
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public List<Piece> GetAllPieces(PieceColor color) 
         {
             var allPieces = GetAllPieces(); // hämtar alla färger på brädet
             var result = new List<Piece>(); // Tom lista som ska innehålla pjäser av rätt färg
@@ -178,15 +215,23 @@ namespace Checkers.CheckersGame.Models
             }
             return result;
         }
-        public int CountPieces(PieceColor color)   // Räknar antalet pjäser som finns av en färg och returnerar antalet
+        /// <summary>
+        ///  Räknar antalet pjäser som finns av en färg och returnerar antalet
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public int CountPieces(PieceColor color)   
         {
             var pieces = GetAllPieces(color); // Hämtar alla pjäser av den valda färgen
             return pieces.Count; // Returnerar antalet pjäser i listan
 
 
         }
-
-        public IBoard Clone() // Skapar och returnerar en kopia av brädet
+        /// <summary>
+        /// Skapar och returnerar en kopia av brädet
+        /// </summary>
+        /// <returns></returns>
+        public IBoard Clone() 
         {
             var copy = new Board(Size); //  Skapar nytt bräde av samma storlek
 
