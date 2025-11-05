@@ -8,6 +8,9 @@ using Checkers.CheckersGame.DataTypes;
 
 namespace Checkers.CheckersGame.Models
 {
+    /// <summary>
+    /// definitionen för hur en vanlig pjäs rör sig
+    /// </summary>
     public class RegularPiece: Piece
     {
         public RegularPiece(PieceColor color, Position position) : base(color, position)
