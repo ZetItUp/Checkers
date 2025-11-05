@@ -14,6 +14,11 @@ namespace Checkers.CheckersGame.Models
         {
         }
 
+        /// <summary>
+        /// Klonar den aktiva pjäsens färg och position
+        /// </summary>
+        /// <param name="Color">Color</param>
+        /// <param name="Position">Position</param>
         public override Piece Clone()
         {
             var clone = new RegularPiece(Color, Position);
@@ -21,6 +26,11 @@ namespace Checkers.CheckersGame.Models
             return clone;
         }
 
+        /// <summary>
+        /// Lägger giltiga drag i en lista
+        /// </summary>
+        /// <returns> Retunerar listan med giltiga drag </returns>
+        /// <param name="board">IBoard</param>
         public override List<Position> GetValidMoves(IBoard board)
         {
             var validMoves = new List<Position>();
@@ -30,6 +40,11 @@ namespace Checkers.CheckersGame.Models
         }
 
 
+        /// <summary>
+        /// Beräknar framtida position för giltiga drag, lägger det utförda draget i en lista
+        /// </summary>
+        /// <returns> Retunerar listan med utfört drag </returns>
+        /// <param name="board">IBoard</param>
         private List<Position> GetForwardMoves(IBoard board)
         {
             var forwardMoves = new List<Position>();
@@ -54,6 +69,11 @@ namespace Checkers.CheckersGame.Models
             return forwardMoves;
         }
 
+        /// <summary>
+        /// Beräknar framtida position för fångst-drag, lägger det utförda draget i en lista
+        /// </summary>
+        /// <returns> Retunerar listan med ett eller fler utförda drag </returns>
+        /// <param name="board">IBoard</param>
         private List<Position> GetCaptureMoves(IBoard board)
         {
             var captureMoves = new List<Position>();
