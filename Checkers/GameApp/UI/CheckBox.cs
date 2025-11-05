@@ -6,6 +6,9 @@ using System;
 
 namespace Checkers.GameApp.UI
 {
+    ///<summary>
+    /// CheckBox UI komponent
+    /// </summary>
     internal class CheckBox : WindowComponent
     {
         const int CHECKBOX_SIZE = 26;
