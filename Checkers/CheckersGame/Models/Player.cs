@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Checkers.CheckersGame.Models
 {
-    // Klassdefinitionen för Player
+    /// <summary>
+    /// Klassdefinitionen för Player
+    /// </summary>
     public class Player
     {
         // Egenskap för Namn
