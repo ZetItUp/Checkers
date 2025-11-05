@@ -8,18 +8,33 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Checkers.GameApp.Helpers
 {
+    /// <summary>
+    /// Ljudhanterar klass
+    /// </summary>
     public static class Sound
     {
-        private static SoundEffect? _winSound; // referensen till ljudet
+        private static SoundEffect? _winSound; // Referens till ljudet
+        private static SoundEffectInstance? _winSoundInstance;
 
-        // ladda ljudfil
+        /// <summary>
+        /// Ladda in ljudresurset
+        /// </summary>
+        /// <param name="content"></param>
         public static void LoadContent(ContentManager content)
         {
             _winSound = content.Load<SoundEffect>("win");
+            _winSoundInstance = _winSound.CreateInstance();
         }
+
+        /// <summary>
+        /// Spela upp ljudet
+        /// </summary>
         public static void PlayWinSound()
         {
-            _winSound?.Play();
+            if(_winSoundInstance == null)
+                return;
+
+            _winSoundInstance.Pitch = 0.5f;
         }
     }
 }
