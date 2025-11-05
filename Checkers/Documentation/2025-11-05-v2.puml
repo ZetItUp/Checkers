@@ -1,0 +1,564 @@
+@startuml Checkers Class Diagram - Complete
+
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+
+' ====================
+' DATA TYPES (Top)
+' ====================
+
+package "Data Types" #FCE4EC {
+    struct Position <<struct>> {
+        + Row: int
+        + Column: int
+        __
+        + IsValid(size): bool
+        + Equals(obj): bool
+        + GetHashCode(): int
+        + ToString(): string
+    }
+
+    enum GameStatus <<enumeration>> {
+        WaitingToStart
+        InProgress
+        Completed
+        Abandoned
+    }
+
+    enum PieceColor <<enumeration>> {
+        Light
+        Dark
+    }
+}
+
+' ====================
+' DOMAIN LAYER
+' ====================
+
+package "Domain Models" #E8F4F8 {
+    abstract class Piece {
+        + Color: PieceColor
+        + Position: Position
+        + IsKing: bool
+        __
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    class RegularPiece {
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    class KingPiece {
+        + GetValidMoves(board): List<Position>
+        + Clone(): Piece
+    }
+
+    interface IBoard {
+        + Size: int
+        __
+        + Initialize()
+        + GetPiece(pos): Piece?
+        + PlacePiece(piece, pos)
+        + MovePiece(from, to)
+        + RemovePiece(pos)
+        + GetAllPieces(): List<Piece>
+        + Clone(): IBoard
+    }
+
+    class Board {
+        - squares: Piece?[,]
+        + Size: int
+        __
+        + Initialize()
+        + GetPiece(pos): Piece?
+        + PlacePiece(piece, pos)
+        + MovePiece(from, to)
+        + Clone(): IBoard
+    }
+
+    class Player {
+        + Name: string
+        + Color: PieceColor
+    }
+}
+
+' ====================
+' RULES LAYER
+' ====================
+
+package "Validation & Rules" #FFF4E6 {
+    interface IRuleSet {
+        + BoardSize: int
+        + ForcedCaptures: bool
+        + AllowMultipleJumps: bool
+    }
+
+    class RuleSet {
+        + BoardSize: int
+        + ForcedCaptures: bool
+        + AllowMultipleJumps: bool
+        __
+        + ToString(): string
+    }
+
+    interface IRuleSetFactory {
+        + CreateFromJsonFile(path): IRuleSet
+    }
+
+    class RuleSetFactory {
+        + CreateFromJsonFile(path): IRuleSet
+    }
+
+    interface IMoveValidator {
+        + ValidateMove(from, to, board, player): bool
+        + GetCapturedPosition(from, to): Position?
+        + IsCapture(from, to): bool
+        + HasValidMoves(player, board): bool
+    }
+
+    class MoveValidator {
+        - _ruleSet: IRuleSet
+        __
+        + ValidateMove(from, to, board, player): bool
+        + GetCapturedPosition(from, to): Position?
+        + IsCapture(from, to): bool
+        + HasValidMoves(player, board): bool
+    }
+
+    class RuleSetLoadException {
+        + RuleSetLoadException(message)
+    }
+
+    class RuleSetDto {
+        + BoardSize: int?
+        + ForcedCaptures: bool?
+        + AllowMultipleJumps: bool?
+    }
+}
+
+' ====================
+' HISTORY LAYER
+' ====================
+
+package "History & Persistence" #E8F5E9 {
+    interface IGameHistory {
+        + RecordMove(move)
+        + Undo(board): bool
+        + GetAllMoves(): List<Move>
+        + Clear()
+    }
+
+    class GameHistory {
+        - _initialBoard: IBoard
+        - _moves: List<Move>
+        __
+        + RecordMove(move)
+        + Undo(board): bool
+        + GetAllMoves(): List<Move>
+        + Clear()
+    }
+
+    class Move {
+        + From: Position
+        + To: Position
+        + CapturedPiece: Piece?
+        + WasPromoted: bool
+        + TimeStamp: DateTime
+        + MoveNumber: int
+        __
+        + ToString(): string
+        + GetNotation(): string
+    }
+
+    class GamePersistence <<static>> {
+        + SaveGame(service): string
+        + LoadGameForReplay(file): SavedGame?
+        + GetSavedGamesWithMetadata(): List<GameMetadata>
+        + DeleteGame(file)
+    }
+
+    class SavedGame {
+        + FileName: string
+        + Player1Name: string
+        + Player2Name: string
+        + RuleSet: RuleSet
+        + Moves: List<Move>
+        + DatePlayed: DateTime
+        + Winner: string?
+    }
+
+    class GameMetadata {
+        + FileName: string
+        + Player1Name: string
+        + Player2Name: string
+        + DatePlayed: DateTime
+        + Winner: string?
+        + TotalMoves: int
+        __
+        + GetDisplayName(): string
+    }
+
+    class ReplayService {
+        - _savedGame: SavedGame
+        - _board: IBoard
+        - _gameHistory: IGameHistory
+        - _ruleSet: RuleSet
+        - _pieceOperationsService: PieceOperationsService
+        - _currentMoveIndex: int
+        - _player1: Player
+        - _player2: Player
+        + TotalMoves: int
+        + Winner: string?
+        __
+        + StepForward(): bool
+        + StepBackward(): bool
+        + ResetToStart()
+        + GetBoard(): IBoard?
+    }
+}
+
+' ====================
+' SERVICE LAYER
+' ====================
+
+package "Game Service" #DDDDDD {
+    class GameService {
+        - _ruleSetFactory: IRuleSetFactory
+        - _board: IBoard?
+        - _player1: Player
+        - _player2: Player
+        - _currentPlayer: Player
+        - _moveValidator: IMoveValidator?
+        - _gameHistory: IGameHistory?
+        - _pieceOperationsService: PieceOperationsService?
+        - _gameStatus: GameStatus
+        - _isInMultiJump: bool
+        + RuleSet: IRuleSet?
+        __
+        + InitializeGame(p1, p2): bool
+        + StartGame()
+        + MakeMove(from, to): bool
+        + Undo(): bool
+        + CheckWinner(): Player?
+        + SwitchTurn()
+        + GetBoard(): IBoard?
+        + GetCurrentPlayer(): Player?
+        + EndTurn()
+    }
+
+    class PieceOperationsService {
+        - _ruleSet: IRuleSet
+        - _moveValidator: IMoveValidator
+        __
+        + HandleCapture(from, to, board): Piece?
+        + PromoteToKing(pos, piece, board)
+        + IsPromotionPosition(pos, color): bool
+    }
+}
+
+' ====================
+' UI COMPONENTS
+' ====================
+
+package "UI Components" #E1BEE7 {
+    class WindowComponent {
+        + WindowRectangle: Rectangle
+        + IsVisible: bool
+        + Enabled: bool
+        + Clicked: EventHandler?
+        __
+        + LoadContent(content)
+        + Update(gameTime)
+        + Draw(spriteBatch)
+    }
+
+    class Button {
+        + Text: string
+    }
+
+    class Label {
+        + Text: string
+        + FontColor: Color
+    }
+
+    class CheckBox {
+        + Checked: bool
+        + CheckedChanged: EventHandler?
+    }
+
+    class ComboBox {
+        + SelectedItemText: string
+        + SelectedItemChanged: EventHandler?
+    }
+
+    class ItemList {
+        + Items: List<string>
+        + SelectedIndex: int
+    }
+}
+
+' ====================
+' SCREENS
+' ====================
+
+package "Screens" #F3E5F5 {
+    interface IScreen {
+        + LoadContent(context)
+        + UnloadContent()
+        + Update(gameTime)
+        + Draw(gameTime)
+    }
+
+    interface IScreenChanger {
+        + ChangeScreen(screenID)
+    }
+
+    interface IAppContext {
+        + SpriteBatch: SpriteBatch
+        + Content: ContentManager
+        + GraphicsDevice: GraphicsDevice
+    }
+
+    class AppContext {
+        + SpriteBatch: SpriteBatch
+        + Content: ContentManager
+        + GraphicsDevice: GraphicsDevice
+    }
+
+    class ScreenManager {
+        - _appContext: IAppContext
+        - _currentScreen: IScreen?
+        - _screens: Dictionary<ScreenID, IScreen>
+        __
+        + AddScreen(id, screen)
+        + ChangeScreen(id)
+        + Update(gameTime)
+        + Draw(gameTime)
+    }
+
+    enum ScreenID {
+        MainMenu
+        Game
+        Replay
+    }
+
+    class MainMenuScreen {
+        - btnStartGame: Button
+        - btnReplayGames: Button
+        - btnExitGame: Button
+    }
+
+    class GameScreen {
+        - _gameService: GameService?
+        - selectedPosition: Position
+        - btnStartGame: Button
+        - btnUndoMove: Button
+        - lblCurrentPlayer: Label
+        - chkColorBlindMode: CheckBox
+    }
+
+    class ReplayScreen {
+        - _replayService: ReplayService?
+        - btnAutoPlay: Button
+        - cboGames: ComboBox
+        - chkColorBlindMode: CheckBox
+    }
+}
+
+' ====================
+' HELPERS
+' ====================
+
+package "Helpers" #FFF9C4 {
+    class MouseHelper {
+        + MouseRectangle(): Rectangle
+        + MousePosition(): Vector2
+        + MousePressed(button): bool
+    }
+
+    enum MouseButton {
+        Left
+        Middle
+        Right
+    }
+
+    class GraphicsHelper <<static>> {
+        + CreateTexture(device, w, h, color): Texture2D
+    }
+
+    class Sound <<static>> {
+        + LoadContent(content)
+        + PlayWinSound()
+    }
+}
+
+' ====================
+' APPLICATION
+' ====================
+
+package "Application" #C5E1A5 {
+    class Program {
+        + Main()
+    }
+
+    class MainGame {
+        - _graphics: GraphicsDeviceManager
+        - _screenManager: ScreenManager?
+        __
+        + Initialize()
+        + LoadContent()
+        + Update(gameTime)
+        + Draw(gameTime)
+    }
+}
+
+' ====================
+' INHERITANCE RELATIONSHIPS
+' ====================
+
+IBoard <|.. Board
+Piece <|-- RegularPiece
+Piece <|-- KingPiece
+IRuleSet <|.. RuleSet
+IRuleSetFactory <|.. RuleSetFactory
+IMoveValidator <|.. MoveValidator
+IGameHistory <|.. GameHistory
+IScreen <|.. MainMenuScreen
+IScreen <|.. GameScreen
+IScreen <|.. ReplayScreen
+IScreenChanger <|.. ScreenManager
+IAppContext <|.. AppContext
+WindowComponent <|-- Button
+WindowComponent <|-- Label
+WindowComponent <|-- CheckBox
+WindowComponent <|-- ComboBox
+WindowComponent <|-- ItemList
+Exception <|-- RuleSetLoadException
+
+' ====================
+' DOMAIN RELATIONSHIPS
+' ====================
+
+Board *-- Piece
+Piece --> Position : uses
+Piece --> PieceColor : uses
+Player --> PieceColor : uses
+
+' ====================
+' SERVICE LAYER RELATIONSHIPS
+' ====================
+
+GameService *-- Player
+GameService o-- IBoard
+GameService o-- IMoveValidator
+GameService o-- IGameHistory
+GameService o-- PieceOperationsService
+GameService o-- IRuleSetFactory
+GameService o-- IRuleSet
+GameService --> GameStatus : uses
+GameService --> Position : uses
+
+PieceOperationsService o-- IRuleSet
+PieceOperationsService o-- IMoveValidator
+PieceOperationsService --> IBoard : uses
+PieceOperationsService --> PieceColor : uses
+
+' ====================
+' VALIDATION RELATIONSHIPS
+' ====================
+
+MoveValidator o-- IRuleSet
+MoveValidator --> IBoard : uses
+MoveValidator --> Player : uses
+MoveValidator --> Position : uses
+
+RuleSetFactory ..> RuleSetDto : creates
+RuleSetFactory ..> RuleSetLoadException : throws
+
+' ====================
+' HISTORY RELATIONSHIPS
+' ====================
+
+GameHistory o-- IBoard
+GameHistory *-- Move
+GameHistory --> Position : uses
+
+Move *-- Position
+Move o-- Piece
+
+ReplayService o-- SavedGame
+ReplayService o-- IBoard
+ReplayService o-- IGameHistory
+ReplayService o-- RuleSet
+ReplayService o-- PieceOperationsService
+ReplayService *-- Player
+ReplayService --> Position : uses
+ReplayService --> PieceColor : uses
+
+SavedGame o-- RuleSet
+SavedGame *-- Move
+
+GamePersistence ..> GameService : saves/loads
+GamePersistence ..> SavedGame : creates
+GamePersistence ..> GameMetadata : creates
+
+' ====================
+' UI COMPONENT RELATIONSHIPS
+' ====================
+
+ComboBox *-- ItemList
+CheckBox *-- Label
+WindowComponent --> MouseHelper : uses
+WindowComponent --> MouseButton : uses
+
+' ====================
+' SCREEN RELATIONSHIPS
+' ====================
+
+MainMenuScreen *-- Button
+MainMenuScreen --> IScreenChanger : uses
+MainMenuScreen --> IAppContext : uses
+MainMenuScreen --> ScreenID : uses
+
+GameScreen *-- Button
+GameScreen *-- Label
+GameScreen *-- CheckBox
+GameScreen o-- GameService
+GameScreen --> IScreenChanger : uses
+GameScreen --> IAppContext : uses
+GameScreen --> ScreenID : uses
+GameScreen --> Position : uses
+
+ReplayScreen *-- Button
+ReplayScreen *-- ComboBox
+ReplayScreen *-- CheckBox
+ReplayScreen o-- ReplayService
+ReplayScreen --> IScreenChanger : uses
+ReplayScreen --> IAppContext : uses
+ReplayScreen --> ScreenID : uses
+
+ScreenManager o-- IScreen
+ScreenManager o-- IAppContext
+ScreenManager --> ScreenID : uses
+
+AppContext o-- SpriteBatch
+AppContext o-- ContentManager
+AppContext o-- GraphicsDevice
+
+' ====================
+' APPLICATION RELATIONSHIPS
+' ====================
+
+MainGame o-- ScreenManager
+MainGame o-- GraphicsDeviceManager
+MainGame --> Sound : uses
+MainGame --> MouseHelper : uses
+
+Program ..> MainGame : creates
+
+@enduml
